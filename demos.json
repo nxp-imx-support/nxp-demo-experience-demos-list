@@ -1,0 +1,117 @@
+{"demos":[{
+    "multimedia":[{
+        "Video4Linux2":[{
+            "name": "Camera Preview",
+            "executable": "/unittests/v4l2/mxc_v4l2_capture",
+            "source": "",
+            "icon": "v4l2_cam_prev_icon.png",
+            "screenshot": "v4l2_cam_prev_screenshot.png",
+            "compatible": "imx7ulpevk",
+            "description": "Description of v4l2 camera preview"
+        },{
+            "name": "Display Video",
+            "executable": "/unittests/v4l2/mxc_v4l2_display",
+            "source": "",
+            "icon": "v4l2_display_icon.png",
+            "screenshot": "v4l2_display_screenshot.png",
+            "compatible": "imx7ulpevk, imx8mm",
+            "description": "Description of V4L2 display video"
+        }],
+        "Gstreamer":[{
+            "name": "Gstreamer video test source",
+            "executable": "gst-launch1.0 v4l2testsrc ! v4lsink",
+            "source": "",
+            "icon": "gst_test_src_icon.png",
+            "screenshot": "gst_test_src_screenshot.png",
+            "compatible": "imx7ulpevk, imx8mm",
+            "description": "Description of gstreamer source test"
+        },{
+            "name": "Gstreamer Camera Preview",
+            "executable": "gst-launch1.0 v4l2src ! v4lsink",
+            "source": "",
+            "icon": "gst_camera_preview_icon.png",
+            "screenshot": "gst_camera_preview_screenshot.png",
+            "compatible": "imx7ulpevk, imx8mm",
+            "description": "Description of gstreamer camera preview"
+        }]
+    }]
+    },
+    {"gpu":[{
+        "OpenGL 3D":[{
+            "name": "GL Cube 3D",
+            "executable": "/opt/viv/glcube",
+            "source": "",
+            "icon": "gles3_cube_icon.png",
+            "screenshot": "gles3_cube_screenshot.png",
+            "compatible": "imx7ulpevk, imx8mm",
+            "description": "Description of GL cube 3D"
+        },
+        {
+            "name": "Cover Flow 3D",
+            "executable": "/opt/viv_samples/flow",
+            "source": "",
+            "icon": "gles3_coverflow_icon.png",
+            "screenshot": "gles3_coverflow_screenshot.png",
+            "compatible": "imx7ulpevk, imx8mm",
+            "description": "Description of OpenGL 3D Cover Flow"
+        }],
+        "OpenVG 2D":[{
+            "name": "Tiger G2D",
+            "executable": "/opt/viv_samples/tiger",
+            "source": "",
+            "icon": "g2d_tiger_icon.png",
+            "screenshot": "g2d_tiger_screenshot.png",
+            "compatible": "imx7ulpevk, imx8mm",
+            "description": "Description of Vivante Tiger G2D"
+        },
+        {
+            "name": "G2D Blit test",
+            "executable": "/opt/viv_samples/g2dblit",
+            "source": "",
+            "icon": "g2d_blit_icon.png",
+            "screenshot": "g2d_blit_screenshot.png",
+            "compatible": "imx7ulpevk, imx8mm",
+            "description": "Description of G2D Blit test"
+        }]
+    }]
+    },
+    {"Artificial Inteligence":[{
+        "Machine Learning":[{
+            "name": "Live face recognition",
+            "executable": "/home/root/aidemos/face_recognition",
+            "source": "",
+            "icon": "face_rec_icon.png",
+            "screenshot": "face_rec_screenshot.png",
+            "compatible": "imx8mm",
+            "description": "Description of Live face recognition"
+        },
+        {
+            "name": "Images recognition",
+            "executable": "/home/root/aidemos/image_recognition",
+            "source": "",
+            "icon": "image_rec_icon.png",
+            "screenshot": "image_rec_screenshot.png",
+            "compatible": "imx8mm",
+            "description": "Description of Images recognition"
+        }],
+        "Deep Learning":[{
+            "name": "Deep Learning 1",
+            "executable": "/home/root/aidemos/face_recognition",
+            "source": "",
+            "icon": "face_rec_icon.png",
+            "screenshot": "face_rec_screenshot.png",
+            "compatible": "imx8mm",
+            "description": "Description of Live face recognition"
+        },
+        {
+            "name": "Deep learning 2",
+            "executable": "/home/root/aidemos/image_recognition",
+            "source": "",
+            "icon": "image_rec_icon.png",
+            "screenshot": "image_rec_screenshot.png",
+            "compatible": "imx8mm",
+            "description": "Description of Images recognition"
+        }]
+    }]
+    }
+]}
