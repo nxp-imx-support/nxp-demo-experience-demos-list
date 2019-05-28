@@ -2,11 +2,11 @@
 
 #### Project bitbucket page:
 
-https://bitbucket.sw.nxp.com/users/nxa19976/repos/imx-demo-launcher-demos-list/browse
+https://bitbucket.sw.nxp.com/projects/IMXS/repos/imx-demo-launcher-demos-list/browse
 
 #### Download: 
 
-git clone https://nxa19976@bitbucket.sw.nxp.com/scm/~nxa19976/imx-demo-launcher-demos-list.git
+git clone https://bitbucket.sw.nxp.com/scm/imxs/imx-demo-launcher-demos-list.git
 
 ### How to add a new demo
 
