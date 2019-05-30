@@ -19,7 +19,7 @@
         }],
         "Gstreamer":[{
             "name": "Gstreamer video test source",
-            "executable": "gst-launch1.0 v4l2testsrc ! v4lsink",
+            "executable": "multimedia/gstreamer/videotestsource.sh",
             "source": "",
             "icon": "gst_test_src_icon.png",
             "screenshot": "gst_test_src_screenshot.png",
@@ -27,7 +27,7 @@
             "description": "Description of gstreamer source test"
         },{
             "name": "Gstreamer Camera Preview",
-            "executable": "gst-launch1.0 v4l2src ! v4lsink",
+            "executable": "multimedia/gstreamer/camerapreview.sh",
             "source": "",
             "icon": "gst_camera_preview_icon.png",
             "screenshot": "gst_camera_preview_screenshot.png",
