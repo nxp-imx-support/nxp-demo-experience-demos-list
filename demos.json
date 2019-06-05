@@ -19,20 +19,44 @@
         }],
         "Gstreamer":[{
             "name": "Gstreamer video test source",
-            "executable": "multimedia/gstreamer/videotestsource.sh",
+            "executable": "gst-launch-1.0 videotestsrc ! glimagesink render-rectangle='<0,0,320,240>'",
             "source": "",
             "icon": "gst_test_src_icon.png",
             "screenshot": "gst_test_src_screenshot.png",
-            "compatible": "imx7ulpevk, imx8mm",
-            "description": "Description of gstreamer source test"
+            "compatible": "imx7ulpevk",
+            "description": "This is a simple GStreamer pipeline able to create a video playback with the Video Test Source example. This pipeline uses glimagesink plugin with the render-rectangle property to create the required video size: gst-launch-1.0 videotestsrc ! glimagesink render-rectangle='<0,0,320,240>'"
+        },{
+            "name": "Gstreamer video test source",
+            "executable": "gst-launch-1.0 videotestsrc ! video/x-raw, width=1280,height=720 ! glimagesink",
+            "source": "",
+            "icon": "gst_test_src_icon.png",
+            "screenshot": "gst_test_src_screenshot.png",
+            "compatible": "imx8qxpmek, imx8mm",
+            "description": "This is a simple GStreamer pipeline able to create a video playback with the Video Test Source example. This pipeline limits the video screen to HD resolution: gst-launch-1.0 videotestsrc ! video/x-raw,width=1280,height=720 ! glimagesink"
+        },{
+            "name": "Gstreamer Video Playback",
+            "executable": "gst-launch-1.0 filesrc location=.imx-launcher/scripts/multimedia/gstreamer/smart_hd.mp4 ! decodebin ! imxvideoconvert_g2d ! glimagesink",
+            "source": "",
+            "icon": "gst_test_src_icon.png",
+            "screenshot": "gst_test_src_screenshot.png",
+            "compatible": "imx8qxpmek",
+            "description": "This is GStreamer playback example, which reproduces a HD video though a H.264 decode process: gst-launch-1.0 filesrc location=file.mp4 ! decodebin ! imxvideoconvert_g2d ! glimagesink"
+        },{
+            "name": "Gstreamer Video Playback",
+            "executable": "gst-launch-1.0 filesrc location=.imx-launcher/scripts/multimedia/gstreamer/smart.mp4 ! decodebin ! imxvideoconvert_g2d ! glimagesink",
+            "source": "",
+            "icon": "gst_test_src_icon.png",
+            "screenshot": "gst_test_src_screenshot.png",
+            "compatible": "imx7ulpevk",
+            "description": "This is GStreamer playback example, which reproduces a HD video though a H.264 decode process: gst-launch-1.0 filesrc location=file.mp4 ! decodebin ! imxvideoconvert_g2d ! glimagesink"
         },{
             "name": "Gstreamer Camera Preview",
-            "executable": "multimedia/gstreamer/camerapreview.sh",
+            "executable": "gst-launch-1.0 v4l2src device=/dev/video0 ! video/x-raw,width=1280,height=720 ! queue ! glimagesink",
             "source": "",
             "icon": "gst_camera_preview_icon.png",
             "screenshot": "gst_camera_preview_screenshot.png",
-            "compatible": "imx7ulpevk, imx8mm",
-            "description": "Description of gstreamer camera preview"
+            "compatible": "imx8qxpmek, imx8mm",
+            "description": "This is a simple GStreamer pipeline able to create a camera preview example. Note that this example only works with the correct DTS file and needs a IMXTOCSI acessory connected to the board: gst-launch-1.0 v4l2src device=/dev/video0 ! video/x-raw,width=1280,height=720 ! queue ! glimagesink"
         }]
     }]
     },
@@ -43,7 +67,7 @@
             "source": "",
             "icon": "gles3_cube_icon.png",
             "screenshot": "gles3_cube_screenshot.png",
-            "compatible": "imx7ulpevk, imx8mm",
+            "compatible": "imx7ulpevk, imx8mm, imx8qxpmek",
             "description": "Description of GL cube 3D"
         },
         {
@@ -52,26 +76,53 @@
             "source": "",
             "icon": "gles3_coverflow_icon.png",
             "screenshot": "gles3_coverflow_screenshot.png",
-            "compatible": "imx7ulpevk, imx8mm",
+            "compatible": "imx7ulpevk, imx8mm, imx8qxpmek",
             "description": "Description of OpenGL 3D Cover Flow"
         }],
         "OpenVG 2D":[{
             "name": "Tiger G2D",
-            "executable": "/opt/viv_samples/tiger",
+            "executable": "/opt/viv_samples/tiger/tiger",
             "source": "",
             "icon": "g2d_tiger_icon.png",
             "screenshot": "g2d_tiger_screenshot.png",
-            "compatible": "imx7ulpevk, imx8mm",
+            "compatible": "imx7ulpevk, imx8mm, imx8qxpmek",
             "description": "Description of Vivante Tiger G2D"
         },
         {
-            "name": "G2D Blit test",
-            "executable": "/opt/viv_samples/g2dblit",
+            "name": "GPU Unit Test",
+            "executable": "/unit_tests/GPU/gpu.sh",
             "source": "",
-            "icon": "g2d_blit_icon.png",
-            "screenshot": "g2d_blit_screenshot.png",
-            "compatible": "imx7ulpevk, imx8mm",
-            "description": "Description of G2D Blit test"
+            "icon": "g2d_gpu_icon.png",
+            "screenshot": "g2d_gpu_screenshot.png",
+            "compatible": "imx7ulpevk, imx8mm, imx8qxpmek",
+            "description": "Description of GPU Unit Test"
+        }],
+        "GLES2":[{
+            "name": "Bloom",
+            "executable": "/opt/imx-gpu-sdk/GLES2/Bloom/Bloom_Wayland --Window [0,0,1280,720]",
+            "source": "",
+            "icon": "",
+            "screenshot": "",
+            "compatible": "imx7ulpevk, imx8mm, imx8qxpmek",
+            "description": "Description of GLE2 Bloom i.MX GPU SDK demo, running at 720p"
+        },
+        {
+            "name": "Eight Layer Blend",
+            "executable": "/opt/imx-gpu-sdk/GLES2/EightLayerBlend/EightLayerBlend_Wayland --Window [0,0,1280,720]",
+            "source": "",
+            "icon": "",
+            "screenshot": "",
+            "compatible": "imx7ulpevk, imx8mm, imx8qxpmek",
+            "description": "Description of GLE2 EightLayerBlend i.MX GPU SDK demo, running at 720p"
+        },
+        {
+            "name": "Cube Texturing",
+            "executable": "/opt/imx-gpu-sdk/GLES2/S06_Texturing/S06_Texturing_Wayland --Window [0,0,1280,720]",
+            "source": "",
+            "icon": "",
+            "screenshot": "",
+            "compatible": "imx7ulpevk, imx8mm, imx8qxpmek",
+            "description": "Description of GLE2 EightLayerBlend i.MX GPU SDK demo, running at 720p"
         }]
     }]
     },
