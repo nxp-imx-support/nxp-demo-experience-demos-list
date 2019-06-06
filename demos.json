@@ -145,6 +145,27 @@
         }]
     }]
     },
+    {"Audio":[{
+        "Audio Playback":[{
+            "name": "Audio Record",
+            "executable": "/home/root/.imx-launcher/scripts/audio/audio_playback/audio_record.sh",
+            "source": "",
+            "icon": "",
+            "screenshot": "",
+            "compatible": "imx7ulpevk",
+            "description": "This test records an audio file from Headphone input with a 10 second duration. Make sure a Headphone is connected to the board."
+        },
+        {
+            "name": "Audio Play",
+            "executable": "/home/root/.imx-launcher/scripts/audio/audio_playback/audio_play.sh",
+            "source": "",
+            "icon": "",
+            "screenshot": "",
+            "compatible": "imx7ulpevk",
+            "description": "This test plays the audio file recorded on the 'Audio Record' test. Make sure a Headphone is connected to the board. Need to run the 'Audio Record' test first."
+        }]
+    }]
+    },
     {"Artificial Inteligence":[{
         "Machine Learning":[{
             "name": "Live face recognition",
