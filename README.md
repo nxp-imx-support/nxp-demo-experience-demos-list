@@ -2,18 +2,18 @@
 
 ### Table of Contents
 
-* [Introduction](#introduction)
-* [How to Add a New Demo](#how-to-add-a-new-demo)
-* [Application Resolution](#application-resolution)
-* [Supported Devices](#supported-devices)
-* [Supported Demo List](#supported-demo-list)
-  * [Multimedia](#multimedia)
-    * [GStreamer](#gstreamer)
-  * [GPU](#gpu)
-    * [OpenVG 2D](#openvg-2d)
-    * [GLES2](#gles2)
-  * [Audio](#audio)
-    * [Audio Playback](#audio-playback)
+* [Introduction](#markdown-header-introduction)
+* [How to Add a New Demo](#markdown-header-how-to-add-a-new-demo)
+* [Application Resolution](#markdown-header-application-resolution)
+* [Supported Devices](#markdown-header-supported-devices)
+* [Supported Demo List](#markdown-header-supported-demo-list)
+  * [Multimedia](#markdown-header-multimedia)
+    * [GStreamer](#markdown-header-gstreamer)
+  * [GPU](#markdown-header-gpu)
+    * [OpenVG 2D](#markdown-header-openvg-2d)
+    * [GLES2](#markdown-header-gles2)
+  * [Audio](#markdown-header-audio)
+    * [Audio Playback](#markdown-header-audio-playback)
 
 ### Introduction
 
@@ -116,79 +116,105 @@ Description of GPU Unit Test
 
 ##### [Bloom][bloom]
 
+<a>
 <img src="screenshot/bloom.jpg" height="150px">
+</a>
 
 An example of how to create a bloom effect. The idea is not to create the most accurate bloom, but something that is fairly fast to render. Instead of increasing the kernal size to get a good blur we do a fairly fast approximation by downscaling the original image to multiple smaller render-targets and then blurring these using a relative small kernel and then finally rescaling the result to the original size.
 
 ##### [Blur][blur]
 
+<a>
 <img src="screenshot/blur.jpg" height="150px">
+</a>
 
 Uses the two pass linear technique and further reduces the bandwidth requirement by downscaling the 'source image' to 1/4 its size (1/2w x 1/2h) before applying the blur and and then upscaling the blurred image to provide the final image. This works well for large kernel sizes and relatively high sigma's but the downscaling produces visible artifacts with low sigma's.
 
 ##### [DFGraphicsBasic2D][dfgraphicsbasic2d]
 
+<a>
 <img src="screenshot/dfgraphicsbasic2d.jpg" height="150px">
+</a>
 
 Shows how to use the Demo Frameworks 'basic' 2d rendering capabilities that work across all backends. The basic2D nterface allows you to render ASCII strings using a system provided font and draw colored points in batches. The functionality in Basic2D is used internally in the framework to render the profiling overlays like the frame rate counter and graphs.
 
 ##### [DFSimpleUI100][dfsimpleui100]
 
+<a>
 <img src="screenshot/dfsimpleui100.jpg" height="150px">
+</a>
 
 A very basic example of how to utilize the DemoFramework's UI library. The sample displays four buttons and reacts to clicks. The UI framework that makes it easy to get a basic UI up and running. The main UI code is API independent. It is not a show case of how to render a UI fast but only intended to allow you to quickly get a UI ready that is good enough for a demo.
 
 ##### [EightLayerBlend][eightlayerblend]
 
+<a>
 <img src="screenshot/eightlayerblend.jpg" height="150px">
+</a>
 
 Creates a simple parallax scrolling effect by blending eight 32 bit per pixel 1080p layers on top of each other. This is not the most optimal way to do it as it uses eight passes. But it does provide a good example of the worst case bandwidth use for the operation. The demo was created to compare GLES to the G2D eight blend blit functionality.
 
 ##### [FractalShader][fractalshader]
 
+<a>
 <img src="screenshot/fractalshader.jpg" height="150px">
+</a>
 
 Can render both the julia and mandelbrot set using a fragment shader. This demo was used to demonstrates GPU shader performance by using up roughly 515 instructions to render each fragment while generating the julia set. It uses no textures, has no overdraw and has a minimal bandwidth requirement.
 
 ##### [LineBuilder101][linebuilder101]
 
+<a>
 <img src="screenshot/linebuilder101.jpg" height="150px">
+</a>
 
 A simple example of dynamic line rendering using the LineBuilder helper class. The line builder has 'Add' methods for most FslBase.Math classes like BoundingBox, BoundingSphere, BoundingFrustrum, Ray, etc.
 
 ##### [ModelLoaderBasics][modelloaderbasics]
 
+<a>
 <img src="screenshot/modelloaderbasics.jpg" height="150px">
+</a>
 
 Demonstrates how to use the FslSceneImporter and Assimp to load a scene and render it using OpenGLES2. The model is rendered using a simple per pixel directional light shader.
 
 ##### [S03_Transform][s03_transform]
 
+<a>
 <img src="screenshot/s03_transform.jpg" height="150px">
+</a>
 
 Renders a animated vertex colored triangle. This shows how to modify the model matrix to rotate a triangle and how to utilize demoTime.DeltaTime to do frame rate independent animation.
 
 ##### [S04_Projection][s04_projection]
 
+<a>
 <img src="screenshot/s04_projection.jpg" height="150px">
+</a>
 
 This example shows how to: - Build a perspective projection matrix - Render two simple 3d models using frame rate independent animation.
 
 ##### [S06_Texturing][s06_texturing]
 
+<a>
 <img src="screenshot/s06_texturing.jpg" height="150px">
+</a>
 
 This example shows how to use the Texture class to use a texture in a cube. It also shows you how to use the ContentManager service to load a 'png' file from the Content directory into a bitmap utility class which is then used to used to create a OpenGL ES texture.
 
 ##### [S07_EnvironmentMapping][s07_environmentmapping]
 
+<a>
 <img src="screenshot/s07_environmentmapping.jpg" height="150px">
+</a>
 
 This sample shows how to use a cubemap texture to simulate a reflective material. It also shows you how to use the ContentManager service to load a 'dds' file from the Content directory into a Texture utility class which is then used to used to create a OpenGL ES cubemap texture.
 
 ##### [S08_EnvironmentMappingRefraction][s08_environmentmappingrefraction]
 
+<a>
 <img src="screenshot/s08_environmentmappingrefraction.jpg" height="150px">
+</a>
 
 This sample is a variation from the previous sample, again, a cubemap texture is used, but this time instead of simulating a reflective material a refractive material is simulated. It also shows you how to use the ContentManager service to load a 'dds' file from the Content directory into a Texture utility class which is then used to used to create a OpenGL ES cubemap texture.
 
