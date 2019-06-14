@@ -44,15 +44,6 @@
             "screenshot": "g2d_tiger_screenshot.png",
             "compatible": "imx7ulpevk, imx8mm, imx8qxpmek",
             "description": "Description of Vivante Tiger G2D"
-        },
-        {
-            "name": "GPU Unit Test",
-            "executable": "/unit_tests/GPU/gpu.sh",
-            "source": "",
-            "icon": "g2d_gpu_icon.png",
-            "screenshot": "g2d_gpu_screenshot.png",
-            "compatible": "imx7ulpevk, imx8mm, imx8qxpmek",
-            "description": "Description of GPU Unit Test"
         }],
         "GLES2":[{
             "name": "Vivante Launcher",
