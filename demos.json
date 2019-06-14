@@ -320,7 +320,7 @@
     {"QT5":[{
         "OpenGL":[{
             "name": "Qt5 Cube",
-            "executable": "/usr/share/qt5/examples/opengl/cube/cube",
+            "executable": "/usr/share/qt5/examples/opengl/cube/cube --platform wayland-egl",
             "source": "https://doc.qt.io/qt-5/qtopengl-cube-example.html",
             "icon": "",
             "screenshot": "qt5_opengl_cube.png",
@@ -329,7 +329,7 @@
         },
         {
             "name": "Q5 Hello GL2 Example",
-            "executable": "/usr/share/qt5/examples/opengl/hellowindow/hellowindow",
+            "executable": "/usr/share/qt5/examples/opengl/hellowindow/hellowindow --platform wayland-egl",
             "source": "https://doc.qt.io/qt-5/qtopengl-hellogl2-example.html",
             "icon": "",
             "screenshot": "qt5_opengl_hellowindow.png",
@@ -338,7 +338,7 @@
         }],
         "Qt Quick":[{
             "name": "QT5 Everywhere Demo",
-            "executable": "/usr/share/qt5everywheredemo-1.0/QtDemo",
+            "executable": "/usr/share/qt5everywheredemo-1.0/QtDemo --platform wayland-egl",
             "source": "https://code.qt.io/cgit/qt-labs/qt5-everywhere-demo.git/",
             "icon": "",
             "screenshot": "qt5everywhere.png",
@@ -347,7 +347,7 @@
         },
         {
             "name": "QT5 Same Game",
-            "executable": "/usr/share/qt5/examples/quick/demos/samegame/samegame",
+            "executable": "/usr/share/qt5/examples/quick/demos/samegame/samegame --platform wayland-egl",
             "source": "https://doc.qt.io/qt-5/qtdoc-demos-samegame-example.html",
             "icon": "",
             "screenshot": "qt5_quick_samegame.png",
@@ -356,7 +356,7 @@
         },
         {
             "name": "QT5 Clocks",
-            "executable": "/usr/share/qt5/examples/quick/demos/clocks/clocks",
+            "executable": "/usr/share/qt5/examples/quick/demos/clocks/clocks --platform wayland-egl",
             "source": "https://doc.qt.io/qt-5/qtdoc-demos-clocks-example.html",
             "icon": "",
             "screenshot": "qt5_quick_clocks.png",
