@@ -1,22 +1,5 @@
 {"demos":[{
     "Multimedia":[{
-        "Video4Linux2":[{
-            "name": "Camera Preview",
-            "executable": "/unittests/v4l2/mxc_v4l2_capture",
-            "source": "",
-            "icon": "v4l2_cam_prev_icon.png",
-            "screenshot": "v4l2_cam_prev_screenshot.png",
-            "compatible": "imx7ulpevk",
-            "description": "Description of v4l2 camera preview"
-        },{
-            "name": "Display Video",
-            "executable": "/unittests/v4l2/mxc_v4l2_display",
-            "source": "",
-            "icon": "v4l2_display_icon.png",
-            "screenshot": "v4l2_display_screenshot.png",
-            "compatible": "imx7ulpevk, imx8mm",
-            "description": "Description of V4L2 display video"
-        }],
         "GStreamer":[{
             "name": "Gstreamer video test source",
             "executable": "gst-launch-1.0 videotestsrc ! imxvideoconvert_g2d ! waylandsink window-width=480 window-height=360",
@@ -53,24 +36,6 @@
     }]
     },
     {"GPU":[{
-        "OpenGL 3D":[{
-            "name": "GL Cube 3D",
-            "executable": "/opt/viv/glcube",
-            "source": "",
-            "icon": "gles3_cube_icon.png",
-            "screenshot": "gles3_cube_screenshot.png",
-            "compatible": "imx7ulpevk, imx8mm, imx8qxpmek",
-            "description": "Description of GL cube 3D"
-        },
-        {
-            "name": "Cover Flow 3D",
-            "executable": "/opt/viv_samples/flow",
-            "source": "",
-            "icon": "gles3_coverflow_icon.png",
-            "screenshot": "gles3_coverflow_screenshot.png",
-            "compatible": "imx7ulpevk, imx8mm, imx8qxpmek",
-            "description": "Description of OpenGL 3D Cover Flow"
-        }],
         "OpenVG 2D":[{
             "name": "Tiger G2D",
             "executable": "/opt/viv_samples/tiger/tiger",
@@ -343,45 +308,6 @@
             "screenshot": "",
             "compatible": "imx7ulpevk",
             "description": "This test plays the audio file recorded on the 'Audio Record' test. Make sure a Headphone is connected to the board. Need to run the 'Audio Record' test first."
-        }]
-    }]
-    },
-    {"Artificial Inteligence":[{
-        "Machine Learning":[{
-            "name": "Live face recognition",
-            "executable": "/home/root/aidemos/face_recognition",
-            "source": "",
-            "icon": "face_rec_icon.png",
-            "screenshot": "face_rec_screenshot.png",
-            "compatible": "imx8mm",
-            "description": "Description of Live face recognition"
-        },
-        {
-            "name": "Images recognition",
-            "executable": "/home/root/aidemos/image_recognition",
-            "source": "",
-            "icon": "image_rec_icon.png",
-            "screenshot": "image_rec_screenshot.png",
-            "compatible": "imx8mm",
-            "description": "Description of Images recognition"
-        }],
-        "Deep Learning":[{
-            "name": "Deep Learning 1",
-            "executable": "/home/root/aidemos/face_recognition",
-            "source": "",
-            "icon": "face_rec_icon.png",
-            "screenshot": "face_rec_screenshot.png",
-            "compatible": "imx8mm",
-            "description": "Description of Live face recognition"
-        },
-        {
-            "name": "Deep learning 2",
-            "executable": "/home/root/aidemos/image_recognition",
-            "source": "",
-            "icon": "image_rec_icon.png",
-            "screenshot": "image_rec_screenshot.png",
-            "compatible": "imx8mm",
-            "description": "Description of Images recognition"
         }]
     }]
     }
