@@ -1,7 +1,7 @@
 {"demos":[{
     "Multimedia":[{
         "GStreamer":[{
-            "name": "GStreamer video test source",
+            "name": "Video test source",
             "executable": "gst-launch-1.0 videotestsrc ! imxvideoconvert_g2d ! waylandsink window-width=480 window-height=360",
             "source": "",
             "icon": "photo-video-solid.svg",
@@ -9,7 +9,7 @@
             "compatible": "imx7ulpevk",
             "description": "This is a simple GStreamer pipeline able to play the Video Test Source example: gst-launch-1.0 videotestsrc ! imxvideoconvert_g2d ! waylandsink window-width=480 window-height=360"
         },{
-            "name": "GStreamer video test source",
+            "name": "Video test source",
             "executable": "gst-launch-1.0 videotestsrc ! video/x-raw, width=1280,height=720 ! glimagesink",
             "source": "",
             "icon": "gst_test_src_icon.png",
@@ -17,7 +17,7 @@
             "compatible": "imx8qxpmek, imx8mmevk",
             "description": "This is a simple GStreamer pipeline able to create a video playback with the Video Test Source example. This pipeline limits the video screen to HD resolution: gst-launch-1.0 videotestsrc ! video/x-raw,width=1280,height=720 ! glimagesink"
         },{
-            "name": "GStreamer Video Playback",
+            "name": "Video Playback",
             "executable": "gst-launch-1.0 filesrc location=.imx-launcher/scripts/multimedia/gstreamer/smart_hd.mp4 ! decodebin ! imxvideoconvert_g2d ! glimagesink",
             "source": "",
             "icon": "gst_test_src_icon.png",
@@ -25,7 +25,7 @@
             "compatible": "imx8qxpmek",
             "description": "This is GStreamer playback example, which reproduces a HD video though a H.264 decode process: gst-launch-1.0 filesrc location=file.mp4 ! decodebin ! imxvideoconvert_g2d ! glimagesink"
         },{
-            "name": "GStreamer Camera Preview",
+            "name": "Camera Preview",
             "executable": "gst-launch-1.0 v4l2src device=/dev/video0 ! video/x-raw,width=1280,height=720 ! queue ! glimagesink",
             "source": "",
             "icon": "gst_camera_preview_icon.png",
@@ -73,7 +73,7 @@
             "description": "Vivante launcher demo."
         },
         {
-            "name": "Vivante Cover Flow",
+            "name": "Cover Flow",
             "executable": "/home/root/.imx-launcher/scripts/opengl/vivante_cover_flow.sh",
             "source": "",
             "icon": "layer-group-solid.svg",
@@ -217,7 +217,7 @@
             "description": "A simple example of dynamic line rendering using the LineBuilder helper class. The line builder has 'Add' methods for most FslBase.Math classes like BoundingBox, BoundingSphere, BoundingFrustrum, Ray, etc."
         },
         {
-            "name": "ModelLoaderBasics",
+            "name": "Model Loader",
             "executable": "/opt/imx-gpu-sdk/GLES2/ModelLoaderBasics/ModelLoaderBasics_Wayland --Window [0,0,1280,720]",
             "source": "",
             "icon": "cubes-solid.svg",
@@ -226,7 +226,7 @@
             "description": "Demonstrates how to use the FslSceneImporter and Assimp to load a scene and render it using OpenGLES2. The model is rendered using a simple per pixel directional light shader."
         },
         {
-            "name": "ModelLoaderBasics",
+            "name": "Model Loader",
             "executable": "/opt/imx-gpu-sdk/GLES2/ModelLoaderBasics/ModelLoaderBasics_Wayland --Window [0,0,480,360]",
             "source": "",
             "icon": "cubes-solid.svg",
@@ -289,7 +289,7 @@
             "description": "This example shows how to use the Texture class to use a texture in a cube. It also shows you how to use the ContentManager service to load a 'png' file from the Content directory into a bitmap utility class which is then used to used to create a OpenGL ES texture."
         },
         {
-            "name": "S07_EnvironmentMapping",
+            "name": "Mapping",
             "executable": "/opt/imx-gpu-sdk/GLES2/S07_EnvironmentMapping/S07_EnvironmentMapping_Wayland --Window [0,0,1280,720]",
             "source": "",
             "icon": "cubes-solid.svg",
@@ -298,7 +298,7 @@
             "description": "This sample shows how to use a cubemap texture to simulate a reflective material. It also shows you how to use the ContentManager service to load a 'dds' file from the Content directory into a Texture utility class which is then used to used to create a OpenGL ES cubemap texture."
         },
         {
-            "name": "S07_EnvironmentMapping",
+            "name": "Mapping",
             "executable": "/opt/imx-gpu-sdk/GLES2/S07_EnvironmentMapping/S07_EnvironmentMapping_Wayland --Window [0,0,480,360]",
             "source": "",
             "icon": "cubes-solid.svg",
@@ -307,7 +307,7 @@
             "description": "This sample shows how to use a cubemap texture to simulate a reflective material. It also shows you how to use the ContentManager service to load a 'dds' file from the Content directory into a Texture utility class which is then used to used to create a OpenGL ES cubemap texture."
         },
         {
-            "name": "S08_EnvironmentMappingRefraction",
+            "name": "Mapping Refraction",
             "executable": "/opt/imx-gpu-sdk/GLES2/S08_EnvironmentMappingRefraction/S08_EnvironmentMappingRefraction_Wayland --Window [0,0,1280,720]",
             "source": "",
             "icon": "cubes-solid.svg",
@@ -316,7 +316,7 @@
             "description": "This sample is a variation from the previous sample, again, a cubemap texture is used, but this time instead of simulating a reflective material a refractive material is simulated. It also shows you how to use the ContentManager service to load a 'dds' file from the Content directory into a Texture utility class which is then used to used to create a OpenGL ES cubemap texture."
         },
         {
-            "name": "S08_EnvironmentMappingRefraction",
+            "name": "Mapping Refraction",
             "executable": "/opt/imx-gpu-sdk/GLES2/S08_EnvironmentMappingRefraction/S08_EnvironmentMappingRefraction_Wayland --Window [0,0,480,360]",
             "source": "",
             "icon": "cubes-solid.svg",
@@ -337,7 +337,7 @@
             "description": "The Cube OpenGL ES 2.0 example shows how to write mouse rotateable textured 3D cube using OpenGL ES 2.0 with Qt. It shows how to handle polygon geometries efficiently and how to write simple vertex and fragment shader for programmable graphics pipeline. In addition it shows how to use quaternions for representing 3D object orientation."
         },
         {
-            "name": "Q5 Hello GL2 Example",
+            "name": "Q5 Hello GL2",
             "executable": "/usr/share/qt5/examples/opengl/hellowindow/hellowindow --platform wayland-egl",
             "source": "https://doc.qt.io/qt-5/qtopengl-hellogl2-example.html",
             "icon": "cube-solid.svg",
@@ -346,7 +346,7 @@
             "description": "The Hello GL2 example demonstrates the basic use of the OpenGL-related classes provided with Qt."
         }],
         "Qt Quick":[{
-            "name": "QT5 Everywhere Demo",
+            "name": "QT5 Everywhere",
             "executable": "/usr/share/qt5everywheredemo-1.0/QtDemo --platform wayland-egl",
             "source": "https://code.qt.io/cgit/qt-labs/qt5-everywhere-demo.git/",
             "icon": "desktop-solid.svg",
@@ -355,7 +355,7 @@
             "description": "QT5 Demo Launcher."
         },
         {
-            "name": "QT5 Same Game",
+            "name": "Same Game",
             "executable": "/usr/share/qt5/examples/quick/demos/samegame/samegame --platform wayland-egl",
             "source": "https://doc.qt.io/qt-5/qtdoc-demos-samegame-example.html",
             "icon": "desktop-solid.svg",
