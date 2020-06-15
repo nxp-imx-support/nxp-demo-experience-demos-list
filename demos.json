@@ -18,7 +18,7 @@
             "description": "This is a simple GStreamer pipeline able to create a video playback with the Video Test Source example. This pipeline limits the video screen to HD resolution: gst-launch-1.0 videotestsrc ! video/x-raw,width=1280,height=720 ! glimagesink"
         },{
             "name": "Video Playback",
-            "executable": "gst-launch-1.0 filesrc location=.imx-launcher/scripts/multimedia/gstreamer/smart_hd.mp4 ! decodebin ! imxvideoconvert_g2d ! glimagesink",
+            "executable": "gst-launch-1.0 filesrc location=.nxp-demo-experience/scripts/multimedia/gstreamer/smart_hd.mp4 ! decodebin ! imxvideoconvert_g2d ! glimagesink",
             "source": "",
             "icon": "gst_test_src_icon.png",
             "screenshot": "gst_test_src_screenshot.png",
@@ -35,7 +35,7 @@
         }],
         "Audio":[{
             "name": "Audio Record",
-            "executable": "/home/root/.imx-launcher/scripts/audio/audio_playback/audio_record.sh",
+            "executable": "/home/root/.nxp-demo-experience/scripts/audio/audio_playback/audio_record.sh",
             "source": "",
             "icon": "volume-up-solid.svg",
             "screenshot": "",
@@ -44,7 +44,7 @@
         },
         {
             "name": "Audio Play",
-            "executable": "/home/root/.imx-launcher/scripts/audio/audio_playback/audio_play.sh",
+            "executable": "/home/root/.nxp-demo-experience/scripts/audio/audio_playback/audio_play.sh",
             "source": "",
             "icon": "volume-up-solid.svg",
             "screenshot": "",
@@ -69,12 +69,12 @@
             "source": "",
             "icon": "layer-group-solid.svg",
             "screenshot": "vivante_vv_laucher.png",
-            "compatible": "imx7ulpevk",
+            "compatible": "imx7ulpevk, imx8qxpmek",
             "description": "Vivante launcher demo."
         },
         {
             "name": "Cover Flow",
-            "executable": "/home/root/.imx-launcher/scripts/opengl/vivante_cover_flow.sh",
+            "executable": "/home/root/.nxp-demo-experience/scripts/opengl/vivante_cover_flow.sh",
             "source": "",
             "icon": "layer-group-solid.svg",
             "screenshot": "vivante_cover_flow.png",
@@ -83,7 +83,7 @@
         },
         {
             "name": "Vivante Tutorial",
-            "executable": "/home/root/.imx-launcher/scripts/opengl/vivante_tutorial7.sh",
+            "executable": "/home/root/.nxp-demo-experience/scripts/opengl/vivante_tutorial7.sh",
             "source": "",
             "icon": "layer-group-solid.svg",
             "screenshot": "vivante_tutorial7.png",
@@ -92,7 +92,7 @@
         },
         {
             "name": "Bloom",
-            "executable": "/opt/imx-gpu-sdk/GLES2/Bloom/Bloom_Wayland --Window [0,0,1280,720]",
+            "executable": "/opt/imx-gpu-sdk/GLES2/Bloom/GLES2.Bloom_Wayland --Window [0,0,1280,720]",
             "source": "",
             "icon": "cubes-solid.svg",
             "screenshot": "bloom.jpg",
@@ -101,7 +101,7 @@
         },
         {
             "name": "Bloom",
-            "executable": "/opt/imx-gpu-sdk/GLES2/Bloom/Bloom_Wayland --Window [0,0,480,360]",
+            "executable": "/opt/imx-gpu-sdk/GLES2/Bloom/GLES2.Bloom_Wayland --Window [0,0,480,360]",
             "source": "",
             "icon": "cubes-solid.svg",
             "screenshot": "bloom.jpg",
@@ -110,7 +110,7 @@
         },
         {
             "name": "Blur",
-            "executable": "/opt/imx-gpu-sdk/GLES2/Blur/Blur_Wayland --Window [0,0,1280,720]",
+            "executable": "/opt/imx-gpu-sdk/GLES2/Blur/GLES2.Blur_Wayland --Window [0,0,1280,720]",
             "source": "",
             "icon": "cubes-solid.svg",
             "screenshot": "blur.jpg",
@@ -119,7 +119,7 @@
         },
         {
             "name": "Blur",
-            "executable": "/opt/imx-gpu-sdk/GLES2/Blur/Blur_Wayland --Window [0,0,480,360]",
+            "executable": "/opt/imx-gpu-sdk/GLES2/Blur/GLES2.Blur_Wayland --Window [0,0,480,360]",
             "source": "",
             "icon": "cubes-solid.svg",
             "screenshot": "blur.jpg",
@@ -128,7 +128,7 @@
         },
         {
             "name": "DFGraphicsBasic2D",
-            "executable": "/opt/imx-gpu-sdk/GLES2/DFGraphicsBasic2D/DFGraphicsBasic2D_Wayland --Window [0,0,1280,720]",
+            "executable": "/opt/imx-gpu-sdk/GLES2/DFGraphicsBasic2D/GLES2.DFGraphicsBasic2D_Wayland --Window [0,0,1280,720]",
             "source": "",
             "icon": "cubes-solid.svg",
             "screenshot": "dfgraphicsbasic2d.jpg",
@@ -137,7 +137,7 @@
         },
         {
             "name": "DFGraphicsBasic2D",
-            "executable": "/opt/imx-gpu-sdk/GLES2/DFGraphicsBasic2D/DFGraphicsBasic2D_Wayland --Window [0,0,480,360]",
+            "executable": "/opt/imx-gpu-sdk/GLES2/DFGraphicsBasic2D/GLES2.DFGraphicsBasic2D_Wayland --Window [0,0,480,360]",
             "source": "",
             "icon": "cubes-solid.svg",
             "screenshot": "dfgraphicsbasic2d.jpg",
@@ -146,7 +146,7 @@
         },
         {
             "name": "DFSimpleUI100",
-            "executable": "/opt/imx-gpu-sdk/GLES2/DFSimpleUI100/DFSimpleUI100_Wayland --Window [0,0,480,360]",
+            "executable": "/opt/imx-gpu-sdk/GLES2/DFSimpleUI100/GLES2.DFSimpleUI100_Wayland --Window [0,0,480,360]",
             "source": "",
             "icon": "cubes-solid.svg",
             "screenshot": "dfsimpleui100.jpg",
@@ -155,7 +155,7 @@
         },
         {
             "name": "DFSimpleUI100",
-            "executable": "/opt/imx-gpu-sdk/GLES2/DFSimpleUI100/DFSimpleUI100_Wayland --Window [0,0,1280,720]",
+            "executable": "/opt/imx-gpu-sdk/GLES2/DFSimpleUI100/GLES2.DFSimpleUI100_Wayland --Window [0,0,1280,720]",
             "source": "",
             "icon": "cubes-solid.svg",
             "screenshot": "dfsimpleui100.jpg",
@@ -164,7 +164,7 @@
         },
         {
             "name": "EightLayerBlend",
-            "executable": "/opt/imx-gpu-sdk/GLES2/EightLayerBlend/EightLayerBlend_Wayland --Window [0,0,1280,720]",
+            "executable": "/opt/imx-gpu-sdk/GLES2/EightLayerBlend/GLES2.EightLayerBlend_Wayland --Window [0,0,1280,720]",
             "source": "",
             "icon": "cubes-solid.svg",
             "screenshot": "eightlayerblend.jpg",
@@ -173,7 +173,7 @@
         },
         {
             "name": "EightLayerBlend",
-            "executable": "/opt/imx-gpu-sdk/GLES2/EightLayerBlend/EightLayerBlend_Wayland --Window [0,0,480,360]",
+            "executable": "/opt/imx-gpu-sdk/GLES2/EightLayerBlend/GLES2.EightLayerBlend_Wayland --Window [0,0,480,360]",
             "source": "",
             "icon": "cubes-solid.svg",
             "screenshot": "eightlayerblend.jpg",
@@ -182,7 +182,7 @@
         },
         {
             "name": "FractalShader",
-            "executable": "/opt/imx-gpu-sdk/GLES2/FractalShader/FractalShader_Wayland --Window [0,0,1280,720]",
+            "executable": "/opt/imx-gpu-sdk/GLES2/FractalShader/GLES2.FractalShader_Wayland --Window [0,0,1280,720]",
             "source": "",
             "icon": "cubes-solid.svg",
             "screenshot": "fractalshader.jpg",
@@ -191,7 +191,7 @@
         },
         {
             "name": "FractalShader",
-            "executable": "/opt/imx-gpu-sdk/GLES2/FractalShader/FractalShader_Wayland --Window [0,0,480,360]",
+            "executable": "/opt/imx-gpu-sdk/GLES2/FractalShader/GLES2.FractalShader_Wayland --Window [0,0,480,360]",
             "source": "",
             "icon": "cubes-solid.svg",
             "screenshot": "fractalshader.jpg",
@@ -200,7 +200,7 @@
         },
         {
             "name": "LineBuilder101",
-            "executable": "/opt/imx-gpu-sdk/GLES2/LineBuilder101/LineBuilder101_Wayland --Window [0,0,1280,720]",
+            "executable": "/opt/imx-gpu-sdk/GLES2/LineBuilder101/GLES2.LineBuilder101_Wayland --Window [0,0,1280,720]",
             "source": "",
             "icon": "cubes-solid.svg",
             "screenshot": "linebuilder101.jpg",
@@ -209,7 +209,7 @@
         },
         {
             "name": "LineBuilder101",
-            "executable": "/opt/imx-gpu-sdk/GLES2/LineBuilder101/LineBuilder101_Wayland --Window [0,0,480,360]",
+            "executable": "/opt/imx-gpu-sdk/GLES2/LineBuilder101/GLES2.LineBuilder101_Wayland --Window [0,0,480,360]",
             "source": "",
             "icon": "cubes-solid.svg",
             "screenshot": "linebuilder101.jpg",
@@ -218,7 +218,7 @@
         },
         {
             "name": "Model Loader",
-            "executable": "/opt/imx-gpu-sdk/GLES2/ModelLoaderBasics/ModelLoaderBasics_Wayland --Window [0,0,1280,720]",
+            "executable": "/opt/imx-gpu-sdk/GLES2/ModelLoaderBasics/GLES2.ModelLoaderBasics_Wayland --Window [0,0,1280,720]",
             "source": "",
             "icon": "cubes-solid.svg",
             "screenshot": "modelloaderbasics.jpg",
@@ -227,7 +227,7 @@
         },
         {
             "name": "Model Loader",
-            "executable": "/opt/imx-gpu-sdk/GLES2/ModelLoaderBasics/ModelLoaderBasics_Wayland --Window [0,0,480,360]",
+            "executable": "/opt/imx-gpu-sdk/GLES2/ModelLoaderBasics/GLES2.ModelLoaderBasics_Wayland --Window [0,0,480,360]",
             "source": "",
             "icon": "cubes-solid.svg",
             "screenshot": "modelloaderbasics.jpg",
@@ -236,7 +236,7 @@
         },
         {
             "name": "S03_Transform",
-            "executable": "/opt/imx-gpu-sdk/GLES2/S03_Transform/S03_Transform_Wayland --Window [0,0,1280,720]",
+            "executable": "/opt/imx-gpu-sdk/GLES2/S03_Transform/GLES2.S03_Transform_Wayland --Window [0,0,1280,720]",
             "source": "",
             "icon": "cubes-solid.svg",
             "screenshot": "s03_transform.jpg",
@@ -245,7 +245,7 @@
         },
         {
             "name": "S03_Transform",
-            "executable": "/opt/imx-gpu-sdk/GLES2/S03_Transform/S03_Transform_Wayland --Window [0,0,480,360]",
+            "executable": "/opt/imx-gpu-sdk/GLES2/S03_Transform/GLES2.S03_Transform_Wayland --Window [0,0,480,360]",
             "source": "",
             "icon": "cubes-solid.svg",
             "screenshot": "s03_transform.jpg",
@@ -254,7 +254,7 @@
         },
         {
             "name": "S04_Projection",
-            "executable": "/opt/imx-gpu-sdk/GLES2/S04_Projection/S04_Projection_Wayland --Window [0,0,1280,720]",
+            "executable": "/opt/imx-gpu-sdk/GLES2/S04_Projection/GLES2.S04_Projection_Wayland --Window [0,0,1280,720]",
             "source": "",
             "icon": "cubes-solid.svg",
             "screenshot": "s04_projection.jpg",
@@ -263,7 +263,7 @@
         },
         {
             "name": "S04_Projection",
-            "executable": "/opt/imx-gpu-sdk/GLES2/S04_Projection/S04_Projection_Wayland --Window [0,0,480,360]",
+            "executable": "/opt/imx-gpu-sdk/GLES2/S04_Projection/GLES2.S04_Projection_Wayland --Window [0,0,480,360]",
             "source": "",
             "icon": "cubes-solid.svg",
             "screenshot": "s04_projection.jpg",
@@ -272,7 +272,7 @@
         },
         {
             "name": "S06_Texturing",
-            "executable": "/opt/imx-gpu-sdk/GLES2/S06_Texturing/S06_Texturing_Wayland --Window [0,0,1280,720]",
+            "executable": "/opt/imx-gpu-sdk/GLES2/S06_Texturing/GLES2.S06_Texturing_Wayland --Window [0,0,1280,720]",
             "source": "",
             "icon": "cubes-solid.svg",
             "screenshot": "s06_texturing.jpg",
@@ -281,7 +281,7 @@
         },
         {
             "name": "S06_Texturing",
-            "executable": "/opt/imx-gpu-sdk/GLES2/S06_Texturing/S06_Texturing_Wayland --Window [0,0,480,360]",
+            "executable": "/opt/imx-gpu-sdk/GLES2/S06_Texturing/GLES2.S06_Texturing_Wayland --Window [0,0,480,360]",
             "source": "",
             "icon": "cubes-solid.svg",
             "screenshot": "s06_texturing.jpg",
@@ -290,7 +290,7 @@
         },
         {
             "name": "Mapping",
-            "executable": "/opt/imx-gpu-sdk/GLES2/S07_EnvironmentMapping/S07_EnvironmentMapping_Wayland --Window [0,0,1280,720]",
+            "executable": "/opt/imx-gpu-sdk/GLES2/S07_EnvironmentMapping/GLES2.S07_EnvironmentMapping_Wayland --Window [0,0,1280,720]",
             "source": "",
             "icon": "cubes-solid.svg",
             "screenshot": "s07_environmentmapping.jpg",
@@ -299,7 +299,7 @@
         },
         {
             "name": "Mapping",
-            "executable": "/opt/imx-gpu-sdk/GLES2/S07_EnvironmentMapping/S07_EnvironmentMapping_Wayland --Window [0,0,480,360]",
+            "executable": "/opt/imx-gpu-sdk/GLES2/S07_EnvironmentMapping/GLES2.S07_EnvironmentMapping_Wayland --Window [0,0,480,360]",
             "source": "",
             "icon": "cubes-solid.svg",
             "screenshot": "s07_environmentmapping.jpg",
@@ -308,7 +308,7 @@
         },
         {
             "name": "Mapping Refraction",
-            "executable": "/opt/imx-gpu-sdk/GLES2/S08_EnvironmentMappingRefraction/S08_EnvironmentMappingRefraction_Wayland --Window [0,0,1280,720]",
+            "executable": "/opt/imx-gpu-sdk/GLES2/S08_EnvironmentMappingRefraction/GLES2.S08_EnvironmentMappingRefraction_Wayland --Window [0,0,1280,720]",
             "source": "",
             "icon": "cubes-solid.svg",
             "screenshot": "s08_environmentmappingrefraction.jpg",
@@ -317,7 +317,7 @@
         },
         {
             "name": "Mapping Refraction",
-            "executable": "/opt/imx-gpu-sdk/GLES2/S08_EnvironmentMappingRefraction/S08_EnvironmentMappingRefraction_Wayland --Window [0,0,480,360]",
+            "executable": "/opt/imx-gpu-sdk/GLES2/S08_EnvironmentMappingRefraction/GLES2.S08_EnvironmentMappingRefraction_Wayland --Window [0,0,480,360]",
             "source": "",
             "icon": "cubes-solid.svg",
             "screenshot": "s08_environmentmappingrefraction.jpg",
