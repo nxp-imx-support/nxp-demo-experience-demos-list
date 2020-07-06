@@ -17,14 +17,6 @@
             "compatible": "imx8qxpmek, imx8mmevk, imx8mpevk",
             "description": "This is a simple GStreamer pipeline able to create a video playback with the Video Test Source example. This pipeline limits the video screen to HD resolution: gst-launch-1.0 videotestsrc ! video/x-raw,width=1280,height=720 ! glimagesink"
         },{
-            "name": "Video Playback",
-            "executable": "gst-launch-1.0 filesrc location=/home/root/.nxp-demo-experience/scripts/multimedia/gstreamer/smart_hd.mp4 ! decodebin ! imxvideoconvert_g2d ! glimagesink",
-            "source": "",
-            "icon": "photo-video-solid.svg",
-            "screenshot": "gst_test_src_screenshot.png",
-            "compatible": "imx8qxpmek, imx8mpevk",
-            "description": "This is GStreamer playback example, which reproduces a HD video though a H.264 decode process: gst-launch-1.0 filesrc location=file.mp4 ! decodebin ! imxvideoconvert_g2d ! glimagesink"
-        },{
             "name": "Camera Preview",
             "executable": "gst-launch-1.0 v4l2src device=/dev/video0 ! video/x-raw,width=1280,height=720 ! queue ! glimagesink",
             "source": "",
