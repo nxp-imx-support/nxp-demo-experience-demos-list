@@ -53,7 +53,7 @@
             "icon": "cube-solid.svg",
             "screenshot": "g2d_tiger_screenshot.png",
             "compatible": "imx7ulpevk, imx8mqevk, imx8mmevk, imx8mnevk, imx8qxpc0mek, imx8qmmek, imx8mpevk",
-            "description": "Description of Vivante Tiger G2D"
+            "description": "Vivante Tiger G2D, this demo shows a vector image being rotated and scaled using OpenVG."
         }],
         "GLES2":[{
             "name": "Vivante Launcher",
