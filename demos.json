@@ -22,8 +22,32 @@
             "source": "",
             "icon": "photo-video-solid.svg",
             "screenshot": "gst_camera_preview_screenshot.png",
-            "compatible": "imx8qxpc0mek, imx8qmmek, imx8mqevk, imx8mmevk, imx8mnevk, imx8mpevk",
+            "compatible": "imx8qxpc0mek, imx8qmmek, imx8mqevk, imx8mmevk, imx8mnevk",
             "description": "This is a simple GStreamer pipeline able to create a camera preview example. Note that this example only works with the correct DTS file and needs a IMXTOCSI acessory connected to the board: gst-launch-1.0 v4l2src device=/dev/video0 ! video/x-raw,width=1280,height=720 ! queue ! glimagesink"
+        },{
+            "name": "Camera Preview",
+            "executable": "python3 /home/root/.nxp-demo-experience/scripts/multimedia/gstreamer/imx8mp_camera_demo.py --open_cam=True",
+            "source": "",
+            "icon": "photo-video-solid.svg",
+            "screenshot": "gst_camera_preview_screenshot.png",
+            "compatible": "imx8mpevk",
+            "description": "This is a simple GStreamer pipeline able to create a camera preview example."
+        },{
+            "name": "Camera VPU encode and decode",
+            "executable": "python3 /home/root/.nxp-demo-experience/scripts/multimedia/gstreamer/imx8mp_camera_demo.py --vpu_enc=True",
+            "source": "",
+            "icon": "photo-video-solid.svg",
+            "screenshot": "gst_camera_preview_screenshot.png",
+            "compatible": "imx8mpevk",
+            "description": "This is a GStreamer pipeline able to create a camera preview example using VPU to encode and decode the image."
+        },{
+            "name": "Multi Cameras Preview",
+            "executable": "python3 /home/root/.nxp-demo-experience/scripts/multimedia/gstreamer/imx8mp_camera_demo.py --multi_cam=True",
+            "source": "",
+            "icon": "photo-video-solid.svg",
+            "screenshot": "gst_camera_preview_screenshot.png",
+            "compatible": "imx8mpevk",
+            "description": "This is a GStreamer pipeline able to create a camera preview example using a Basler camera and an OV5640 camera simultaneously."
         }],
         "Audio":[{
             "name": "Audio Record",
