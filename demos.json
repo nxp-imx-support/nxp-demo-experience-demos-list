@@ -33,7 +33,7 @@
             "compatible": "imx8mpevk",
             "description": "This is a simple GStreamer pipeline able to create a camera preview example."
         },{
-            "name": "Camera VPU encode and decode",
+            "name": "Camera using VPU",
             "executable": "python3 /home/root/.nxp-demo-experience/scripts/multimedia/gstreamer/imx8mp_camera_demo.py --vpu_enc=True",
             "source": "",
             "icon": "photo-video-solid.svg",
