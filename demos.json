@@ -48,6 +48,14 @@
             "screenshot": "gst_camera_preview_screenshot.png",
             "compatible": "imx8mpevk",
             "description": "This is a GStreamer pipeline able to create a camera preview example using a Basler camera and an OV5640 camera simultaneously."
+        },{
+            "name": "ISP VVEXT Demo",
+            "executable": "python3 /home/root/.nxp-demo-experience/scripts/multimedia/gstreamer/imx8mp_isp_demo.py",
+            "source": "",
+            "icon": "photo-video-solid.svg",
+            "screenshot": "",
+            "compatible": "imx8mpevk",
+            "description": "This programs opens a GStreamer pipeline and allows the user to change the BLS parameters of the ISP in real time. The camera at /dev/video0 will be used."
         }],
         "Audio":[{
             "name": "Audio Record",

@@ -1,3 +1,7 @@
+# Copyright 2021 NXP Semiconductors
+#
+# SPDX-License-Identifier: BSD-3-Clause
+
 import gi
 gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk
@@ -52,7 +56,7 @@ class pyeIQSwitchImage(Gtk.Window):
         time.sleep(1)
         if check_connection():
             self.label.set_text("Downloading pyeIQ and Switch Image data, it may take a while...")
-            Popen(["pip3", "install", "eiq"]).wait()
+            Popen(["pip3", "install", "eiq", "requests"]).wait()
             Popen(["pyeiq", "--run", "switch_image"]).wait()
         else:
             self.label.set_text("No internet connection.")

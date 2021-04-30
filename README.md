@@ -82,6 +82,11 @@ This is a GStreamer pipeline able to create a camera preview example using VPU t
 
 This is a GStreamer pipeline able to create a camera preview example using a Basler camera and an OV5640 camera simultaneously.
 
+#### GStreamer - ISP VVEXT Demo
+*Compatible with imx8mpevk*
+
+This programs opens a GStreamer pipeline and allows the user to change the BLS parameters of the ISP in real time. The camera at /dev/video0 will be used.
+
 #### Audio - Audio Record
 *Compatible with imx7ulpevk*
 
