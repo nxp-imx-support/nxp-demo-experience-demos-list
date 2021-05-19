@@ -58,7 +58,7 @@ After adding the new demo, you can check if the new entry is in a valid JSON for
 
 ## Supported Demo List
 
-Below is a list of demos that come on the default installalation of the NXP Demo Experience. To see what boards support the NXP Demo Expereince, please see the [README on the build layer](https://source.codeaurora.org/external/imxsupport/meta-nxp-demo-experience/tree/README).
+Below is a list of demos that come on the default installation of the NXP Demo Experience. To see what boards support the NXP Demo Expereince, please see the [README on the build layer](https://source.codeaurora.org/external/imxsupport/meta-nxp-demo-experience/tree/README).
 
 ### Multimedia
 
@@ -85,7 +85,7 @@ This is a GStreamer pipeline able to create a camera preview example using a Bas
 #### GStreamer - ISP VVEXT Demo
 *Compatible with imx8mpevk*
 
-This programs opens a GStreamer pipeline and allows the user to change the BLS parameters of the ISP in real time. The camera at /dev/video0 will be used.
+This program opens a GStreamer pipeline and allows the user to change the Black Level Subtraction parameters of the ISP in real time. The camera at /dev/video0 will be used. This demo will only work with a compatible Basler camera
 
 #### Audio - Audio Record
 *Compatible with imx7ulpevk*

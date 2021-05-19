@@ -55,7 +55,7 @@
             "icon": "photo-video-solid.svg",
             "screenshot": "",
             "compatible": "imx8mpevk",
-            "description": "This programs opens a GStreamer pipeline and allows the user to change the BLS parameters of the ISP in real time. The camera at /dev/video0 will be used."
+            "description": "This program opens a GStreamer pipeline and allows the user to change the Black Level Subtraction parameters of the ISP in real time. The camera at /dev/video0 will be used. This demo will only work with a compatible Basler camera"
         }],
         "Audio":[{
             "name": "Audio Record",
@@ -167,24 +167,6 @@
             "screenshot": "dfgraphicsbasic2d.jpg",
             "compatible": "imx7ulpevk",
             "description": "Shows how to use the Demo Frameworks 'basic' 2d rendering capabilities that work across all backends. The basic2D interface allows you to render ASCII strings using a system provided font and draw colored points in batches. The functionality in Basic2D is used internally in the framework to render the profiling overlays like the frame rate counter and graphs."
-        },
-        {
-            "name": "DFSimpleUI100",
-            "executable": "/opt/imx-gpu-sdk/GLES2/DFSimpleUI100/GLES2.DFSimpleUI100_Wayland --Window [0,0,480,360]",
-            "source": "",
-            "icon": "object-group-regular.svg",
-            "screenshot": "dfsimpleui100.jpg",
-            "compatible": "imx7ulpevk",
-            "description": "A very basic example of how to utilize the DemoFramework's UI library. The sample displays four buttons and reacts to clicks. The UI framework that makes it easy to get a basic UI up and running. The main UI code is API independent. It is not a show case of how to render a UI fast but only intended to allow you to quickly get a UI ready that is good enough for a demo. "
-        },
-        {
-            "name": "DFSimpleUI100",
-            "executable": "/opt/imx-gpu-sdk/GLES2/DFSimpleUI100/GLES2.DFSimpleUI100_Wayland --Window [0,0,1280,720]",
-            "source": "",
-            "icon": "object-group-regular.svg",
-            "screenshot": "dfsimpleui100.jpg",
-            "compatible": "imx8mqevk, imx8mmevk, imx8mnevk, imx8qxpc0mek, imx8qmmek, imx8mpevk",
-            "description": "A very basic example of how to utilize the DemoFramework's UI library. The sample displays four buttons and reacts to clicks. The UI framework that makes it easy to get a basic UI up and running. The main UI code is API independent. It is not a show case of how to render a UI fast but only intended to allow you to quickly get a UI ready that is good enough for a demo. "
         },
         {
             "name": "EightLayerBlend",
