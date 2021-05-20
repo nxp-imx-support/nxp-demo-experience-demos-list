@@ -55,7 +55,7 @@
             "icon": "photo-video-solid.svg",
             "screenshot": "",
             "compatible": "imx8mpevk",
-            "description": "This program opens a GStreamer pipeline and allows the user to change the Black Level Subtraction parameters of the ISP in real time. The camera at /dev/video0 will be used. This demo will only work with a compatible Basler camera"
+            "description": "This program opens a GStreamer pipeline and allows the user to change the Black Level Subtraction parameters of the ISP in real time. The camera at /dev/video0 will be used. This demo will only work with a compatible Basler camera."
         }],
         "Audio":[{
             "name": "Audio Record",

@@ -85,7 +85,7 @@ This is a GStreamer pipeline able to create a camera preview example using a Bas
 #### GStreamer - ISP VVEXT Demo
 *Compatible with imx8mpevk*
 
-This program opens a GStreamer pipeline and allows the user to change the Black Level Subtraction parameters of the ISP in real time. The camera at /dev/video0 will be used. This demo will only work with a compatible Basler camera
+This program opens a GStreamer pipeline and allows the user to change the Black Level Subtraction parameters of the ISP in real time. The camera at /dev/video0 will be used. This demo will only work with a compatible Basler camera.
 
 #### Audio - Audio Record
 *Compatible with imx7ulpevk*
@@ -163,17 +163,6 @@ Shows how to use the Demo Frameworks 'basic' 2d rendering capabilities that work
 </a>
 
 *Source: https://source.codeaurora.org/external/imx/cafatgithub/gtec-demo-framework/tree/DemoApps/GLES2/DFGraphicsBasic2D*
-
-#### GLES2 - DFSimpleUI100
-*Compatible with imx7ulpevk, imx8mqevk, imx8mmevk, imx8mnevk, imx8qxpc0mek, imx8qmmek, and imx8mpevk*
-
-A very basic example of how to utilize the DemoFramework's UI library. The sample displays four buttons and reacts to clicks. The UI framework that makes it easy to get a basic UI up and running. The main UI code is API independent. It is not a show case of how to render a UI fast but only intended to allow you to quickly get a UI ready that is good enough for a demo.
-
-<a>
-<img src="screenshot/dfsimpleui100.jpg"  height="150px" alt="Screenshot">
-</a>
-
-*Source: https://source.codeaurora.org/external/imx/cafatgithub/gtec-demo-framework/tree/DemoApps/GLES2/DFSimpleUI100*
 
 #### GLES2 - EightLayerBlend
 *Compatible with imx7ulpevk, imx8mqevk, imx8mmevk, imx8mnevk, imx8qxpc0mek, imx8qmmek, and imx8mpevk*
