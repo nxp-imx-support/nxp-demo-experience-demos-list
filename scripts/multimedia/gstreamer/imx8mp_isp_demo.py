@@ -3,9 +3,9 @@
 # SPDX-License-Identifier: BSD-3-Clause
 
 import gi
-
 gi.require_version("Gtk", "3.0")
-from gi.repository import Gtk
+gi.require_version("Gst", "1.0")
+from gi.repository import Gtk, Gst
 import os
 from subprocess import Popen
 import time
@@ -16,7 +16,10 @@ class ispDemo(Gtk.Window):
         Gtk.Window.__init__(self, title="ISP Demo")
         self.set_default_size(440, 280)
         self.set_resizable(False)
-
+        if path is None:
+            noCam = Gtk.Label.new("No Basler Camera!")
+            self.add(noCam)
+            return
         grid = Gtk.Grid()
         grid.set_row_homogeneous(True)
         grid.set_margin_right(20)
@@ -80,7 +83,7 @@ class ispDemo(Gtk.Window):
         gb = self.gb_scale.get_value()
         b = self.b_scale.get_value()
         os.system(
-            "/opt/imx8-isp/bin/vvext 0 0 BLS \"" + str(int(r)) + ", " + str(int(gr)) + ", " + str(int(gb)) + ", " + str(
+            "/opt/imx8-isp/bin/vvext " + path[-1] + " 0 BLS \"" + str(int(r)) + ", " + str(int(gr)) + ", " + str(int(gb)) + ", " + str(
                 int(b)) + "\"")
 
 
@@ -90,7 +93,25 @@ def on_close(self):
 
 
 if __name__ == "__main__":
-    Popen(["gst-launch-1.0", "v4l2src", "device=/dev/video0", "!", "waylandsink"])
+    Gst.init()
+    dev_monitor = Gst.DeviceMonitor()
+    dev_monitor.add_filter("Video/Source")
+    dev_monitor.start()
+    path = None
+    for dev in dev_monitor.get_devices():
+        if dev.get_display_name() == "VIV":
+            dev_caps = dev.get_caps().normalize()
+            for i in range(dev_caps.get_size()):
+                caps_struct = dev_caps.get_structure(i)
+                if caps_struct.get_name() != "video/x-raw":
+                    continue
+                framerate = ("{}/{}".format(*caps_struct.get_fraction("framerate")[1:]))
+                if framerate != "0/0":
+                    path = "device="+dev.get_properties().get_string("device.path")
+                    break
+        if path is not None:
+            Popen(["gst-launch-1.0", "v4l2src", path, "!", "waylandsink"])
+            break
     time.sleep(2)
     window = ispDemo()
     window.connect("destroy", on_close)
