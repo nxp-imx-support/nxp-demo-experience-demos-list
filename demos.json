@@ -296,7 +296,7 @@
         },
         {
             "name": "Mapping",
-            "executable": "/opt/imx-gpu-sdk/GLES2/S07_EnvironmentMapping/GLES2.S07_EnvironmentMapping_Wayland --Window [0,0,1280,720]",
+            "executable": "/opt/imx-gpu-sdk/GLES2/S07_EnvMapping/GLES2.S07_EnvMapping_Wayland --Window [0,0,1280,720]",
             "source": "",
             "icon": "cubes-solid.svg",
             "screenshot": "s07_environmentmapping.jpg",
@@ -305,7 +305,7 @@
         },
         {
             "name": "Mapping",
-            "executable": "/opt/imx-gpu-sdk/GLES2/S07_EnvironmentMapping/GLES2.S07_EnvironmentMapping_Wayland --Window [0,0,480,360]",
+            "executable": "/opt/imx-gpu-sdk/GLES2/S07_EnvMapping/GLES2.S07_EnvMapping_Wayland --Window [0,0,480,360]",
             "source": "",
             "icon": "cubes-solid.svg",
             "screenshot": "s07_environmentmapping.jpg",
@@ -314,7 +314,7 @@
         },
         {
             "name": "Mapping Refraction",
-            "executable": "/opt/imx-gpu-sdk/GLES2/S08_EnvironmentMappingRefraction/GLES2.S08_EnvironmentMappingRefraction_Wayland --Window [0,0,1280,720]",
+            "executable": "/opt/imx-gpu-sdk/GLES2/S08_EnvMappingRefraction/GLES2.S08_EnvMappingRefraction_Wayland --Window [0,0,1280,720]",
             "source": "",
             "icon": "cubes-solid.svg",
             "screenshot": "s08_environmentmappingrefraction.jpg",
@@ -323,7 +323,7 @@
         },
         {
             "name": "Mapping Refraction",
-            "executable": "/opt/imx-gpu-sdk/GLES2/S08_EnvironmentMappingRefraction/GLES2.S08_EnvironmentMappingRefraction_Wayland --Window [0,0,480,360]",
+            "executable": "/opt/imx-gpu-sdk/GLES2/S08_EnvMappingRefraction/GLES2.S08_EnvMappingRefraction_Wayland --Window [0,0,480,360]",
             "source": "",
             "icon": "cubes-solid.svg",
             "screenshot": "s08_environmentmappingrefraction.jpg",
