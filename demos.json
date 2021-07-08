@@ -386,7 +386,14 @@
             "executable": "python3 /home/root/.nxp-demo-experience/scripts/machine_learning/pyeiq_switch_image.py",
             "compatible": "imx8mpevk",
             "description": "A object classification application whose inference can be done either by the CPU ou the NPU to compare the performance of each core."
+        }],
+       "NNStreamer":[{
+            "name": "Object Classification",
+            "executable": "python3 /home/root/.nxp-demo-experience/scripts/machine_learning/nnclassification.py",
+            "compatible": "imx8mpevk",
+            "description": "Using the camera in /dev/video3, use NNStreamer to identify an object using the NPU. No download required!"
         }]
+
     }]
     }
 ]}
