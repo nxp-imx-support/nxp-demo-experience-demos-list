@@ -392,6 +392,11 @@
             "executable": "python3 /home/root/.nxp-demo-experience/scripts/machine_learning/nnclassification.py",
             "compatible": "imx8mpevk",
             "description": "Using the camera in /dev/video3, use NNStreamer to identify an object using the NPU. No download required!"
+        },{
+            "name": "Object Detection",
+            "executable": "python3 /home/root/.nxp-demo-experience/scripts/machine_learning/nndetection.py",
+            "compatible": "imx8mpevk",
+            "description": "Using the camera in /dev/video3, use NNStreamer to detect objects using the NPU. No download required!"
         }]
 
     }]
