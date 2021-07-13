@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 """
 @file		nnstreamer_example_image_classification_tflite.py
@@ -42,41 +42,57 @@ import gi
 gi.require_version('Gst', '1.0')
 from gi.repository import Gst, GObject
 
-
 class NNStreamerExample:
     """NNStreamer example for image classification."""
 
-    def __init__(self, argv=None):
+    def __init__(self, device, backend, display, model, labels):
         self.loop = None
         self.pipeline = None
         self.running = False
         self.current_label_index = -1
         self.new_label_index = -1
-        self.tflite_model = ''
+        self.tflite_model = model
+        self.label_path = labels
+        self.device = device
+        self.backend = backend
+        self.display = display
         self.tflite_labels = []
 
         if not self.tflite_init():
             raise Exception
 
         GObject.threads_init()
-        Gst.init(argv)
+        Gst.init(None)
     # Modified: Specified camera to use and to use NPU
     def run_example(self):
         """Init pipeline and run example.
 
         :return: None
         """
+
+        if self.backend == "CPU":
+            backend = "false"
+        elif self.backend == "GPU":
+            backend = "true:gpu"
+        else:
+            backend = "true:npu"
+
+        if self.display == "X11":
+            display = "ximagesink name=img_tensor"
+        else:
+            display = "waylandsink name=img_tensor"
+
         # main loop
         self.loop = GObject.MainLoop()
 
         # init pipeline
         self.pipeline = Gst.parse_launch(
-            'v4l2src name=cam_src device=/dev/video3 ! videoconvert ! videoscale ! '
+            'v4l2src name=cam_src device="' + self.device + '" ! videoconvert ! videoscale ! '
             'video/x-raw,width=640,height=480,format=RGB ! tee name=t_raw '
             't_raw. ! queue ! textoverlay name=tensor_res font-desc=Sans,24 ! '
-            'videoconvert ! ximagesink name=img_tensor '
+            'videoconvert ! ' + display + ' '
             't_raw. ! queue leaky=2 max-size-buffers=2 ! videoscale ! tensor_converter ! '
-            'tensor_filter framework=tensorflow-lite model=' + self.tflite_model + ' accelerator=true:npu silent=FALSE ! '
+            'tensor_filter framework=tensorflow-lite model=' + self.tflite_model + ' accelerator=' + backend + ' silent=FALSE ! '
             'tensor_sink name=tensor_sink'
         )
 
@@ -186,13 +202,12 @@ class NNStreamerExample:
         """
 
         # check model file exists
-        self.tflite_model = '/usr/bin/tensorflow-lite-2.4.1/examples/mobilenet_v1_1.0_224_quant.tflite'
         if not os.path.exists(self.tflite_model):
             logging.error('cannot find tflite model [%s]', self.tflite_model)
             return False
 
         # load labels
-        label_path = '/usr/bin/tensorflow-lite-2.4.1/examples/labels.txt'
+        label_path = self.label_path
         try:
             with open(label_path, 'r') as label_file:
                 for line in label_file.readlines():
@@ -236,5 +251,5 @@ class NNStreamerExample:
 
 
 if __name__ == '__main__':
-    example = NNStreamerExample(sys.argv[1:])
+    example = NNStreamerExample(sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[4],sys.argv[5])
     example.run_example()
