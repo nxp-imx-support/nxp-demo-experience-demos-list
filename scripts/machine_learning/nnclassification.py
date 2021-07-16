@@ -42,6 +42,7 @@ import gi
 gi.require_version('Gst', '1.0')
 from gi.repository import Gst, GObject, GLib
 
+
 class NNStreamerExample:
     """NNStreamer example for image classification."""
 
@@ -78,12 +79,11 @@ class NNStreamerExample:
         else:
             backend = "true:npu custom=Delegate:NNAPI"
 
-
         if self.display == "X11":
             display = "ximagesink name=img_tensor"
         else:
             display = "waylandsink name=img_tensor"
-        
+
         self.oldtime = GLib.get_monotonic_time()
         self.updateTime = GLib.get_monotonic_time()
 

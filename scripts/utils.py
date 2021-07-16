@@ -30,5 +30,3 @@ def downloadFile(name):
         return DOWNLOAD_FOLDER + name
     urllib.request.urlretrieve(download[2],DOWNLOAD_FOLDER + name)
     return DOWNLOAD_FOLDER + name
-
-#print(downloadFile("mobilenet_ssd_v2_coco_quant_postprocess.tflite"))

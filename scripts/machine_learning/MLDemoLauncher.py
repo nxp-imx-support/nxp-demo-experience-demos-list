@@ -12,7 +12,6 @@ import sys
 sys.path.append("/home/root/.nxp-demo-experience/scripts/")
 import utils
 import subprocess
-import multiprocessing
 
 class MLLaunch(Gtk.Window):
 
