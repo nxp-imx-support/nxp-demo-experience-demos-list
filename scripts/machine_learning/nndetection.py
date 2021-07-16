@@ -10,14 +10,14 @@ import cairo
 
 gi.require_version('Gst', '1.0')
 gi.require_foreign('cairo')
-from gi.repository import Gst, GObject
+from gi.repository import Gst, GObject, GLib
 
 DEBUG = False
 
 class ObjectDetection:
     """NNStreamer example for Object Detection."""
 
-    def __init__(self, argv=None):
+    def __init__(self, device, backend, display, model, labels, callback):
         self.loop = None
         self.pipeline = None
         self.running = False
@@ -38,15 +38,20 @@ class ObjectDetection:
         self.MODEL_WIDTH = 300
         self.MODEL_HEIGHT = 300
 
-        self.tflite_model = ''
+        self.tflite_model = model
+        self.label_path = labels
+        self.device = device
+        self.backend = backend
+        self.display = display
         self.tflite_labels = []
         self.detected_objects = []
+        self.callback = callback
 
         if not self.tflite_init():
             raise Exception
 
         GObject.threads_init()
-        Gst.init(argv)
+        Gst.init(None)
 
     def run(self):
         """Init pipeline and run example.
@@ -55,20 +60,34 @@ class ObjectDetection:
 
         print("Run: NNStreamer example for object detection.")
 
+        if self.backend == "CPU":
+            backend = "true:CPU"
+        elif self.backend == "GPU":
+            backend = "true:gpu custom=Delegate:GPU"
+        else:
+            backend = "true:npu custom=Delegate:NNAPI"
+
+        if self.display == "X11":
+            display = "ximagesink name=img_tensor "
+        else:
+            display = "waylandsink name=img_tensor "
+
         # main loop
         self.loop = GObject.MainLoop()
+        self.oldtime = GLib.get_monotonic_time()
+        self.updateTime = GLib.get_monotonic_time()
 
-        gst_launch_cmdline = ' v4l2src device="/dev/video3" ! imxvideoconvert_g2d !'
+        gst_launch_cmdline = ' v4l2src device="' + self.device  + '" ! imxvideoconvert_g2d !'
         gst_launch_cmdline += '  video/x-raw,width={:d},height={:d} ! tee name=t '.format(self.VIDEO_WIDTH, self.VIDEO_HEIGHT)
         gst_launch_cmdline += ' t. ! queue name=thread-nn max-size-buffers=2 leaky=2 !'
         gst_launch_cmdline += '  imxvideoconvert_g2d !'
         gst_launch_cmdline += '  video/x-raw,width={:d},height={:d},format=RGBA !'.format(self.MODEL_WIDTH, self.MODEL_HEIGHT)
         gst_launch_cmdline += '  videoconvert ! video/x-raw,format=RGB !'
         gst_launch_cmdline += '  tensor_converter !'
-        gst_launch_cmdline += '  tensor_filter framework=tensorflow-lite model={:s} accelerator=true:npu silent=FALSE !'.format(self.tflite_model)
+        gst_launch_cmdline += '  tensor_filter framework=tensorflow2-lite model=' + self.tflite_model  + ' accelerator=' + backend + ' silent=FALSE ! '
         gst_launch_cmdline += '  tensor_sink name=tensor_sink'
         gst_launch_cmdline += ' t. ! queue name=thread-img max-size-buffers=2 !'
-        gst_launch_cmdline += '  videoconvert ! cairooverlay name=tensor_res ! ximagesink name=img_tensor '
+        gst_launch_cmdline += '  videoconvert ! cairooverlay name=tensor_res ! ' + display
         print(gst_launch_cmdline)
         self.pipeline = Gst.parse_launch(gst_launch_cmdline);
 
@@ -105,15 +124,16 @@ class ObjectDetection:
         :return: True if successfully initialized
         """
 
-        self.tflite_model = '/usr/share/gstnninferencedemo/google-coral/examples-camera/mobilenet_ssd_v2_coco_quant_postprocess.tflite'
         if not os.path.exists(self.tflite_model):
             logging.error('cannot find tflite model [%s]', self.tflite_model)
             return False
 
-        label_path = '/usr/share/gstnninferencedemo/google-coral/examples-camera/coco_labels.txt'
+        label_path = self.label_path
         try:
             with open(label_path, 'r') as label_file:
                 for line in label_file.readlines():
+                    while str(len(self.tflite_labels)) not in line:
+                        self.tflite_labels.append("Invalid")
                     self.tflite_labels.append(line)
         except FileNotFoundError:
             logging.error('cannot find tflite label [%s]', label_path)
@@ -125,6 +145,14 @@ class ObjectDetection:
     # @brief Callback for tensor sink signal.
     def new_data_cb(self, sink, buffer):
         if self.running:
+            newtime = GLib.get_monotonic_time()
+            self.intime = newtime - self.oldtime
+            self.oldtime = newtime
+            interTime = (GLib.get_monotonic_time() - self.updateTime)/1000000
+            if interTime > 1:
+                self.callback(self.intime)
+                self.updateTime = GLib.get_monotonic_time()
+
             if buffer.n_memory() != 4:
                 return False
 
@@ -306,6 +334,6 @@ class ObjectDetection:
                 pad.send_event(Gst.Event.new_tag(tags))
 
 if __name__ == '__main__':
-    example = ObjectDetection(sys.argv[1:])
+    example = ObjectDetection(sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[4],sys.argv[5])
     example.run()
 

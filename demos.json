@@ -389,16 +389,20 @@
         }],
        "NNStreamer":[{
             "name": "Object Classification",
-            "executable": "python3 /home/root/.nxp-demo-experience/scripts/machine_learning/nnclassification.py",
+            "executable": "python3 /home/root/.nxp-demo-experience/scripts/machine_learning/MLDemoLauncher.py id",
             "compatible": "imx8mpevk",
-            "description": "Using the camera in /dev/video3, use NNStreamer to identify an object using the NPU. No download required!"
+            "description": "Use NNStreamer to identify an object using the NPU through the camera. No download required!"
         },{
             "name": "Object Detection",
-            "executable": "python3 /home/root/.nxp-demo-experience/scripts/machine_learning/nndetection.py",
+            "executable": "python3 /home/root/.nxp-demo-experience/scripts/machine_learning/MLDemoLauncher.py detect",
             "compatible": "imx8mpevk",
-            "description": "Using the camera in /dev/video3, use NNStreamer to detect objects using the NPU. No download required!"
+            "description": "Use NNStreamer to detect objects through the camera. No download required!"
+        },{
+            "name": "Pose Detection",
+            "executable": "python3 /home/root/.nxp-demo-experience/scripts/machine_learning/MLDemoLauncher.py pose",
+            "compatible": "imx8mpevk",
+            "description": "Use NNStreamer to derect a pose through the camera."
         }]
-
     }]
     }
 ]}
