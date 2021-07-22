@@ -8,29 +8,29 @@ name:coco_labels.txt
 path:/usr/share/gstnninferencedemo/google-coral/examples-camera/coco_labels.txt
 url:https://raw.githubusercontent.com/google-coral/test_data/master/coco_labels.txt
 alt_url:
-sha:
+sha:aa281f7fea3eccaa28be34eaf7c6baafc257bda8
 
 name:mobilenet_v1_1.0_224_quant.tflite
-path:/usr/bin/tensorflow-lite-2.4.1/examples/mobilenet_v1_1.0_224_quant.tflite
+path:/usr/bin/tensorflow-lite-2.5.0/examples/mobilenet_v1_1.0_224_quant.tflite
 url:https://github.com/google-coral/test_data/raw/master/mobilenet_v1_1.0_224_quant_edgetpu.tflite
 alt_url:
-sha:
+sha:ec59e140bf97986bab66c9bf0d77346ef5e03548
 
 name:1_1.0_224_labels.txt
-path:/usr/bin/tensorflow-lite-2.4.1/examples/labels.txt
+path:/usr/bin/tensorflow-lite-2.5.0/examples/labels.txt
 url:https://github.com/google-coral/test_data/raw/master/imagenet_labels.txt
 alt_url:
-sha:
+sha:9bf4e3f155d34ce2f624c864c9cf64c04ff9a06c
 
 
 name:posenet_resnet50_uint8_float32_quant.tflite
 path:
 url:
 alt_url:
-sha:
+sha:9bd26137cfa5c0d8f605f22764430f70975972c0
 
 name:key_point_labels.txt
 path:
 url:
 alt_url:
-sha:
+sha:6bcc31a01125007c7f8792413ac1207ab5e801c0

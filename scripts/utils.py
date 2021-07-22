@@ -3,11 +3,12 @@
 import sys
 from os.path import exists
 import urllib.request
+import subprocess
 
 DOWNLOAD_FOLDER = "/home/root/.cache/demoexperience/downloads/"
 DOWNLOAD_DB = "/home/root/.nxp-demo-experience/downloads.txt"
 
-def downloadFile(name):
+def download_file(name):
     downloads = open(DOWNLOAD_DB, 'r').read().splitlines()
     found = False
     for i in range(len(downloads)):
@@ -19,14 +20,15 @@ def downloadFile(name):
             found = True
     if not found:
         return -1
-    print(name)
-    print(path)
-    print(url)
-    print(alt_url)
-    print(sha)
     if exists(path):
-        return path
-    if exists(DOWNLOAD_FOLDER + name):
-        return DOWNLOAD_FOLDER + name
-    urllib.request.urlretrieve(download[2],DOWNLOAD_FOLDER + name)
-    return DOWNLOAD_FOLDER + name
+        loc = path
+    elif exists(DOWNLOAD_FOLDER + name):
+        loc = DOWNLOAD_FOLDER + name
+    else:
+        urllib.request.urlretrieve(url,DOWNLOAD_FOLDER + name)
+        loc = DOWNLOAD_FOLDER + name
+    sha_check = ['sha1sum', loc, '-z']
+    check_process = subprocess.Popen(sha_check, stdout=subprocess.PIPE)
+    if(sha != check_process.stdout.read().split()[0].decode('utf-8')):
+        return -3
+    return loc

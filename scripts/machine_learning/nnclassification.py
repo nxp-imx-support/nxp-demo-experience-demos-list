@@ -1,52 +1,31 @@
 #!/usr/bin/env python3
 
 """
-@file		nnstreamer_example_image_classification_tflite.py
-@date		18 July 2018
-@brief		Tensor stream example with filter
-@see		https://github.com/nnsuite/nnstreamer
-@author		Jaeyun Jung <jy1210.jung@samsung.com>
-@bug		No known bugs.
-
 NNStreamer example for image classification using tensorflow-lite.
 
-Pipeline :
-v4l2src -- tee -- textoverlay -- videoconvert -- ximagesink
-            |
-            --- videoscale -- tensor_converter -- tensor_filter -- tensor_sink
-
-This app displays video sink.
-
-'tensor_filter' for image classification.
-Get model by
-$ cd $NNST_ROOT/bin
-$ bash get-model.sh image-classification-tflite
-
-'tensor_sink' updates classification result to display in textoverlay.
-
-Run example :
-Before running this example, GST_PLUGIN_PATH should be updated for nnstreamer plugin.
-$ export GST_PLUGIN_PATH=$GST_PLUGIN_PATH:<nnstreamer plugin path>
-$ python nnstreamer_example_image_classification_tflite.py
-
-See https://lazka.github.io/pgi-docs/#Gst-1.0 for Gst API details.
-
 Under GNU Lesser General Public License v2.1
+
+Orginal Author: Jaeyun Jung <jy1210.jung@samsung.com>
+Source: https://github.com/nnstreamer/nnstreamer-example
+Author: Michael Pontikes <michael.pontikes_1@nxp.com>
 """
 
 import os
 import sys
 import logging
 import gi
+import cairo
 
 gi.require_version('Gst', '1.0')
 from gi.repository import Gst, GObject, GLib
 
 
 class NNStreamerExample:
-    """NNStreamer example for image classification."""
-
-    def __init__(self, device, backend, display, model, labels, callback):
+    def __init__(self, device="/dev/video0", backend="NPU", display="Wayland",
+        model="/usr/bin/tensorflow-lite-2.5.0/examples/"
+        "mobilenet_v1_1.0_224_quant.tflite",
+        labels="/usr/bin/tensorflow-lite-2.5.0/examples/labels.txt",
+        callback=print):
         self.loop = None
         self.pipeline = None
         self.running = False
@@ -59,13 +38,16 @@ class NNStreamerExample:
         self.display = display
         self.tflite_labels = []
         self.callback = callback
+        self.VIDEO_WIDTH = 1920
+        self.VIDEO_HEIGHT = 1080
+        self.label = "Loading..."
 
         if not self.tflite_init():
             raise Exception
 
         GObject.threads_init()
         Gst.init(None)
-    # Modified: Specified camera to use and to use NPU
+
     def run_example(self):
         """Init pipeline and run example.
 
@@ -84,22 +66,25 @@ class NNStreamerExample:
         else:
             display = "waylandsink name=img_tensor"
 
-        self.oldtime = GLib.get_monotonic_time()
-        self.updateTime = GLib.get_monotonic_time()
+        self.past_time = GLib.get_monotonic_time()
+        self.interval_time = 999999
 
         # main loop
         self.loop = GObject.MainLoop()
+        pipeline = 'v4l2src name=cam_src device=' + self.device
+        pipeline += ' ! video/x-raw,width=1920,height=1080 ! tee name=t_raw'
+        pipeline += ' t_raw. ! queue ! imxvideoconvert_g2d ! cairooverlay '
+        pipeline += 'name=tensor_res ! waylandsink t_raw. ! '
+        pipeline += 'imxvideoconvert_g2d ! '
+        pipeline += 'video/x-raw,width=224,height=224,format=RGBA ! '
+        pipeline += 'videoconvert ! video/x-raw,format=RGB ! '
+        pipeline += 'queue leaky=2 max-size-buffers=2 ! tensor_converter ! '
+        pipeline += 'tensor_filter framework=tensorflow-lite model='
+        pipeline += self.tflite_model + ' accelerator=' + backend
+        pipeline += ' silent=FALSE  ! tensor_sink name=tensor_sink'
 
         # init pipeline
-        self.pipeline = Gst.parse_launch(
-            'v4l2src name=cam_src device="' + self.device + '" ! videoconvert ! videoscale ! '
-            'video/x-raw,width=640,height=480,format=RGB ! tee name=t_raw '
-            't_raw. ! queue ! textoverlay name=tensor_res font-desc=Sans,24 ! '
-            'videoconvert ! ' + display + ' '
-            't_raw. ! queue leaky=2 max-size-buffers=2 ! videoscale ! tensor_converter ! '
-            'tensor_filter framework=tensorflow-lite model=' + self.tflite_model + ' accelerator=' + backend + ' silent=FALSE ! '
-            'tensor_sink name=tensor_sink'
-        )
+        self.pipeline = Gst.parse_launch(pipeline)
 
         # bus and message callback
         bus = self.pipeline.get_bus()
@@ -110,15 +95,20 @@ class NNStreamerExample:
         tensor_sink = self.pipeline.get_by_name('tensor_sink')
         tensor_sink.connect('new-data', self.on_new_data)
 
+
+        tensor_res = self.pipeline.get_by_name('tensor_res')
+        tensor_res.connect('draw', self.draw_overlay_cb)
+        tensor_res.connect('caps-changed', self.prepare_overlay_cb)
+
         # timer to update result
-        GObject.timeout_add(500, self.on_timer_update_result)
+        GObject.timeout_add(500, self.callback, self)
 
         # start pipeline
         self.pipeline.set_state(Gst.State.PLAYING)
         self.running = True
 
         # set window title
-        self.set_window_title('img_tensor', 'NNStreamer Example')
+        self.set_window_title('img_tensor', 'NNStreamer Classification')
 
         # run main loop
         self.loop.run()
@@ -151,7 +141,8 @@ class NNStreamerExample:
         elif message.type == Gst.MessageType.QOS:
             data_format, processed, dropped = message.parse_qos_stats()
             format_str = Gst.Format.get_name(data_format)
-            logging.debug('[qos] format[%s] processed[%d] dropped[%d]', format_str, processed, dropped)
+            logging.debug('[qos] format[%s] processed[%d] dropped[%d]',
+                format_str, processed, dropped)
 
     def on_new_data(self, sink, buffer):
         """Callback for tensor sink signal.
@@ -161,13 +152,9 @@ class NNStreamerExample:
         :return: None
         """
         if self.running:
-            newtime = GLib.get_monotonic_time()
-            self.intime = newtime - self.oldtime
-            self.oldtime = newtime
-            interTime = (GLib.get_monotonic_time() - self.updateTime)/1000000
-            if interTime > 1:
-                self.callback(self.intime)
-                self.updateTime = GLib.get_monotonic_time()
+            new_time = GLib.get_monotonic_time()
+            self.interval_time = new_time - self.past_time
+            self.past_time = new_time
 
             for idx in range(buffer.n_memory()):
                 mem = buffer.peek_memory(idx)
@@ -176,20 +163,11 @@ class NNStreamerExample:
                     # update label index with max score
                     self.update_top_label_index(mapinfo.data, mapinfo.size)
                     mem.unmap(mapinfo)
-
-    def on_timer_update_result(self):
-        """Timer callback for textoverlay.
-
-        :return: True to ensure the timer continues
-        """
-        if self.running:
             if self.current_label_index != self.new_label_index:
                 # update textoverlay
                 self.current_label_index = self.new_label_index
-                label = self.tflite_get_label(self.current_label_index)
-                textoverlay = self.pipeline.get_by_name('tensor_res')
-                textoverlay.set_property('text', label)
-        return True
+                self.label = self.tflite_get_label(
+                    self.current_label_index)[:-1]
 
     def set_window_title(self, name, title):
         """Set window title.
@@ -229,7 +207,8 @@ class NNStreamerExample:
             logging.error('cannot find tflite label [%s]', label_path)
             return False
 
-        logging.info('finished to load labels, total [%d]', len(self.tflite_labels))
+        logging.info(
+            'finished to load labels, total [%d]', len(self.tflite_labels))
         return True
 
     def tflite_get_label(self, index):
@@ -262,7 +241,18 @@ class NNStreamerExample:
         else:
             logging.error('unexpected data size [%d]', data_size)
 
+    def draw_overlay_cb(self, overlay, context, timestamp, duration):
+        context.select_font_face('Sans', cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
+        context.set_font_size(100.0)
+        context.move_to(50, 100)
+        context.text_path(self.label)
+        context.set_source_rgb(1, 0, 0)
+        context.fill_preserve()
+
+    def prepare_overlay_cb(self, overlay, caps):
+        self.video_caps = caps
 
 if __name__ == '__main__':
-    example = NNStreamerExample(sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[4],sys.argv[5],sys.argv[6])
+    example = NNStreamerExample(sys.argv[1],sys.argv[2],sys.argv[3],
+        sys.argv[4],sys.argv[5],sys.argv[6])
     example.run_example()

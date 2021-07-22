@@ -1,5 +1,15 @@
 #!/usr/bin/env python3
 
+"""
+NNStreamer example for image classification using tensorflow-lite.
+
+Under GNU Lesser General Public License v2.1
+
+Orginal Author: Jaeyun Jung <jy1210.jung@samsung.com>
+Source: https://github.com/nnstreamer/nnstreamer-example
+Author: Michael Pontikes <michael.pontikes_1@nxp.com>
+"""
+
 import os
 import sys
 import gi
@@ -22,6 +32,7 @@ class ObjectDetection:
         self.pipeline = None
         self.running = False
         self.video_caps = None
+        self.first_frame = True
 
         self.BOX_SIZE = 4
         self.LABEL_SIZE = 91
@@ -33,8 +44,8 @@ class ObjectDetection:
         self.H_SCALE = 5.0
         self.W_SCALE = 5.0
 
-        self.VIDEO_WIDTH = 640
-        self.VIDEO_HEIGHT = 360
+        self.VIDEO_WIDTH = 1920
+        self.VIDEO_HEIGHT = 1080
         self.MODEL_WIDTH = 300
         self.MODEL_HEIGHT = 300
 
@@ -74,21 +85,28 @@ class ObjectDetection:
 
         # main loop
         self.loop = GObject.MainLoop()
-        self.oldtime = GLib.get_monotonic_time()
-        self.updateTime = GLib.get_monotonic_time()
+        self.old_time = GLib.get_monotonic_time()
+        self.update_time = GLib.get_monotonic_time()
+        self.interval_time = 999999
 
-        gst_launch_cmdline = ' v4l2src device="' + self.device  + '" ! imxvideoconvert_g2d !'
-        gst_launch_cmdline += '  video/x-raw,width={:d},height={:d} ! tee name=t '.format(self.VIDEO_WIDTH, self.VIDEO_HEIGHT)
-        gst_launch_cmdline += ' t. ! queue name=thread-nn max-size-buffers=2 leaky=2 !'
-        gst_launch_cmdline += '  imxvideoconvert_g2d !'
-        gst_launch_cmdline += '  video/x-raw,width={:d},height={:d},format=RGBA !'.format(self.MODEL_WIDTH, self.MODEL_HEIGHT)
-        gst_launch_cmdline += '  videoconvert ! video/x-raw,format=RGB !'
-        gst_launch_cmdline += '  tensor_converter !'
-        gst_launch_cmdline += '  tensor_filter framework=tensorflow2-lite model=' + self.tflite_model  + ' accelerator=' + backend + ' silent=FALSE ! '
-        gst_launch_cmdline += '  tensor_sink name=tensor_sink'
-        gst_launch_cmdline += ' t. ! queue name=thread-img max-size-buffers=2 !'
-        gst_launch_cmdline += '  videoconvert ! cairooverlay name=tensor_res ! ' + display
-        print(gst_launch_cmdline)
+        gst_launch_cmdline = ' v4l2src device=' + self.device  + ' ! video/'
+        gst_launch_cmdline += 'x-raw, width={:d},'.format(self.VIDEO_WIDTH)
+        gst_launch_cmdline += 'height={:d}'.format(self.VIDEO_HEIGHT)
+        gst_launch_cmdline += ' ! tee name=t  t. ! queue name=thread-nn'
+        gst_launch_cmdline += ' max-size-buffers=2 leaky=2 !'
+        gst_launch_cmdline += ' imxvideoconvert_g2d !  video/x-raw, '
+        gst_launch_cmdline += 'width={:d},'.format(self.MODEL_WIDTH)
+        gst_launch_cmdline += 'height={:d},'.format(self.MODEL_HEIGHT)
+        gst_launch_cmdline += ' format=ARGB ! imxvideoconvert_g2d ! '
+        gst_launch_cmdline += 'videoconvert ! video/x-raw,format=RGB !'
+        gst_launch_cmdline += ' tensor_converter ! tensor_filter'
+        gst_launch_cmdline += ' framework=tensorflow2-lite model='
+        gst_launch_cmdline += self.tflite_model +' accelerator=' + backend
+        gst_launch_cmdline += ' silent=FALSE ! tensor_sink name=tensor_sink t.'
+        gst_launch_cmdline += ' ! queue name=thread-img max-size-buffers=2 !'
+        gst_launch_cmdline += ' imxvideoconvert_g2d !'
+        gst_launch_cmdline += ' cairooverlay name=tensor_res ! ' + display
+
         self.pipeline = Gst.parse_launch(gst_launch_cmdline);
 
         # bus and message callback
@@ -103,12 +121,14 @@ class ObjectDetection:
         tensor_res = self.pipeline.get_by_name('tensor_res')
         tensor_res.connect('draw', self.draw_overlay_cb)
         tensor_res.connect('caps-changed', self.prepare_overlay_cb)
+        GObject.timeout_add(500, self.callback, self) 
 
         # start pipeline
         self.pipeline.set_state(Gst.State.PLAYING)
         self.running = True
 
-        self.set_window_title('img_tensor', 'NNStreamer Object Detection Example')
+        self.set_window_title(
+            'img_tensor', 'NNStreamer Object Detection Example')
 
         # run main loop
         self.loop.run()
@@ -125,7 +145,8 @@ class ObjectDetection:
         """
 
         if not os.path.exists(self.tflite_model):
-            logging.error('cannot find tflite model [%s]', self.tflite_model)
+            logging.error(
+                'cannot find tflite model [%s]', self.tflite_model)
             return False
 
         label_path = self.label_path
@@ -139,62 +160,76 @@ class ObjectDetection:
             logging.error('cannot find tflite label [%s]', label_path)
             return False
 
-        logging.info('finished to load labels, total [%d]', len(self.tflite_labels))
+        logging.info(
+            'finished to load labels, total [%d]', len(self.tflite_labels))
         return True
 
     # @brief Callback for tensor sink signal.
     def new_data_cb(self, sink, buffer):
         if self.running:
-            newtime = GLib.get_monotonic_time()
-            self.intime = newtime - self.oldtime
-            self.oldtime = newtime
-            interTime = (GLib.get_monotonic_time() - self.updateTime)/1000000
-            if interTime > 1:
-                self.callback(self.intime)
-                self.updateTime = GLib.get_monotonic_time()
-
+            new_time = GLib.get_monotonic_time()
+            self.interval_time = new_time - self.old_time
+            self.old_time = new_time
             if buffer.n_memory() != 4:
                 return False
 
             #  tensor type is float32.
             # LOCATIONS_IDX:CLASSES_IDX:SCORES_IDX:NUM_DETECTION_IDX
             # 4:20:1:1\,20:1:1:1\,20:1:1:1\,1:1:1:1
-            # [0] detection_boxes (default 4th tensor). BOX_SIZE : #MaxDetection, ANY-TYPE¬
-            # [1] detection_classes (default 2nd tensor). #MaxDetection, ANY-TYPE¬
-            # [2] detection_scores (default 3rd tensor). #MaxDetection, ANY-TYPE¬
-            # [3] num_detection (default 1st tensor). 1, ANY-TYPE¬
+            # [0] detection_boxes (default 4th tensor). BOX_SIZE :
+            # #MaxDetection, ANY-TYPE
+            # [1] detection_classes (default 2nd tensor).
+            # #MaxDetection, ANY-TYPE
+            # [2] detection_scores (default 3rd tensor)
+            # #MaxDetection, ANY-TYPE
+            # [3] num_detection (default 1st tensor). 1, ANY-TYPE
 
-            # bytestrings that are based on float32 must be decoded into float list.
+            # bytestrings that are based on float32 must be
+            # decoded into float list.
 
             # boxes
             mem_boxes = buffer.peek_memory(0)
             ret, info_boxes = mem_boxes.map(Gst.MapFlags.READ)
             if ret:
-                assert info_boxes.size == self.BOX_SIZE * self.DETECTION_MAX * 4, "Invalid info_box size"
-                decoded_boxes = list(np.frombuffer(info_boxes.data, dtype=np.float32))  # decode bytestrings to float list
+                assert info_boxes.size == (
+                    self.BOX_SIZE * self.DETECTION_MAX
+                    * 4),"Invalid info_box size"
+                decoded_boxes = list(
+                    np.frombuffer(info_boxes.data,
+                    dtype=np.float32))  # decode bytestrings to float list
 
             # detections
             mem_detections = buffer.peek_memory(1)
             ret, info_detections = mem_detections.map(Gst.MapFlags.READ)
             if ret:
-                assert info_detections.size == self.DETECTION_MAX * 4, "Invalid info_detection size"
-                decoded_detections = list(np.frombuffer(info_detections.data, dtype=np.float32)) # decode bytestrings to float list
+                assert info_detections.size == (
+                    self.DETECTION_MAX * 4), "Invalid info_detection size"
+                decoded_detections = list(np.frombuffer(
+                    info_detections.data,
+                    dtype=np.float32)) # decode bytestrings to float list
 
             # scores
             mem_scores = buffer.peek_memory(2)
             ret, info_scores = mem_scores.map(Gst.MapFlags.READ)
             if ret:
-                assert info_scores.size == self.DETECTION_MAX * 4, "Invalid info_score size"
-                decoded_scores = list(np.frombuffer(info_scores.data, dtype=np.float32)) # decode bytestrings to float list
+                assert info_scores.size == (
+                    self.DETECTION_MAX * 4), "Invalid info_score size"
+                decoded_scores = list(np.frombuffer(
+                    info_scores.data,
+                    dtype=np.float32)) # decode bytestrings to float list
 
             # num detection
             mem_num = buffer.peek_memory(3)
             ret, info_num = mem_num.map(Gst.MapFlags.READ)
             if ret:
                 assert info_num.size == 4, "Invalid info_num size"
-                decoded_num = list(np.frombuffer(info_num.data, dtype=np.float32)) # decode bytestrings to float list
+                decoded_num = list(np.frombuffer(
+                    info_num.data,
+                    dtype=np.float32)) # decode bytestrings to float list
 
-            self.get_detected_objects(decoded_boxes, decoded_detections, decoded_scores, int(decoded_num[0]))
+            self.get_detected_objects(
+                decoded_boxes, decoded_detections, decoded_scores,
+                int(decoded_num[0]))
 
             mem_boxes.unmap(info_boxes)
             mem_detections.unmap(info_detections)
@@ -242,7 +277,8 @@ class ObjectDetection:
             self.detected_objects.append(d)
             if DEBUG:
                 print("==============================")
-                print("LABEL           : {}".format(self.tflite_labels[d["class_id"]]))
+                print("LABEL           : {}".format(
+                    self.tflite_labels[d["class_id"]]))
                 print("x               : {}".format(d["x"]))
                 print("y               : {}".format(d["y"]))
                 print("width           : {}".format(d["width"]))
@@ -258,13 +294,24 @@ class ObjectDetection:
         if self.video_caps == None or not self.running:
             return
 
+        if self.first_frame:
+            context.select_font_face(
+                'Sans', cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
+            context.set_font_size(200.0)
+            context.move_to(400, 500)
+            context.text_path("Loading...")
+            context.set_source_rgb(1, 0, 0)
+            context.fill_preserve()
+            self.first_frame = False
+            return
         # mutex_lock alternative required
         detected = self.detected_objects
         # mutex_unlock alternative needed
 
         drawed = 0
-        context.select_font_face('Sans', cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
-        context.set_font_size(20.0)
+        context.select_font_face(
+            'Sans', cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
+        context.set_font_size(50.0)
 
         for obj in detected:
             label = self.tflite_labels[obj['class_id']][:-1]
@@ -276,12 +323,12 @@ class ObjectDetection:
             # draw rectangle
             context.rectangle(x, y, width, height)
             context.set_source_rgb(1, 0, 0)
-            context.set_line_width(1.5)
+            context.set_line_width(3)
             context.stroke()
             context.fill_preserve()
 
             # draw title
-            context.move_to(x + 5, y + 25)
+            context.move_to(x + 5, y + 50)
             context.text_path(label)
             context.set_source_rgb(1, 0, 0)
             context.fill_preserve()
@@ -315,7 +362,9 @@ class ObjectDetection:
         elif message.type == Gst.MessageType.QOS:
             data_format, processed, dropped = message.parse_qos_stats()
             format_str = Gst.Format.get_name(data_format)
-            logging.debug('[qos] format[%s] processed[%d] dropped[%d]', format_str, processed, dropped)
+            logging.debug(
+                '[qos] format[%s] processed[%d] dropped[%d]',
+                format_str, processed, dropped)
 
 
     def set_window_title(self, name, title):
@@ -334,6 +383,7 @@ class ObjectDetection:
                 pad.send_event(Gst.Event.new_tag(tags))
 
 if __name__ == '__main__':
-    example = ObjectDetection(sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[4],sys.argv[5])
+    example = ObjectDetection(
+        sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[4],sys.argv[5])
     example.run()
 
