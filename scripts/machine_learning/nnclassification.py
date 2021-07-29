@@ -83,7 +83,7 @@ class NNStreamerExample:
         self.loop = GObject.MainLoop()
         pipeline += ' t_raw. ! queue ! imxvideoconvert_g2d ! cairooverlay '
         pipeline += 'name=tensor_res draw-on-transparent-surface=false ! '
-        pipeline += 'waylandsink t_raw. ! imxvideoconvert_g2d ! '
+        pipeline += display + ' t_raw. ! imxvideoconvert_g2d ! '
         pipeline += 'video/x-raw,width=224,height=224,format=RGBA ! '
         pipeline += 'videoconvert ! video/x-raw,format=RGB ! '
         pipeline += 'queue leaky=2 max-size-buffers=2 ! tensor_converter ! '

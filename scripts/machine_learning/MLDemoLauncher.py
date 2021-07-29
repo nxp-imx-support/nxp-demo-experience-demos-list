@@ -25,8 +25,8 @@ class MLLaunch(Gtk.Window):
         super().__init__(title=demo)
         self.set_default_size(450, 250)
         self.set_resizable(False)
-        os.environ["VIV_VX_CACHE_BINARY_GRAPH_DIR"] = "/home/root/.cache"
-        "/demoexperience"
+        os.environ["VIV_VX_CACHE_BINARY_GRAPH_DIR"] = ("/home/root/.cache"
+            "/demoexperience")
         os.environ["VIV_VX_ENABLE_CACHE_GRAPH_BINARY"] = "1"
 
         # Get widget properties
