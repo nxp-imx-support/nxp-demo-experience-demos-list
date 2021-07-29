@@ -8,6 +8,9 @@ Under GNU Lesser General Public License v2.1
 Orginal Author: Jaeyun Jung <jy1210.jung@samsung.com>
 Source: https://github.com/nnstreamer/nnstreamer-example
 Author: Michael Pontikes <michael.pontikes_1@nxp.com>
+
+From the original source, this was modified to better work with the a
+UI and to get better performance on the i.MX 8M Plus
 """
 
 import os
@@ -37,7 +40,7 @@ class ObjectDetection:
         self.BOX_SIZE = 4
         self.LABEL_SIZE = 91
         self.DETECTION_MAX = 20
-        self.MAX_OBJECT_DETECTION = 10
+        self.MAX_OBJECT_DETECTION = 5
 
         self.Y_SCALE = 10.0
         self.X_SCALE = 10.0
@@ -57,10 +60,8 @@ class ObjectDetection:
         self.tflite_labels = []
         self.detected_objects = []
         self.callback = callback
-
         if not self.tflite_init():
             raise Exception
-
         GObject.threads_init()
         Gst.init(None)
 
@@ -68,8 +69,6 @@ class ObjectDetection:
         """Init pipeline and run example.
         :return: None
         """
-
-        print("Run: NNStreamer example for object detection.")
 
         if self.backend == "CPU":
             backend = "true:CPU"
@@ -87,12 +86,19 @@ class ObjectDetection:
         self.loop = GObject.MainLoop()
         self.old_time = GLib.get_monotonic_time()
         self.update_time = GLib.get_monotonic_time()
+        self.reload_time = -1
         self.interval_time = 999999
 
-        gst_launch_cmdline = ' v4l2src device=' + self.device  + ' ! video/'
-        gst_launch_cmdline += 'x-raw, width={:d},'.format(self.VIDEO_WIDTH)
-        gst_launch_cmdline += 'height={:d}'.format(self.VIDEO_HEIGHT)
-        gst_launch_cmdline += ' ! tee name=t  t. ! queue name=thread-nn'
+
+        if "/dev/video" in self.device:
+            gst_launch_cmdline = 'v4l2src name=cam_src device=' + self.device
+            gst_launch_cmdline += ' ! video/x-raw,width=1920,height=1080 '
+            gst_launch_cmdline += '! tee name=t'
+        else:
+            gst_launch_cmdline = 'filesrc location=' + self.device  + ' ! qtdemux'
+            gst_launch_cmdline += ' ! vpudec ! tee name=t'
+
+        gst_launch_cmdline += ' t. ! queue name=thread-nn'
         gst_launch_cmdline += ' max-size-buffers=2 leaky=2 !'
         gst_launch_cmdline += ' imxvideoconvert_g2d !  video/x-raw, '
         gst_launch_cmdline += 'width={:d},'.format(self.MODEL_WIDTH)
@@ -102,19 +108,25 @@ class ObjectDetection:
         gst_launch_cmdline += ' tensor_converter ! tensor_filter'
         gst_launch_cmdline += ' framework=tensorflow2-lite model='
         gst_launch_cmdline += self.tflite_model +' accelerator=' + backend
-        gst_launch_cmdline += ' silent=FALSE ! tensor_sink name=tensor_sink t.'
+        gst_launch_cmdline += ' silent=FALSE name=tensor_filter latency=1 ! '
+        gst_launch_cmdline += 'tensor_sink name=tensor_sink t.'
         gst_launch_cmdline += ' ! queue name=thread-img max-size-buffers=2 !'
         gst_launch_cmdline += ' imxvideoconvert_g2d !'
         gst_launch_cmdline += ' cairooverlay name=tensor_res ! ' + display
-
-        self.pipeline = Gst.parse_launch(gst_launch_cmdline);
+        
+        self.pipeline = Gst.parse_launch(gst_launch_cmdline)
 
         # bus and message callback
         bus = self.pipeline.get_bus()
         bus.add_signal_watch()
         bus.connect('message', self.on_bus_message)
 
+        self.tensor_filter = self.pipeline.get_by_name('tensor_filter')
+
         # tensor sink signal : new data callback
+
+        tensor_filter = self.pipeline.get_by_name('tensor_filter')
+
         tensor_sink = self.pipeline.get_by_name('tensor_sink')
         tensor_sink.connect('new-data', self.new_data_cb)
 
@@ -153,8 +165,9 @@ class ObjectDetection:
         try:
             with open(label_path, 'r') as label_file:
                 for line in label_file.readlines():
-                    while str(len(self.tflite_labels)) not in line:
-                        self.tflite_labels.append("Invalid")
+                    if line[0].isdigit():
+                        while str(len(self.tflite_labels)) not in line:
+                            self.tflite_labels.append("Invalid")
                     self.tflite_labels.append(line)
         except FileNotFoundError:
             logging.error('cannot find tflite label [%s]', label_path)
@@ -294,16 +307,6 @@ class ObjectDetection:
         if self.video_caps == None or not self.running:
             return
 
-        if self.first_frame:
-            context.select_font_face(
-                'Sans', cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
-            context.set_font_size(200.0)
-            context.move_to(400, 500)
-            context.text_path("Loading...")
-            context.set_source_rgb(1, 0, 0)
-            context.fill_preserve()
-            self.first_frame = False
-            return
         # mutex_lock alternative required
         detected = self.detected_objects
         # mutex_unlock alternative needed
@@ -325,21 +328,64 @@ class ObjectDetection:
             context.set_source_rgb(1, 0, 0)
             context.set_line_width(3)
             context.stroke()
-            context.fill_preserve()
+            #context.fill_preserve()
 
             # draw title
             context.move_to(x + 5, y + 50)
-            context.text_path(label)
+            context.show_text(label)
             context.set_source_rgb(1, 0, 0)
-            context.fill_preserve()
             context.set_source_rgb(1, 1, 1)
             context.set_line_width(0.3)
             context.stroke()
-            context.fill_preserve()
 
             drawed += 1
             if drawed >= self.MAX_OBJECT_DETECTION:
                 break
+
+        width = 1920
+        height = 1080
+        inference = self.tensor_filter.get_property("latency")
+        context.select_font_face(
+            'Sans', cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
+        context.set_source_rgb(1, 0, 0)
+        context.set_font_size(25.0)
+        context.move_to(50, height-100)
+        context.show_text("i.MX NNStreamer Detection Demo")
+        if inference == 0:
+            context.move_to(50, height-75)
+            context.show_text("FPS: ")
+            context.move_to(50, height-50)
+            context.show_text("IPS: ")
+        elif (
+            (GLib.get_monotonic_time() - self.reload_time) < 1000000
+            and self.reload_time != -1):
+            context.move_to(50, height-75)
+            context.show_text(
+                "FPS: " + "{:12.2f}".format(1/(self.update_time/1000000)) +
+                " (" + str(self.update_time/1000) + " ms)")
+            context.move_to(50, height-50)
+            context.show_text(
+                "IPS: " + "{:12.2f}".format(1/(self.inference/1000000)) +
+                " (" + str(self.inference/1000) + " ms)")
+        else:
+            self.reload_time = GLib.get_monotonic_time()
+            self.update_time = self.interval_time
+            self.inference = self.tensor_filter.get_property("latency")
+            context.move_to(50, height-75)
+            context.show_text(
+                "FPS: " + "{:12.2f}".format(1/(self.update_time/1000000)) +
+                " (" + str(self.update_time/1000) + " ms)")
+            context.move_to(50, height-50)
+            context.show_text(
+                "IPS: " + "{:12.2f}".format(1/(self.inference/1000000)) +
+                " (" + str(self.inference/1000) + " ms)")
+        if(self.first_frame):
+            context.move_to(400, 600)
+            context.set_font_size(200.0)
+            context.show_text("Loading...")
+            self.first_frame = False
+        context.fill()
+
 
     def on_bus_message(self, bus, message):
         """

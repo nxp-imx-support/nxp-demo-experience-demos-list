@@ -9,6 +9,9 @@ Orginal Author: Soonbeen Kim <ksb940925@gmail.com>
 Orginal Author: Jongha Jang <jangjongha.sw@gmail.com>
 Source: https://github.com/nnstreamer/nnstreamer-example
 Author: Michael Pontikes <michael.pontikes_1@nxp.com>
+
+From the original source, this was modified to better work with the a
+UI and to get better performance on the i.MX 8M Plus
 """
 
 import os
@@ -27,8 +30,6 @@ from gi.repository import Gst, GObject, GLib
 DEBUG = False
 
 class NNStreamerExample:
-    """NNStreamer example for face detection."""
-
     def __init__(self, device, backend, display, model, labels, callback):
         self.loop = None
         self.pipeline = None
@@ -42,16 +43,17 @@ class NNStreamerExample:
         self.backend = backend
         self.display = display
         self.callback = callback
-        self.interval_time = 999999
+        self.interval_time = -1
+        self.reload_time = -1
 
         self.VIDEO_WIDTH = 1920
         self.VIDEO_HEIGHT = 1080
 
-        self.IMAGE_WIDTH = 513
-        self.IMAGE_HEIGHT = 513
+        self.IMAGE_WIDTH = 1920
+        self.IMAGE_HEIGHT = 1080
 
-        self.MODEL_INPUT_HEIGHT = 513
-        self.MODEL_INPUT_WIDTH = 513
+        self.MODEL_INPUT_HEIGHT = 225
+        self.MODEL_INPUT_WIDTH = 225
 
         self.KEYPOINT_SIZE = 17
         self.OUTPUT_STRIDE = 16
@@ -95,30 +97,39 @@ class NNStreamerExample:
 
         self.update_time = GLib.get_monotonic_time()
         self.old_time = GLib.get_monotonic_time()
-
-        gst_launch_cmdline = ' v4l2src device=' + self.device
-        gst_launch_cmdline += ' ! video/x-raw,width=1920,height=1080 !'
-        gst_launch_cmdline += ' imxvideoconvert_g2d ! tee name=t t. !'
+        
+        
+        if "/dev/video" in self.device:
+            gst_launch_cmdline = 'v4l2src name=cam_src device=' + self.device
+            gst_launch_cmdline += ' ! video/x-raw,width=1920,height=1080'
+            gst_launch_cmdline += ' ! tee name=t'
+        else:
+            gst_launch_cmdline = 'filesrc location=' + self.device
+            gst_launch_cmdline += ' ! qtdemux ! vpudec ! tee name=t'
+        gst_launch_cmdline += ' t. !'
         gst_launch_cmdline += ' queue name=thread-nn max-size-buffers=2 '
-        gst_launch_cmdline += 'leaky=2 ! video/x-raw,'
+        gst_launch_cmdline += 'leaky=2 ! imxvideoconvert_g2d ! video/x-raw,'
         gst_launch_cmdline += 'width={:d},'.format(self.MODEL_INPUT_WIDTH)
         gst_launch_cmdline += 'height={:d},'.format(self.MODEL_INPUT_HEIGHT)
         gst_launch_cmdline += 'format=ARGB ! videoconvert !'
-        gst_launch_cmdline += ' video/x-raw,format=RGB ! tensor_converter !'
+        gst_launch_cmdline += ' video/x-raw,format=RGB ! tensor_converter ! '
         gst_launch_cmdline += ' tensor_filter framework=tensorflow-lite model='
         gst_launch_cmdline += self.tflite_model + ' accelerator=' + backend
-        gst_launch_cmdline += ' silent=FALSE ! tensor_sink name=tensor_sink t.'
+        gst_launch_cmdline += ' silent=FALSE name=tensor_filter latency=1 !'
+        gst_launch_cmdline += ' tensor_sink name=tensor_sink t.'
         gst_launch_cmdline += ' ! queue name=thread-img max-size-buffers=2 !'
         gst_launch_cmdline += ' imxvideoconvert_g2d ! '
         gst_launch_cmdline += 'cairooverlay name=tensor_res ! ' + display
 
         # init pipeline
-        self.pipeline = Gst.parse_launch(gst_launch_cmdline);
+        self.pipeline = Gst.parse_launch(gst_launch_cmdline)
 
         # bus and message callback
         bus = self.pipeline.get_bus()
         bus.add_signal_watch()
         bus.connect('message', self.on_bus_message)
+
+        self.tensor_filter = self.pipeline.get_by_name('tensor_filter')
 
         # tensor sink signal : new data callback
         tensor_sink = self.pipeline.get_by_name('tensor_sink')
@@ -269,11 +280,10 @@ class NNStreamerExample:
         if self.first_frame:
             context.select_font_face(
                 'Sans', cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
-            context.set_font_size(50.0)
-            context.move_to(130, 250)
-            context.text_path("Loading...")
+            context.set_font_size(200.0)
+            context.move_to(400, 600)
+            context.show_text("Loading...")
             context.set_source_rgb(1, 0, 0)
-            context.fill_preserve()
             self.first_frame = False
             return
 
@@ -286,36 +296,11 @@ class NNStreamerExample:
 
         context.select_font_face(
             'Sans', cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
-        context.set_font_size(8.0)
-
-        for obj in kpts:
-            score = obj['score']
-            if score < self.SCORE_THRESHOLD:
-                continue
-
-            label = self.tflite_labels[obj['label']][:-1]
-            y = obj['y'] * self.IMAGE_HEIGHT / self.MODEL_INPUT_HEIGHT
-            x = obj['x'] * self.IMAGE_WIDTH / self.MODEL_INPUT_WIDTH
-
-            # draw key point
-            context.set_source_rgb(0.85, 0.2, 0.2)
-            context.arc(x, y, 3, 0, 2 * math.pi)
-            context.stroke_preserve()
-            context.fill()
-
-            # draw the text of each key point
-            context.move_to(x + 5, y + 17)
-            context.text_path(label)
-            context.set_source_rgb(0.7, 0.3, 0.5)
-            context.fill_preserve()
-            context.set_source_rgb(0.7, 0.3, 0.5)
-            context.set_line_width(0.2)
-            context.stroke()
-            context.fill_preserve()
+        context.set_font_size(35.0)
 
         # draw body lines
         context.set_source_rgb(0.85, 0.2, 0.2)
-        context.set_line_width(3)
+        context.set_line_width(15)
 
         self.draw_line(overlay, context, kpts, 5, 6)
         self.draw_line(overlay, context, kpts, 5, 7)
@@ -334,7 +319,7 @@ class NNStreamerExample:
 
     def draw_line(self, overlay, context, kpts, from_key, to_key):
         kpts_len = len(kpts)
-        if from_key > kpts_len or to_key > kpts_len:
+        if from_key > kpts_len-1 or to_key > kpts_len-1:
             return
         if kpts[from_key]['score'] < self.SCORE_THRESHOLD or (
             kpts[to_key]['score'] < self.SCORE_THRESHOLD):

@@ -74,26 +74,28 @@ class NNStreamerExample:
         self.past_time = GLib.get_monotonic_time()
         self.interval_time = -1
         self.label_time = GLib.get_monotonic_time()
-         
+       
         if "/dev/video" in self.device:
             pipeline = 'v4l2src name=cam_src device=' + self.device
-            pipeline += ' ! video/x-raw,width=1920,height=1080 ! tee name=t_raw'
+            pipeline += ' ! video/x-raw,width=1920,height=1080 ! '
+            pipeline += 'tee name=t_raw'
         else:
             pipeline = 'filesrc location=' + self.device  + ' ! qtdemux'
             pipeline += ' ! vpudec ! tee name=t_raw'
         # main loop
         self.loop = GObject.MainLoop()
         pipeline += ' t_raw. ! queue ! imxvideoconvert_g2d ! cairooverlay '
-        pipeline += 'name=tensor_res draw-on-transparent-surface=false ! '
-        pipeline += 'waylandsink t_raw. ! imxvideoconvert_g2d ! '
+        pipeline += 'name=tensor_res ! waylandsink t_raw. ! '
+        pipeline += 'imxvideoconvert_g2d ! '
         pipeline += 'video/x-raw,width=224,height=224,format=RGBA ! '
         pipeline += 'videoconvert ! video/x-raw,format=RGB ! '
         pipeline += 'queue leaky=2 max-size-buffers=2 ! tensor_converter ! '
-        pipeline += 'tensor_filter name=tensor_filter framework=tensorflow-lite model='
-        pipeline += self.tflite_model + ' accelerator=' + backend
+        pipeline += 'tensor_filter name=tensor_filter framework='
+        pipeline += 'tensorflow-lite model=' + self.tflite_model
+        pipeline +=  ' accelerator=' + backend
         pipeline += ' silent=FALSE latency=1 ! tensor_sink name=tensor_sink'
-
         # init pipeline
+        
         self.pipeline = Gst.parse_launch(pipeline)
 
         # bus and message callback
@@ -116,7 +118,11 @@ class NNStreamerExample:
         self.pipeline.set_state(Gst.State.PLAYING)
         self.running = True
 
+        self.data = -1
+        self.data_size = -1
+
         GObject.timeout_add(500, self.callback, self)
+        GObject.timeout_add(250, self.update_top_label_index)
 
         # set window title
         self.set_window_title('img_tensor', 'NNStreamer Classification')
@@ -172,15 +178,9 @@ class NNStreamerExample:
                 result, mapinfo = mem.map(Gst.MapFlags.READ)
                 if result:
                     # update label index with max score
-                    self.update_top_label_index(mapinfo.data, mapinfo.size)
+                    self.data = mapinfo.data
+                    self.data_size = mapinfo.size
                     mem.unmap(mapinfo)
-            if self.current_label_index != self.new_label_index:
-                # update textoverlay
-                self.current_label_index = self.new_label_index
-                if(GLib.get_monotonic_time() - self.label_time > 10000):
-                    self.label = self.tflite_get_label(
-                        self.current_label_index)[:-1]
-                    self.label_time = GLib.get_monotonic_time()
 
     def set_window_title(self, name, title):
         """Set window title.
@@ -219,6 +219,7 @@ class NNStreamerExample:
         except FileNotFoundError:
             logging.error('cannot find tflite label [%s]', label_path)
             return False
+        del self.tflite_labels[0]
 
         logging.info(
             'finished to load labels, total [%d]', len(self.tflite_labels))
@@ -236,7 +237,7 @@ class NNStreamerExample:
             label = ''
         return label
 
-    def update_top_label_index(self, data, data_size):
+    def update_top_label_index(self):
         """Update tflite label index with max score.
 
         :param data: array of scores
@@ -245,30 +246,39 @@ class NNStreamerExample:
         """
         # -1 if failed to get max score index
         self.new_label_index = -1
-        if data_size == len(self.tflite_labels):
-            scores = [data[i] for i in range(data_size)]
+        if self.data_size == -1:
+            return True
+        if self.data_size == len(self.tflite_labels):
+            scores = [self.data[i] for i in range(self.data_size)]
             max_score = max(scores)
             if max_score > 0:
                 self.new_label_index = scores.index(max_score)
+                self.label = self.tflite_get_label(self.new_label_index)[:-1]
+            
         else:
-            logging.error('unexpected data size [%d]', data_size)
+            logging.error('unexpected data size [%d]', self.data_size)
+        return True
 
     def draw_overlay_cb(self, overlay, context, timestamp, duration):
         width = 1920
         height = 1080
         inference = self.tensor_filter.get_property("latency")
         context.select_font_face(
-            'Sans', cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
+            'Sans', cairo.FONT_SLANT_NORMAL,
+            cairo.FONT_WEIGHT_BOLD)
         context.set_source_rgb(1, 0, 0)
+        
         context.set_font_size(20.0)
         context.move_to(50, height-100)
-        context.show_text("i.MX NNStreamer Identification Demo")
+        context.show_text("i.MX NNStreamer Brand Demo")
         if inference == 0:
             context.move_to(50, height-75)
             context.show_text("FPS: ")
             context.move_to(50, height-50)
             context.show_text("IPS: ")
-        elif (GLib.get_monotonic_time() - self.reload_time) < 100000 and self.refresh_time != -1:
+        elif (
+            (GLib.get_monotonic_time() - self.reload_time) < 100000
+            and self.refresh_time != -1):
             context.move_to(50, height-75)
             context.show_text(
                 "FPS: " + "{:12.2f}".format(1/(self.refresh_time/1000000)) +
@@ -290,7 +300,7 @@ class NNStreamerExample:
                 "IPS: " + "{:12.2f}".format(1/(self.inference/1000000)) +
                 " (" + str(self.inference/1000) + " ms)")
         context.move_to(50, 100)
-        context.set_font_size(100.0)
+        context.set_font_size(30.0)
         context.show_text(self.label)
         if(self.first_frame):
             context.move_to(400, 600)

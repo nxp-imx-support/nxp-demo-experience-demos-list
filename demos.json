@@ -381,27 +381,26 @@
     }]
     },
     {"Machine Learning":[{
-        "pyeIQ":[{
-            "name": "Switch Image",
-            "executable": "python3 /home/root/.nxp-demo-experience/scripts/machine_learning/pyeiq_switch_image.py",
-            "compatible": "imx8mpevk",
-            "description": "A object classification application whose inference can be done either by the CPU ou the NPU to compare the performance of each core."
-        }],
        "NNStreamer":[{
             "name": "Object Classification",
             "executable": "python3 /home/root/.nxp-demo-experience/scripts/machine_learning/MLDemoLauncher.py id",
             "compatible": "imx8mpevk",
-            "description": "Use NNStreamer to identify an object using the NPU through the camera. No download required!"
+            "description": "An example of how to use NNStreamer to classify objects in a video or camera feed. An internet connection may be required.."
         },{
             "name": "Object Detection",
             "executable": "python3 /home/root/.nxp-demo-experience/scripts/machine_learning/MLDemoLauncher.py detect",
             "compatible": "imx8mpevk",
-            "description": "Use NNStreamer to detect objects through the camera. No download required!"
+            "description": "An example of how to use NNStreamer to detect objects in a video or camera feed. An internet connection may be required.."
         },{
             "name": "Pose Detection",
             "executable": "python3 /home/root/.nxp-demo-experience/scripts/machine_learning/MLDemoLauncher.py pose",
             "compatible": "imx8mpevk",
-            "description": "Use NNStreamer to derect a pose through the camera."
+            "description": "An example of how to use NNStreamer to detect a pose in a video or camera feed. An internet connection may be required.."
+        },{
+            "name": "Brand Detection",
+            "executable": "python3 /home/root/.nxp-demo-experience/scripts/machine_learning/MLDemoLauncher.py brand",
+            "compatible": "imx8mpevk",
+            "description": "An example of how to use NNStreamer to detect a branded item in a video or camera feed. An internet connection may be required.."
         }]
     }]
     }

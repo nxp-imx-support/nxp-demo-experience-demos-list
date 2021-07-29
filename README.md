@@ -321,9 +321,31 @@ A QML clock application that demonstrates using a ListView type to display data 
 *Source: https://doc.qt.io/qt-5/qtdoc-demos-clocks-example.html*
 
 ### Machine Learning
-#### pyeIQ - Switch Image
+#### NNStreamer - Object Classification
 *Compatible with imx8mpevk*
 
-A object classification application whose inference can be done either by the CPU ou the NPU to compare the performance of each core.
+An example of how to use NNStreamer to classify objects in a video or camera feed. An internet connection may be required.
 
-*Source: https://source.codeaurora.org/external/imxsupport/pyeiq/tree/eiq/apps/label*
+*Source: https://github.com/nnstreamer/nnstreamer-example*
+
+#### NNStreamer - Object Detection
+*Compatible with imx8mpevk*
+
+An example of how to use NNStreamer to detect objects in a video or camera feed. An internet connection may be required.
+
+*Source: https://github.com/nnstreamer/nnstreamer-example*
+
+#### NNStreamer - Pose Detection
+*Compatible with imx8mpevk*
+
+An example of how to use NNStreamer to detect a pose in a video or camera feed. An internet connection may be required.
+
+*Source: https://github.com/nnstreamer/nnstreamer-example*
+
+#### NNStreamer - Brand Detection
+*Compatible with imx8mpevk*
+
+An example of how to use NNStreamer to detect a branded item in a video or camera feed. An internet connection may be required.
+
+*Source: https://github.com/nnstreamer/nnstreamer-example*
+
