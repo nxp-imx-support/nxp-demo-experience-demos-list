@@ -400,7 +400,7 @@
             "name": "Brand Detection",
             "executable": "python3 /home/root/.nxp-demo-experience/scripts/machine_learning/MLDemoLauncher.py brand",
             "compatible": "imx8mpevk",
-            "description": "An example of how to use NNStreamer to detect a branded item in a video or camera feed. An internet connection may be required.."
+            "description": "An example of how to use NNStreamer to detect a branded item in a video or camera feed. An internet connection may be required."
         }]
     }]
     }

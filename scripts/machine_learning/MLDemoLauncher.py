@@ -224,32 +224,32 @@ class MLLaunch(Gtk.Window):
             example = nndetection.ObjectDetection(
                 device,
                 self.backend_combo.get_active_text(),
-                self.display_combo.get_active_text(),
-                model, labels, self.update_stats)
+                model, labels, self.display_combo.get_active_text(),
+                self.update_stats)
             example.run()
         if self.demo == "id":
             import nnclassification
             example = nnclassification.NNStreamerExample(
                 device,
                 self.backend_combo.get_active_text(),
-                self.display_combo.get_active_text(),
-                model, labels, self.update_stats)
+                model, labels, self.display_combo.get_active_text(),
+                self.update_stats)
             example.run_example()
         if self.demo == "pose":
             import nnpose 
             example = nnpose.NNStreamerExample(
                 device,
                 self.backend_combo.get_active_text(),
-                self.display_combo.get_active_text(),
-                model, labels, self.update_stats)
+                model, labels, self.display_combo.get_active_text(),
+                self.update_stats)
             example.run_example()
         if self.demo == "brand":
             import nnbrand
             example = nnbrand.NNStreamerExample(
                 device,
                 self.backend_combo.get_active_text(),
-                self.display_combo.get_active_text(),
-                model, labels, self.update_stats)
+                model, labels, self.display_combo.get_active_text(),
+                self.update_stats)
             example.run_example()
         self.launch_button.set_sensitive(True)
 

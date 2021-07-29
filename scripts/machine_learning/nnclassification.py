@@ -24,11 +24,8 @@ from gi.repository import Gst, GObject, GLib
 
 
 class NNStreamerExample:
-    def __init__(self, device="/dev/video0", backend="NPU", display="Wayland",
-        model="/usr/bin/tensorflow-lite-2.5.0/examples/"
-        "mobilenet_v1_1.0_224_quant.tflite",
-        labels="/usr/bin/tensorflow-lite-2.5.0/examples/labels.txt",
-        callback=print):
+    def __init__(self, device, backend,
+        model, labels, display="Weston", callback=None):
         self.loop = None
         self.pipeline = None
         self.running = False
@@ -77,7 +74,8 @@ class NNStreamerExample:
          
         if "/dev/video" in self.device:
             pipeline = 'v4l2src name=cam_src device=' + self.device
-            pipeline += ' ! video/x-raw,width=1920,height=1080 ! tee name=t_raw'
+            pipeline += ' ! imxvideoconvert_g2d ! video/x-raw,width=1920,'
+            pipeline += 'height=1080,format=BGRx ! tee name=t_raw'
         else:
             pipeline = 'filesrc location=' + self.device  + ' ! qtdemux'
             pipeline += ' ! vpudec ! tee name=t_raw'
@@ -116,7 +114,8 @@ class NNStreamerExample:
         self.pipeline.set_state(Gst.State.PLAYING)
         self.running = True
 
-        GObject.timeout_add(500, self.callback, self)
+        if self.callback is not None:
+            GObject.timeout_add(500, self.callback, self)
 
         # set window title
         self.set_window_title('img_tensor', 'NNStreamer Classification')
@@ -303,6 +302,14 @@ class NNStreamerExample:
         self.video_caps = caps
 
 if __name__ == '__main__':
-    example = NNStreamerExample(sys.argv[1],sys.argv[2],sys.argv[3],
-        sys.argv[4],sys.argv[5],sys.argv[6])
+    if(len(sys.argv) != 7 and len(sys.argv) != 5):
+        print("Usage: python3 nnclassification.py <dev/video*/video file> <NPU/CPU>"+
+                " <model file> <label file>")
+        exit()
+    if(len(sys.argv) == 7):
+        example = NNStreamerExample(sys.argv[1],sys.argv[2],sys.argv[3],
+            sys.argv[4],sys.argv[5],sys.argv[6])
+    if(len(sys.argv) == 5):
+        example = NNStreamerExample(sys.argv[1],sys.argv[2],sys.argv[3],
+            sys.argv[4])
     example.run_example()

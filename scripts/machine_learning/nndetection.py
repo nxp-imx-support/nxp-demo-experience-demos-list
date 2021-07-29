@@ -30,7 +30,9 @@ DEBUG = False
 class ObjectDetection:
     """NNStreamer example for Object Detection."""
 
-    def __init__(self, device, backend, display, model, labels, callback):
+    def __init__(
+            self, device, backend, model, labels,
+            display="Weston", callback=None):
         self.loop = None
         self.pipeline = None
         self.running = False
@@ -92,8 +94,9 @@ class ObjectDetection:
 
         if "/dev/video" in self.device:
             gst_launch_cmdline = 'v4l2src name=cam_src device=' + self.device
-            gst_launch_cmdline += ' ! video/x-raw,width=1920,height=1080 '
-            gst_launch_cmdline += '! tee name=t'
+            gst_launch_cmdline += ' ! imxvideoconvert_g2d ! '
+            gst_launch_cmdline += 'video/x-raw,width=1920,height=1080,'
+            gst_launch_cmdline += 'format=BGRx ! tee name=t'
         else:
             gst_launch_cmdline = 'filesrc location=' + self.device  + ' ! qtdemux'
             gst_launch_cmdline += ' ! vpudec ! tee name=t'
@@ -133,7 +136,8 @@ class ObjectDetection:
         tensor_res = self.pipeline.get_by_name('tensor_res')
         tensor_res.connect('draw', self.draw_overlay_cb)
         tensor_res.connect('caps-changed', self.prepare_overlay_cb)
-        GObject.timeout_add(500, self.callback, self) 
+        if self.callback is not None:
+            GObject.timeout_add(500, self.callback, self)
 
         # start pipeline
         self.pipeline.set_state(Gst.State.PLAYING)
@@ -429,7 +433,15 @@ class ObjectDetection:
                 pad.send_event(Gst.Event.new_tag(tags))
 
 if __name__ == '__main__':
-    example = ObjectDetection(
-        sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[4],sys.argv[5])
+    if(len(sys.argv) != 7 and len(sys.argv) != 5):
+        print("Usage: python3 nndetection.py <dev/video*/video file> <NPU/CPU>"+
+                " <model file> <label file>")
+        exit()
+    if(len(sys.argv) == 7):
+        example = ObjectDetection(sys.argv[1],sys.argv[2],sys.argv[3],
+            sys.argv[4],sys.argv[5],sys.argv[6])
+    if(len(sys.argv) == 5):
+        example = ObjectDetection(sys.argv[1],sys.argv[2],sys.argv[3],
+            sys.argv[4])
     example.run()
 
