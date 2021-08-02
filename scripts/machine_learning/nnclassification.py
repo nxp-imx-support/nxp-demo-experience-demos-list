@@ -1,16 +1,16 @@
 #!/usr/bin/env python3
 
 """
-NNStreamer example for image classification using tensorflow-lite.
+Copyright Jaeyun Jung <jy1210.jung@samsung.com>
+Copyright 2021 NXP
 
-Under GNU Lesser General Public License v2.1
+SPDX-License-Identifier: LGPL-2.1-only
+Original Source: https://github.com/nnstreamer/nnstreamer-example
 
-Orginal Author: Jaeyun Jung <jy1210.jung@samsung.com>
-Source: https://github.com/nnstreamer/nnstreamer-example
-Author: Michael Pontikes <michael.pontikes_1@nxp.com>
+This demo shows how you can use the NNStreamer to identify objects.
 
 From the original source, this was modified to better work with the a
-UI and to get better performance on the i.MX 8M Plus
+GUI and to get better performance on the i.MX 8M Plus.
 """
 
 import os
@@ -24,8 +24,25 @@ from gi.repository import Gst, GObject, GLib
 
 
 class NNStreamerExample:
+    """The class that manages the demo"""
     def __init__(self, device, backend,
-        model, labels, display="Weston", callback=None):
+        model, labels, display="Weston", callback=None, width=1920,
+        height=1080, r=1, g=0, b=0):
+        """Creates an instance of the demo
+        
+        Arguments:
+        device -- What camera or video file to use
+        backend -- Whether to use NPU or CPU
+        model -- the path to the model
+        lables -- the path to the labels
+        display -- Whether to use X11 or Weston
+        callback -- Callback to pass stats to
+        width -- Width of output
+        height -- Height of output
+        r -- Red value for labels
+        g -- Green value for labels
+        b -- Blue value for labels
+        """
         self.loop = None
         self.pipeline = None
         self.running = False
@@ -38,11 +55,14 @@ class NNStreamerExample:
         self.display = display
         self.callback = callback
         self.tflite_labels = []
-        self.VIDEO_WIDTH = 1920
-        self.VIDEO_HEIGHT = 1080
+        self.VIDEO_WIDTH = width
+        self.VIDEO_HEIGHT = height
         self.label = "Loading..."
         self.first_frame = True
         self.refresh_time = -1
+        self.r = r
+        self.b = b
+        self.g = g
 
         if not self.tflite_init():
             raise Exception
@@ -51,10 +71,7 @@ class NNStreamerExample:
         Gst.init(None)
 
     def run_example(self):
-        """Init pipeline and run example.
-
-        :return: None
-        """
+        """Starts pipeline and run demo"""
 
         if self.backend == "CPU":
             backend = "true:cpu"
@@ -74,8 +91,10 @@ class NNStreamerExample:
          
         if "/dev/video" in self.device:
             pipeline = 'v4l2src name=cam_src device=' + self.device
-            pipeline += ' ! imxvideoconvert_g2d ! video/x-raw,width=1920,'
-            pipeline += 'height=1080,format=BGRx ! tee name=t_raw'
+            pipeline += ' ! imxvideoconvert_g2d ! video/x-raw,width='
+            pipeline += str(int(self.VIDEO_WIDTH)) +',height='
+            pipeline += str(int(self.VIDEO_HEIGHT))
+            pipeline += ',format=BGRx ! tee name=t_raw'
         else:
             pipeline = 'filesrc location=' + self.device  + ' ! qtdemux'
             pipeline += ' ! vpudec ! tee name=t_raw'
@@ -83,11 +102,12 @@ class NNStreamerExample:
         self.loop = GObject.MainLoop()
         pipeline += ' t_raw. ! queue ! imxvideoconvert_g2d ! cairooverlay '
         pipeline += 'name=tensor_res draw-on-transparent-surface=false ! '
-        pipeline += display + ' t_raw. ! imxvideoconvert_g2d ! '
+        pipeline += 'queue ! ' + display + ' t_raw. ! imxvideoconvert_g2d ! '
         pipeline += 'video/x-raw,width=224,height=224,format=RGBA ! '
         pipeline += 'videoconvert ! video/x-raw,format=RGB ! '
         pipeline += 'queue leaky=2 max-size-buffers=2 ! tensor_converter ! '
-        pipeline += 'tensor_filter name=tensor_filter framework=tensorflow-lite model='
+        pipeline += 'tensor_filter name=tensor_filter '
+        pipeline += 'framework=tensorflow-lite model='
         pipeline += self.tflite_model + ' accelerator=' + backend
         pipeline += ' silent=FALSE latency=1 ! tensor_sink name=tensor_sink'
 
@@ -253,26 +273,41 @@ class NNStreamerExample:
             logging.error('unexpected data size [%d]', data_size)
 
     def draw_overlay_cb(self, overlay, context, timestamp, duration):
-        width = 1920
-        height = 1080
+        """Draws the results onto the video frame"""
+        scale_height = self.VIDEO_HEIGHT/1080
+        scale_width = self.VIDEO_WIDTH/1920
+        scale_text = max(scale_height, scale_width)
         inference = self.tensor_filter.get_property("latency")
         context.select_font_face(
             'Sans', cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
-        context.set_source_rgb(1, 0, 0)
-        context.set_font_size(20.0)
-        context.move_to(50, height-100)
+        context.set_source_rgb(self.r, self.g, self.b)
+
+        context.set_font_size(int(25.0 * scale_text))
+        context.move_to(
+            int(50 * scale_width),
+            int(self.VIDEO_HEIGHT-(100*scale_height)))
         context.show_text("i.MX NNStreamer Identification Demo")
         if inference == 0:
-            context.move_to(50, height-75)
+            context.move_to(
+                int(50 * scale_width),
+                int(self.VIDEO_HEIGHT-(75*scale_height)))
             context.show_text("FPS: ")
-            context.move_to(50, height-50)
+            context.move_to(
+                int(50 * scale_width),
+                int(self.VIDEO_HEIGHT-(50*scale_height)))
             context.show_text("IPS: ")
-        elif (GLib.get_monotonic_time() - self.reload_time) < 100000 and self.refresh_time != -1:
-            context.move_to(50, height-75)
+        elif (
+            (GLib.get_monotonic_time() - self.reload_time) < 100000
+            and self.refresh_time != -1):
+            context.move_to(
+                int(50 * scale_width),
+                int(self.VIDEO_HEIGHT-(75*scale_height)))
             context.show_text(
                 "FPS: " + "{:12.2f}".format(1/(self.refresh_time/1000000)) +
                 " (" + str(self.refresh_time/1000) + " ms)")
-            context.move_to(50, height-50)
+            context.move_to(
+                int(50 * scale_width),
+                int(self.VIDEO_HEIGHT-(50*scale_height)))
             context.show_text(
                 "IPS: " + "{:12.2f}".format(1/(self.inference/1000000)) +
                 " (" + str(self.inference/1000) + " ms)")
@@ -280,20 +315,24 @@ class NNStreamerExample:
             self.reload_time = GLib.get_monotonic_time()
             self.refresh_time = self.interval_time
             self.inference = self.tensor_filter.get_property("latency")
-            context.move_to(50, height-75)
+            context.move_to(
+                int(50 * scale_width),
+                int(self.VIDEO_HEIGHT-(75*scale_height)))
             context.show_text(
                 "FPS: " + "{:12.2f}".format(1/(self.refresh_time/1000000)) +
                 " (" + str(self.refresh_time/1000) + " ms)")
-            context.move_to(50, height-50)
+            context.move_to(
+                int(50 * scale_width),
+                int(self.VIDEO_HEIGHT-(50*scale_height)))
             context.show_text(
                 "IPS: " + "{:12.2f}".format(1/(self.inference/1000000)) +
                 " (" + str(self.inference/1000) + " ms)")
-        context.move_to(50, 100)
-        context.set_font_size(100.0)
+        context.move_to(int(50 * scale_width), int(100 * scale_height))
+        context.set_font_size(int(100 * scale_text))
         context.show_text(self.label)
         if(self.first_frame):
-            context.move_to(400, 600)
-            context.set_font_size(200.0)
+            context.move_to(int(400 * scale_width), int(600 * scale_height))
+            context.set_font_size(int(200.0 * min(scale_width,scale_height)))
             context.show_text("Loading...")
             self.first_frame = False
         context.set_operator(cairo.Operator.SOURCE)
@@ -302,9 +341,12 @@ class NNStreamerExample:
         self.video_caps = caps
 
 if __name__ == '__main__':
-    if(len(sys.argv) != 7 and len(sys.argv) != 5):
-        print("Usage: python3 nnclassification.py <dev/video*/video file> <NPU/CPU>"+
-                " <model file> <label file>")
+    if(
+        len(sys.argv) != 7 and len(sys.argv) != 5
+        and len(sys.argv) != 9 and len(sys.argv) != 12):
+        print(
+            "Usage: python3 nnclassification.py <dev/video*/video file>"+
+            " <NPU/CPU> <model file> <label file>")
         exit()
     if(len(sys.argv) == 7):
         example = NNStreamerExample(sys.argv[1],sys.argv[2],sys.argv[3],
@@ -312,4 +354,11 @@ if __name__ == '__main__':
     if(len(sys.argv) == 5):
         example = NNStreamerExample(sys.argv[1],sys.argv[2],sys.argv[3],
             sys.argv[4])
+    if(len(sys.argv) == 9):
+        example = NNStreamerExample(sys.argv[1],sys.argv[2],sys.argv[3],
+            sys.argv[4],sys.argv[5],sys.argv[6],sys.argv[7],sys.argv[8])
+    if(len(sys.argv) == 12):
+        example = NNStreamerExample(sys.argv[1],sys.argv[2],sys.argv[3],
+            sys.argv[4],sys.argv[5],sys.argv[6],sys.argv[7],sys.argv[8],
+            sys.argv[9],sys.argv[10],sys.argv[11])
     example.run_example()

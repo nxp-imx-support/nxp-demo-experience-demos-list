@@ -1,17 +1,17 @@
 #!/usr/bin/env python3
 
 """
-NNStreamer example for pose detection using tensorflow-lite.
+Copyright Soonbeen Kim <ksb940925@gmail.com>
+Copyright Jongha Jang <jangjongha.sw@gmail.com>
+Copyright 2021 NXP
 
-Under GNU Lesser General Public License v2.1
+SPDX-License-Identifier: LGPL-2.1-only
+Original Source: https://github.com/nnstreamer/nnstreamer-example
 
-Orginal Author: Soonbeen Kim <ksb940925@gmail.com>
-Orginal Author: Jongha Jang <jangjongha.sw@gmail.com>
-Source: https://github.com/nnstreamer/nnstreamer-example
-Author: Michael Pontikes <michael.pontikes_1@nxp.com>
+This demo shows how you can use the NNStreamer to identify poses.
 
 From the original source, this was modified to better work with the a
-UI and to get better performance on the i.MX 8M Plus
+GUI and to get better performance on the i.MX 8M Plus.
 """
 
 import os
@@ -30,7 +30,24 @@ from gi.repository import Gst, GObject, GLib
 DEBUG = False
 
 class NNStreamerExample:
-    def __init__(self, device, backend, model, labels, display="Weston", callback=None):
+    def __init__(
+        self, device, backend, model, labels, display="Weston",
+        callback=None, width=1920, height=1080, r=1, g=0, b=0):
+        """Creates an instance of the demo
+        
+        Arguments:
+        device -- What camera or video file to use
+        backend -- Whether to use NPU or CPU
+        model -- the path to the model
+        lables -- the path to the labels
+        display -- Whether to use X11 or Weston
+        callback -- Callback to pass stats to
+        width -- Width of output
+        height -- Height of output
+        r -- Red value for labels
+        g -- Green value for labels
+        b -- Blue value for labels
+        """
         self.loop = None
         self.pipeline = None
         self.running = False
@@ -45,12 +62,15 @@ class NNStreamerExample:
         self.callback = callback
         self.interval_time = -1
         self.reload_time = -1
+        self.r = r
+        self.b = b
+        self.g = g
 
-        self.VIDEO_WIDTH = 1920
-        self.VIDEO_HEIGHT = 1080
+        self.VIDEO_WIDTH = width
+        self.VIDEO_HEIGHT = height
 
-        self.IMAGE_WIDTH = 1920
-        self.IMAGE_HEIGHT = 1080
+        self.IMAGE_WIDTH = width
+        self.IMAGE_HEIGHT = height
 
         self.MODEL_INPUT_HEIGHT = 225
         self.MODEL_INPUT_WIDTH = 225
@@ -76,9 +96,7 @@ class NNStreamerExample:
         Gst.init(None)
 
     def run_example(self):
-        """Init pipeline and run example.
-        :return: None
-        """
+        """Starts pipeline and runs demo"""
 
         if self.backend == "CPU":
             backend = "true:cpu"
@@ -101,8 +119,9 @@ class NNStreamerExample:
         
         if "/dev/video" in self.device:
             gst_launch_cmdline = 'v4l2src name=cam_src device=' + self.device
-            gst_launch_cmdline += ' ! imxvideoconvert_g2d ! '
-            gst_launch_cmdline += 'video/x-raw,width=1920,height=1080'
+            gst_launch_cmdline += ' ! imxvideoconvert_g2d ! video/x-raw,width='
+            gst_launch_cmdline += str(int(self.VIDEO_WIDTH)) +',height='
+            gst_launch_cmdline += str(int(self.VIDEO_HEIGHT))
             gst_launch_cmdline += ',format=BGRx ! tee name=t'
         else:
             gst_launch_cmdline = 'filesrc location=' + self.device
@@ -120,7 +139,8 @@ class NNStreamerExample:
         gst_launch_cmdline += ' tensor_sink name=tensor_sink t.'
         gst_launch_cmdline += ' ! queue name=thread-img max-size-buffers=2 !'
         gst_launch_cmdline += ' imxvideoconvert_g2d ! '
-        gst_launch_cmdline += 'cairooverlay name=tensor_res ! ' + display
+        gst_launch_cmdline += 'cairooverlay name=tensor_res ! queue ! '
+        gst_launch_cmdline += display
 
         # init pipeline
         self.pipeline = Gst.parse_launch(gst_launch_cmdline)
@@ -158,7 +178,8 @@ class NNStreamerExample:
         bus.remove_signal_watch()
 
     def tflite_init(self):
-        """
+        """Check tflite model and load labels.
+
         :return: True if successfully initialized
         """
     
@@ -178,14 +199,8 @@ class NNStreamerExample:
             'finished to load labels, total [%d]', len(self.tflite_labels))
         return True
 
-    def new_data_2cb(self, sink, buffer):
-        if self.running:
-            new_time = GLib.get_monotonic_time()
-            self.interval_time = new_time - self.old_time
-            self.old_time = new_time
-
-    # @brief Callback for tensor sink signal.
     def new_data_cb(self, sink, buffer):
+        """Callback for tensor sink signal."""
         if self.running:
             new_time = GLib.get_monotonic_time()
             self.interval_time = new_time - self.old_time
@@ -273,20 +288,22 @@ class NNStreamerExample:
             mem_heatmap.unmap(info_heatmap)
             mem_offset.unmap(info_offset)
 
-    # @brief Store the information from the caps that we are interested in.
     def prepare_overlay_cb(self, overlay, caps):
+        """Store the information from the caps that we are interested in."""
         self.video_caps = caps
 
-    # @brief Callback to draw the overlay.
     def draw_overlay_cb(self, overlay, context, timestamp, duration):
+        """Callback to draw the overlay."""
+        scale_height = self.VIDEO_HEIGHT/1080
+        scale_width = self.VIDEO_WIDTH/1920
+        scale_text = max(scale_height, scale_width)
         if self.first_frame:
             context.select_font_face(
                 'Sans', cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
-            context.set_source_rgb(1, 0, 0)
-            context.set_font_size(200.0)
-            context.move_to(400, 600)
+            context.set_source_rgb(self.r, self.g, self.b)
+            context.move_to(int(400 * scale_width), int(600 * scale_height))
+            context.set_font_size(int(200.0 * min(scale_width,scale_height)))
             context.show_text("Loading...")
-            context.set_source_rgb(1, 0, 0)
             self.first_frame = False
             return
 
@@ -302,7 +319,7 @@ class NNStreamerExample:
         context.set_font_size(35.0)
 
         # draw body lines
-        context.set_source_rgb(0.85, 0.2, 0.2)
+        context.set_source_rgb(self.r, self.g, self.b)
         context.set_line_width(15)
 
         self.draw_line(overlay, context, kpts, 5, 6)
@@ -321,6 +338,7 @@ class NNStreamerExample:
         context.stroke()
 
     def draw_line(self, overlay, context, kpts, from_key, to_key):
+        """Connects pose points"""
         kpts_len = len(kpts)
         if from_key > kpts_len-1 or to_key > kpts_len-1:
             return

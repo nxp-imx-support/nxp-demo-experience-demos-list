@@ -1,15 +1,16 @@
+#!/usr/bin/env python3
+
 """
-Demo launcher for NNStreamer Demos
+Copyright 2021 NXP
 
-Copyright NXP 2021
+SPDX-License-Identifier: BSD-2-Clause
 
-Author: Michael Pontikes <michael.pontikes_1@nxp.com>
+This script launches the NNStreamer ML Demos using a UI to pick settings.
 """
 
 import gi
 gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk, GLib, Gio
-
 import glob
 import sys
 import os
@@ -17,13 +18,13 @@ sys.path.append("/home/root/.nxp-demo-experience/scripts/")
 import utils
 
 class MLLaunch(Gtk.Window):
-
+    """The GUI window for the ML demo launcher"""
     def __init__(self, demo):
-
+        """Creates the UI window"""
         # Initialization
         self.demo = demo
         super().__init__(title=demo)
-        self.set_default_size(450, 250)
+        self.set_default_size(450, 200)
         self.set_resizable(False)
         os.environ["VIV_VX_CACHE_BINARY_GRAPH_DIR"] = ("/home/root/.cache"
             "/demoexperience")
@@ -37,6 +38,8 @@ class MLLaunch(Gtk.Window):
         backends_available = ["NPU", "CPU"]
 
         displays_available = ["Weston"]
+
+        colors_available = ["Red", "Green", "Blue", "Black", "White"]
 
         # Create widgets
         main_grid = Gtk.Grid.new()
@@ -58,6 +61,15 @@ class MLLaunch(Gtk.Window):
         inference_title_label = Gtk.Label.new("Inference Time")
         self.inference_label = Gtk.Label.new("--.-- ms")
         self.ips_label = Gtk.Label.new("-- IPS")
+        self.width_entry = self.r_scale = Gtk.Scale.new_with_range(
+            Gtk.Orientation.HORIZONTAL, 300, 1920, 2)
+        self.height_entry = self.r_scale = Gtk.Scale.new_with_range(
+            Gtk.Orientation.HORIZONTAL, 300, 1080, 2)
+        self.width_label = Gtk.Label.new("Height")
+        self.height_label = Gtk.Label.new("Width")
+        self.color_label = Gtk.Label.new("Label Color")
+        self.color_combo = Gtk.ComboBoxText()
+
 
         # Organize widgets
         self.add(main_grid)
@@ -72,23 +84,29 @@ class MLLaunch(Gtk.Window):
         main_grid.attach(device_label, 0, 1, 2, 1)
         device_label.set_hexpand(True)
         main_grid.attach(backend_label, 0, 2, 2, 1)
-        main_grid.attach(display_label, 0, 3, 2, 1)
+        #main_grid.attach(display_label, 0, 3, 2, 1)
+        main_grid.attach(self.width_label, 0, 4, 2, 1)
+        main_grid.attach(self.height_label, 0, 5, 2, 1)
+        main_grid.attach(self.color_label, 0, 6, 2, 1)
         
         main_grid.attach(self.device_combo, 2, 1, 2, 1)
         self.device_combo.set_hexpand(True)
         main_grid.attach(self.backend_combo, 2, 2, 2, 1)
-        main_grid.attach(self.display_combo, 2, 3, 2, 1)
+        #main_grid.attach(self.display_combo, 2, 3, 2, 1)
+        main_grid.attach(self.width_entry, 2, 4, 2, 1)
+        main_grid.attach(self.height_entry, 2, 5, 2, 1)
+        main_grid.attach(self.color_combo, 2, 6, 2, 1)
 
-        main_grid.attach(self.launch_button, 0, 4, 4, 1)
+        main_grid.attach(self.launch_button, 0, 7, 4, 1)
 
-        main_grid.attach(separator, 0, 5, 4, 1)
+        main_grid.attach(separator, 0, 8, 4, 1)
 
-        main_grid.attach(time_title_label, 0, 6, 2, 1)
-        main_grid.attach(self.time_label, 0, 7, 1, 1)
-        main_grid.attach(self.fps_label, 1, 7, 1, 1)
-        main_grid.attach(inference_title_label, 2, 6, 2, 1)
-        main_grid.attach(self.inference_label, 2, 7, 1, 1)
-        main_grid.attach(self.ips_label, 3, 7, 1, 1)
+        main_grid.attach(time_title_label, 0, 9, 2, 1)
+        main_grid.attach(self.time_label, 0, 10, 1, 1)
+        main_grid.attach(self.fps_label, 1, 10, 1, 1)
+        main_grid.attach(inference_title_label, 2, 9, 2, 1)
+        main_grid.attach(self.inference_label, 2, 10, 1, 1)
+        main_grid.attach(self.ips_label, 3, 10, 1, 1)
 
         # Configure widgets
         for device in devices:
@@ -97,10 +115,18 @@ class MLLaunch(Gtk.Window):
             self.backend_combo.append_text(backend)
         for display in displays_available:
             self.display_combo.append_text(display)
+        for color in colors_available:
+            self.color_combo.append_text(color)
 
         self.device_combo.set_active(0)
         self.backend_combo.set_active(0)
         self.display_combo.set_active(0)
+        self.color_combo.set_active(0)
+        self.width_entry.set_value(1920)
+        self.height_entry.set_value(1080)
+        self.width_entry.set_sensitive(False)
+        self.height_entry.set_sensitive(False)
+        self.device_combo.connect('changed', self.on_source_change)
         self.launch_button.connect("clicked",self.start)
         quit_button.connect("clicked",exit)
         if self.demo == "detect":
@@ -116,8 +142,33 @@ class MLLaunch(Gtk.Window):
         header.set_subtitle("NNStreamer Examples")
 
     def start(self, button):
+        """Starts the ML Demo with selected settings"""
         self.update_time = GLib.get_monotonic_time()
         self.launch_button.set_sensitive(False)
+        if self.color_combo.get_active_text() == "Red":
+            r = 1
+            g = 0
+            b = 0
+        elif self.color_combo.get_active_text() == "Blue":
+            r = 0
+            g = 0
+            b = 1
+        elif self.color_combo.get_active_text() == "Green":
+            r = 0
+            g = 1
+            b = 0
+        elif self.color_combo.get_active_text() == "Black":
+            r = 0
+            g = 0
+            b = 0
+        elif self.color_combo.get_active_text() == "White":
+            r = 1
+            g = 1
+            b = 1
+        else:
+            r = 1
+            g = 0
+            b = 0
         if self.demo == "detect":
             model = utils.download_file(
                 "mobilenet_ssd_v2_coco_quant_postprocess.tflite")
@@ -225,7 +276,8 @@ class MLLaunch(Gtk.Window):
                 device,
                 self.backend_combo.get_active_text(),
                 model, labels, self.display_combo.get_active_text(),
-                self.update_stats)
+                self.update_stats, self.width_entry.get_value(),
+                self.height_entry.get_value(), r, g, b)
             example.run()
         if self.demo == "id":
             import nnclassification
@@ -233,7 +285,8 @@ class MLLaunch(Gtk.Window):
                 device,
                 self.backend_combo.get_active_text(),
                 model, labels, self.display_combo.get_active_text(),
-                self.update_stats)
+                self.update_stats, self.width_entry.get_value(),
+                self.height_entry.get_value(), r, g, b)
             example.run_example()
         if self.demo == "pose":
             import nnpose 
@@ -241,7 +294,8 @@ class MLLaunch(Gtk.Window):
                 device,
                 self.backend_combo.get_active_text(),
                 model, labels, self.display_combo.get_active_text(),
-                self.update_stats)
+                self.update_stats, self.width_entry.get_value(),
+                self.height_entry.get_value(), r, g, b)
             example.run_example()
         if self.demo == "brand":
             import nnbrand
@@ -249,11 +303,13 @@ class MLLaunch(Gtk.Window):
                 device,
                 self.backend_combo.get_active_text(),
                 model, labels, self.display_combo.get_active_text(),
-                self.update_stats)
+                self.update_stats, self.width_entry.get_value(),
+                self.height_entry.get_value(), r, g, b)
             example.run_example()
         self.launch_button.set_sensitive(True)
 
     def update_stats(self, time):
+        """Callback used the update stats in GUI"""
         interval_time = (GLib.get_monotonic_time() - self.update_time)/1000000
         if interval_time > 1:
             refresh_time = time.interval_time
@@ -270,6 +326,18 @@ class MLLaunch(Gtk.Window):
             self.update_time = GLib.get_monotonic_time()
         return True
 
+    def on_source_change(self, widget):
+        """Callback to lock sliders"""
+        if self.device_combo.get_active_text() == "Example Video":
+            self.width_entry.set_value(1920)
+            self.height_entry.set_value(1080)
+            self.width_entry.set_sensitive(False)
+            self.height_entry.set_sensitive(False)
+        else:
+            self.width_entry.set_sensitive(True)
+            self.height_entry.set_sensitive(True)
+
+
 if __name__ == "__main__":
     if (
         len(sys.argv) != 2 and sys.argv[1] != "detect"
@@ -280,4 +348,3 @@ if __name__ == "__main__":
         win.connect("destroy", Gtk.main_quit)
         win.show_all()
         Gtk.main()
-
