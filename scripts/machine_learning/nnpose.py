@@ -39,7 +39,7 @@ class NNStreamerExample:
         device -- What camera or video file to use
         backend -- Whether to use NPU or CPU
         model -- the path to the model
-        lables -- the path to the labels
+        labels -- the path to the labels
         display -- Whether to use X11 or Weston
         callback -- Callback to pass stats to
         width -- Width of output
