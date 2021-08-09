@@ -31,7 +31,7 @@ class MLLaunch(Gtk.Window):
         os.environ["VIV_VX_ENABLE_CACHE_GRAPH_BINARY"] = "1"
 
         # Get widget properties
-        devices = [] # ["Example Video"]
+        devices = ["Example Video"]
         for device in glob.glob('/dev/video*'):
             devices.append(device)
 
@@ -124,8 +124,8 @@ class MLLaunch(Gtk.Window):
         self.color_combo.set_active(0)
         self.width_entry.set_value(1920)
         self.height_entry.set_value(1080)
-        # self.width_entry.set_sensitive(False)
-        # self.height_entry.set_sensitive(False)
+        self.width_entry.set_sensitive(False)
+        self.height_entry.set_sensitive(False)
         self.device_combo.connect('changed', self.on_source_change)
         self.launch_button.connect("clicked",self.start)
         quit_button.connect("clicked",exit)
