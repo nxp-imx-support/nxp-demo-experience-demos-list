@@ -1,72 +1,66 @@
 name:mobilenet_ssd_v2_coco_quant_postprocess.tflite
 path:/usr/share/gstnninferencedemo/google-coral/examples-camera/mobilenet_ssd_v2_coco_quant_postprocess.tflite
 url:https://github.com/google-coral/test_data/raw/master/ssd_mobilenet_v2_coco_quant_postprocess.tflite
-alt_url:
+alt_url:https://github.com/NXP/nxp-demo-experience-assets/raw/master/models/ssd_mobilenet_v2_coco_quant_postprocess.tflite
 sha:
 
 name:coco_labels.txt
 path:/usr/share/gstnninferencedemo/google-coral/examples-camera/coco_labels.txt
 url:https://github.com/google-coral/test_data/raw/master/coco_labels.txt
-alt_url:
+alt_url:https://github.com/NXP/nxp-demo-experience-assets/raw/master/models/coco_labels.txt
 sha:
 
 name:mobilenet_v1_1.0_224_quant.tflite
 path:/usr/bin/tensorflow-lite-2.5.0/examples/mobilenet_v1_1.0_224_quant.tflite
 url:https://github.com/google-coral/test_data/raw/master/mobilenet_v1_1.0_224_quant.tflite
-alt_url:
+alt_url:https://github.com/NXP/nxp-demo-experience-assets/raw/master/models/mobilenet_v1_1.0_224_quant.tflite
 sha:
 
 name:1_1.0_224_labels.txt
 path:/usr/bin/tensorflow-lite-2.5.0/examples/labels.txt
 url:https://github.com/google-coral/test_data/raw/master/imagenet_labels.txt
-alt_url:
+alt_url:https://github.com/NXP/nxp-demo-experience-assets/raw/master/models/imagenet_labels.txt
 sha:
 
 
 name:posenet_resnet50_uint8_float32_quant.tflite
 path:
-url:
+url:https://github.com/NXP/nxp-demo-experience-assets/raw/master/models/posenet_resnet50_uint8_float32_quant.tflite
 alt_url:
 sha:
 
 name:key_point_labels.txt
 path:
-url:
+url:https://github.com/NXP/nxp-demo-experience-assets/raw/master/models/key_point_labels.txt
 alt_url:
 sha:
 
 name:id_example.mov
 path:
-url:
+url:https://github.com/NXP/nxp-demo-experience-assets/raw/master/videos/id_example.mov
 alt_url:
 sha:
 
 name:detect_example.mov
 path:
-url:
+url:https://github.com/NXP/nxp-demo-experience-assets/raw/master/videos/detect_example.mov
 alt_url:
 sha:
 
 name:pose_example.mov
 path:
-url:
+url:https://github.com/NXP/nxp-demo-experience-assets/raw/master/pose_example.mov
 alt_url:
 sha:
 
 name:brand_model.tflite
 path:
 url:https://github.com/google-coral/test_data/raw/master/tfhub_tf1_popular_us_products_ptq_fc_split.tflite
-alt_url:
+alt_url:https://github.com/NXP/nxp-demo-experience-assets/raw/master/brand_model.tflite
 sha:4926c7bdfe8b06c41cf166caed99fde7a63f8a12
 
 name:brand_labels.txt
 path:
 url:https://www.gstatic.com/aihub/tfhub/labelmaps/popular_us_products_V1_labelmap.csv
-alt_url:
+alt_url:https://github.com/NXP/nxp-demo-experience-assets/raw/master/brand_labels.csv
 sha:8668498affbbe2ca7af3ac587a6eeb66625439bb
-
-name:brand_example.mov
-path:
-url:
-alt_url:
-sha:

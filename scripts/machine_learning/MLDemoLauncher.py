@@ -31,7 +31,10 @@ class MLLaunch(Gtk.Window):
         os.environ["VIV_VX_ENABLE_CACHE_GRAPH_BINARY"] = "1"
 
         # Get widget properties
-        devices = ["Example Video"]
+        if self.demo != "brand":
+            devices = ["Example Video"]
+        else:
+            devices = []
         for device in glob.glob('/dev/video*'):
             devices.append(device)
 
