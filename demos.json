@@ -38,7 +38,7 @@
             "source": "",
             "icon": "photo-video-solid.svg",
             "screenshot": "gst_test_src_screenshot.png",
-            "compatible": "imx7ulpevk",
+            "compatible": "imx7ulpevk, imx8ulpevk",
             "description": "This is a simple GStreamer pipeline able to play the Video Test Source example: gst-launch-1.0 videotestsrc ! imxvideoconvert_g2d ! waylandsink window-width=480 window-height=360"
         },{
             "name": "Video test source",
@@ -64,6 +64,14 @@
             "screenshot": "gst_camera_preview_screenshot.png",
             "compatible": "imx8mpevk",
             "description": "This is a simple GStreamer pipeline able to create a camera preview example."
+        },{
+            "name": "Camera Preview",
+            "executable": "gst-launch-1.0 v4l2src device=/dev/video0 ! video/x-raw,width=720,height=480 ! waylandsink",
+            "source": "",
+            "icon": "photo-video-solid.svg",
+            "screenshot": "gst_camera_preview_screenshot.png",
+            "compatible": "imx8ulpevk",
+            "description": "This is a simple GStreamer pipeline able to create a camera preview example. Note that this example only works with the correct DTS file and needs a IMXTOCSI acessory connected to the board: gst-launch-1.0 v4l2src device=/dev/video0 ! video/x-raw,width=720,height=480 ! waylandsink"
         },{
             "name": "Camera using VPU",
             "executable": "python3 /home/root/.nxp-demo-experience/scripts/multimedia/gstreamer/imx8mp_camera_demo.py --vpu_enc=True",
@@ -116,7 +124,7 @@
             "source": "",
             "icon": "cube-solid.svg",
             "screenshot": "g2d_tiger_screenshot.png",
-            "compatible": "imx7ulpevk, imx8mqevk, imx8mmevk, imx8mnevk, imx8qxpc0mek, imx8qmmek, imx8mpevk",
+            "compatible": "imx7ulpevk, imx8mqevk, imx8mmevk, imx8mnevk, imx8qxpc0mek, imx8qmmek, imx8mpevk, imx8ulpevk",
             "description": "Vivante Tiger G2D, this demo shows a vector image being rotated and scaled using OpenVG."
         }],
         "GLES2":[{
@@ -125,7 +133,7 @@
             "source": "",
             "icon": "object-group-regular.svg",
             "screenshot": "vivante_vv_laucher.png",
-            "compatible": "imx7ulpevk, imx8qxpc0mek, imx8qmmek, imx8mpevk",
+            "compatible": "imx7ulpevk, imx8qxpc0mek, imx8qmmek, imx8mpevk, imx8ulpevk",
             "description": "Vivante launcher demo."
         },
         {
@@ -134,7 +142,7 @@
             "source": "",
             "icon": "object-group-regular.svg",
             "screenshot": "vivante_cover_flow.png",
-            "compatible": "imx7ulpevk",
+            "compatible": "imx7ulpevk, imx8ulpevk",
             "description": "Vivante Cover Flow demo."
         },
         {
@@ -143,7 +151,7 @@
             "source": "",
             "icon": "object-group-regular.svg",
             "screenshot": "vivante_tutorial7.png",
-            "compatible": "imx7ulpevk",
+            "compatible": "imx7ulpevk, imx8ulpevk",
             "description": "Vivante OpenGL tutorial"
         },
         {
@@ -179,7 +187,7 @@
             "source": "",
             "icon": "object-group-regular.svg",
             "screenshot": "blur.jpg",
-            "compatible": "imx7ulpevk",
+            "compatible": "imx7ulpevk, imx8ulpevk",
             "description": "Uses the two pass linear technique and further reduces the bandwidth requirement by downscaling the 'source image' to 1/4 its size (1/2w x 1/2h) before applying the blur and and then upscaling the blurred image to provide the final image. This works well for large kernel sizes and relatively high sigma's but the downscaling produces visible artifacts with low sigma's."
         },
         {
@@ -197,7 +205,7 @@
             "source": "",
             "icon": "object-group-regular.svg",
             "screenshot": "dfgraphicsbasic2d.jpg",
-            "compatible": "imx7ulpevk",
+            "compatible": "imx7ulpevk, imx8ulpevk",
             "description": "Shows how to use the Demo Frameworks 'basic' 2d rendering capabilities that work across all backends. The basic2D interface allows you to render ASCII strings using a system provided font and draw colored points in batches. The functionality in Basic2D is used internally in the framework to render the profiling overlays like the frame rate counter and graphs."
         },
         {
@@ -215,7 +223,7 @@
             "source": "",
             "icon": "object-group-regular.svg",
             "screenshot": "eightlayerblend.jpg",
-            "compatible": "imx7ulpevk",
+            "compatible": "imx7ulpevk, imx8ulpevk",
             "description": "Creates a simple parallax scrolling effect by blending eight 32 bit per pixel 1080p layers on top of each other. This is not the most optimal way to do it as it uses eight passes. But it does provide a good example of the worst case bandwidth use for the operation. The demo was created to compare GLES to the G2D eight blend blit functionality."
         },
         {
@@ -237,6 +245,15 @@
             "description": "Can render both the julia and mandelbrot set using a fragment shader. This demo was used to demonstrates GPU shader performance by using up roughly 515 instructions to render each fragment while generating the julia set. It uses no textures, has no overdraw and has a minimal bandwidth requirement."
         },
         {
+            "name": "FractalShader",
+            "executable": "/opt/imx-gpu-sdk/GLES2/FractalShader/GLES2.FractalShader_Wayland --Window [0,0,650,400]",
+            "source": "",
+            "icon": "object-group-regular.svg",
+            "screenshot": "fractalshader.jpg",
+            "compatible": "imx8ulpevk",
+            "description": "Can render both the julia and mandelbrot set using a fragment shader. This demo was used to demonstrates GPU shader performance by using up roughly 515 instructions to render each fragment while generating the julia set. It uses no textures, has no overdraw and has a minimal bandwidth requirement."
+        },
+        {
             "name": "LineBuilder101",
             "executable": "/opt/imx-gpu-sdk/GLES2/LineBuilder101/GLES2.LineBuilder101_Wayland --Window [0,0,1280,720]",
             "source": "",
@@ -251,7 +268,7 @@
             "source": "",
             "icon": "object-group-regular.svg",
             "screenshot": "linebuilder101.jpg",
-            "compatible": "imx7ulpevk",
+            "compatible": "imx7ulpevk, imx8ulpevk",
             "description": "A simple example of dynamic line rendering using the LineBuilder helper class. The line builder has 'Add' methods for most FslBase.Math classes like BoundingBox, BoundingSphere, BoundingFrustrum, Ray, etc."
         },
         {
@@ -269,7 +286,7 @@
             "source": "",
             "icon": "object-group-regular.svg",
             "screenshot": "modelloaderbasics.jpg",
-            "compatible": "imx7ulpevk",
+            "compatible": "imx7ulpevk, imx8ulpevk",
             "description": "Demonstrates how to use the FslSceneImporter and Assimp to load a scene and render it using OpenGLES2. The model is rendered using a simple per pixel directional light shader."
         },
         {
@@ -287,7 +304,7 @@
             "source": "",
             "icon": "cubes-solid.svg",
             "screenshot": "s03_transform.jpg",
-            "compatible": "imx7ulpevk",
+            "compatible": "imx7ulpevk, imx8ulpevk",
             "description": "Renders a animated vertex colored triangle. This shows how to modify the model matrix to rotate a triangle and how to utilize demoTime.DeltaTime to do frame rate independent animation."
         },
         {
@@ -305,7 +322,7 @@
             "source": "",
             "icon": "cubes-solid.svg",
             "screenshot": "s04_projection.jpg",
-            "compatible": "imx7ulpevk",
+            "compatible": "imx7ulpevk, imx8ulpevk",
             "description": "This example shows how to: - Build a perspective projection matrix - Render two simple 3d models using frame rate independent animation."
         },
         {
@@ -323,7 +340,7 @@
             "source": "",
             "icon": "cubes-solid.svg",
             "screenshot": "s06_texturing.jpg",
-            "compatible": "imx7ulpevk",
+            "compatible": "imx7ulpevk, imx8ulpevk",
             "description": "This example shows how to use the Texture class to use a texture in a cube. It also shows you how to use the ContentManager service to load a 'png' file from the Content directory into a bitmap utility class which is then used to used to create a OpenGL ES texture."
         },
         {
@@ -341,7 +358,7 @@
             "source": "",
             "icon": "cubes-solid.svg",
             "screenshot": "s07_environmentmapping.jpg",
-            "compatible": "imx7ulpevk",
+            "compatible": "imx7ulpevk, imx8ulpevk",
             "description": "This sample shows how to use a cubemap texture to simulate a reflective material. It also shows you how to use the ContentManager service to load a 'dds' file from the Content directory into a Texture utility class which is then used to used to create a OpenGL ES cubemap texture."
         },
         {
@@ -359,7 +376,7 @@
             "source": "",
             "icon": "cubes-solid.svg",
             "screenshot": "s08_environmentmappingrefraction.jpg",
-            "compatible": "imx7ulpevk",
+            "compatible": "imx7ulpevk, imx8ulpevk",
             "description": "This sample is a variation from the previous sample, again, a cubemap texture is used, but this time instead of simulating a reflective material a refractive material is simulated. It also shows you how to use the ContentManager service to load a 'dds' file from the Content directory into a Texture utility class which is then used to used to create a OpenGL ES cubemap texture."
         }]
     }]

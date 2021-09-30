@@ -63,12 +63,12 @@ Below is a list of demos that come on the default installation of the NXP Demo E
 ### Multimedia
 
 #### GStreamer - Video test source
-*Compatible with imx7ulpevk imx8qxpc0mek, imx8qmmek, imx8mqevk, imx8mmevk, imx8mnevk, and imx8mpevk*
+*Compatible with imx7ulpevk imx8qxpc0mek, imx8qmmek, imx8mqevk, imx8mmevk, imx8mnevk, imx8mpevk, and imx8ulpevk*
 
 This is a simple GStreamer pipeline able to play the Video Test Source example.
 
 #### GStreamer - Camera Preview
-*Compatible with imx8qxpc0mek, imx8qmmek, imx8mqevk, imx8mmevk, imx8mnevk, and imx8mpevk*
+*Compatible with imx8qxpc0mek, imx8qmmek, imx8mqevk, imx8mmevk, imx8mnevk, imx8mpevk, and imx8ulpevk*
 
 This is a simple GStreamer pipeline able to create a camera preview example. Note that this example only works with the correct DTS file and needs a IMXTOCSI acessory connected to the board.
 
@@ -100,12 +100,12 @@ This test plays the audio file recorded on the 'Audio Record' test. Make sure a 
 ### GPU
 
 #### OpenVG 2D - Tiger G2D
-*Compatible with imx7ulpevk, imx8mqevk, imx8mmevk, imx8mnevk, imx8qxpc0mek, imx8qmmek, and imx8mpevk*
+*Compatible with imx7ulpevk, imx8mqevk, imx8mmevk, imx8mnevk, imx8qxpc0mek, imx8qmmek, imx8mpevk, and imx8ulpevk*
 
 Vivante Tiger G2D, this demo shows a vector image being rotated and scaled using OpenVG.
 
 #### GLES2 - Vivante Launcher
-*Compatible with imx7ulpevk, imx8qxpc0mek, imx8qmmek, and imx8mpevk*
+*Compatible with imx7ulpevk, imx8qxpc0mek, imx8qmmek, imx8mpevk, and imx8ulpevk*
 
 Displays the Vivante launcher demo.
 
@@ -114,7 +114,7 @@ Displays the Vivante launcher demo.
 </a>
 
 #### GLES2 - Cover Flow
-*Compatible with imx7ulpevk*
+*Compatible with imx7ulpevk and imx8ulpevk*
 
 Displays the Vivante Cover Flow demo.
 
@@ -123,7 +123,7 @@ Displays the Vivante Cover Flow demo.
 </a>
 
 #### GLES2 - Vivante Tutorial
-*Compatible with imx7ulpevk*
+*Compatible with imx7ulpevk and imx8ulpevk*
 
 Displays the Vivante OpenGL tutorial.
 
@@ -143,7 +143,7 @@ An example of how to create a bloom effect. The idea is not to create the most a
 *Source: https://source.codeaurora.org/external/imx/cafatgithub/gtec-demo-framework/tree/DemoApps/GLES2/Bloom*
 
 #### GLES2 - Blur
-*Compatible with imx7ulpevk, imx8mqevk, imx8mmevk, imx8mnevk, imx8qxpc0mek, imx8qmmek, and imx8mpevk*
+*Compatible with imx7ulpevk, imx8mqevk, imx8mmevk, imx8mnevk, imx8qxpc0mek, imx8qmmek, imx8mpevk, and imx8ulpevk*
 
 Uses the two pass linear technique and further reduces the bandwidth requirement by downscaling the 'source image' to 1/4 its size (1/2w x 1/2h) before applying the blur and and then upscaling the blurred image to provide the final image. This works well for large kernel sizes and relatively high sigma's but the downscaling produces visible artifacts with low sigma's.
 
@@ -154,7 +154,7 @@ Uses the two pass linear technique and further reduces the bandwidth requirement
 *Source: https://source.codeaurora.org/external/imx/cafatgithub/gtec-demo-framework/tree/DemoApps/GLES2/Blur*
 
 #### GLES2 - DFGraphicsBasic2D
-*Compatible with imx7ulpevk, imx8mqevk, imx8mmevk, imx8mnevk, imx8qxpc0mek, imx8qmmek, and imx8mpevk*
+*Compatible with imx7ulpevk, imx8mqevk, imx8mmevk, imx8mnevk, imx8qxpc0mek, imx8qmmek, imx8mpevk, and imx8ulpevk*
 
 Shows how to use the Demo Frameworks 'basic' 2d rendering capabilities that work across all backends. The basic2D interface allows you to render ASCII strings using a system provided font and draw colored points in batches. The functionality in Basic2D is used internally in the framework to render the profiling overlays like the frame rate counter and graphs.
 
@@ -165,7 +165,7 @@ Shows how to use the Demo Frameworks 'basic' 2d rendering capabilities that work
 *Source: https://source.codeaurora.org/external/imx/cafatgithub/gtec-demo-framework/tree/DemoApps/GLES2/DFGraphicsBasic2D*
 
 #### GLES2 - EightLayerBlend
-*Compatible with imx7ulpevk, imx8mqevk, imx8mmevk, imx8mnevk, imx8qxpc0mek, imx8qmmek, and imx8mpevk*
+*Compatible with imx7ulpevk, imx8mqevk, imx8mmevk, imx8mnevk, imx8qxpc0mek, imx8qmmek, imx8mpevk, and imx8ulpevk*
 
 Creates a simple parallax scrolling effect by blending eight 32 bit per pixel 1080p layers on top of each other. This is not the most optimal way to do it as it uses eight passes. But it does provide a good example of the worst case bandwidth use for the operation. The demo was created to compare GLES to the G2D eight blend blit functionality.
 
@@ -176,7 +176,7 @@ Creates a simple parallax scrolling effect by blending eight 32 bit per pixel 10
 *Source: https://source.codeaurora.org/external/imx/cafatgithub/gtec-demo-framework/tree/DemoApps/GLES2/EightLayerBlend*
 
 #### GLES2 - FractalShader
-*Compatible with imx7ulpevk, imx8mqevk, imx8mmevk, imx8mnevk, imx8qxpc0mek, imx8qmmek, and imx8mpevk*
+*Compatible with imx7ulpevk, imx8mqevk, imx8mmevk, imx8mnevk, imx8qxpc0mek, imx8qmmek, imx8mpevk, and imx8ulpevk*
 
 Can render both the julia and mandelbrot set using a fragment shader. This demo was used to demonstrates GPU shader performance by using up roughly 515 instructions to render each fragment while generating the julia set. It uses no textures, has no overdraw and has a minimal bandwidth requirement.
 
@@ -187,7 +187,7 @@ Can render both the julia and mandelbrot set using a fragment shader. This demo 
 *Source: https://source.codeaurora.org/external/imx/cafatgithub/gtec-demo-framework/tree/DemoApps/GLES2/FractalShader*
 
 #### GLES2 - LineBuilder101
-*Compatible with imx7ulpevk, imx8mqevk, imx8mmevk, imx8mnevk, imx8qxpc0mek, imx8qmmek, and imx8mpevk*
+*Compatible with imx7ulpevk, imx8mqevk, imx8mmevk, imx8mnevk, imx8qxpc0mek, imx8qmmek, imx8mpevk, and imx8ulpevk*
 
 A simple example of dynamic line rendering using the LineBuilder helper class. The line builder has 'Add' methods for most FslBase.Math classes like BoundingBox, BoundingSphere, BoundingFrustrum, Ray, etc.
 
@@ -198,7 +198,7 @@ A simple example of dynamic line rendering using the LineBuilder helper class. T
 *Source: https://source.codeaurora.org/external/imx/cafatgithub/gtec-demo-framework/tree/DemoApps/GLES2/LineBuilder101*
 
 #### GLES2 - Model Loader
-*Compatible with imx7ulpevk, imx8mqevk, imx8mmevk, imx8mnevk, imx8qxpc0mek, imx8qmmek, and imx8mpevk*
+*Compatible with imx7ulpevk, imx8mqevk, imx8mmevk, imx8mnevk, imx8qxpc0mek, imx8qmmek, imx8mpevk, and imx8ulpevk*
 
 Demonstrates how to use the FslSceneImporter and Assimp to load a scene and render it using OpenGLES2. The model is rendered using a simple per pixel directional light shader.
 
@@ -209,7 +209,7 @@ Demonstrates how to use the FslSceneImporter and Assimp to load a scene and rend
 *Source: https://source.codeaurora.org/external/imx/cafatgithub/gtec-demo-framework/tree/DemoApps/GLES2/ModelLoaderBasics*
 
 #### GLES2 - S03_Transform
-*Compatible with imx7ulpevk, imx8mqevk, imx8mmevk, imx8mnevk, imx8qxpc0mek, imx8qmmek, and imx8mpevk*
+*Compatible with imx7ulpevk, imx8mqevk, imx8mmevk, imx8mnevk, imx8qxpc0mek, imx8qmmek, imx8mpevk, and imx8ulpevk*
 
 Renders a animated vertex colored triangle. This shows how to modify the model matrix to rotate a triangle and how to utilize demoTime.DeltaTime to do frame rate independent animation.
 
@@ -220,7 +220,7 @@ Renders a animated vertex colored triangle. This shows how to modify the model m
 *Source: https://source.codeaurora.org/external/imx/cafatgithub/gtec-demo-framework/tree/DemoApps/GLES2/S03_Transform*
 
 #### GLES2 - S04_Projection
-*Compatible with imx7ulpevk, imx8mqevk, imx8mmevk, imx8mnevk, imx8qxpc0mek, imx8qmmek, and imx8mpevk*
+*Compatible with imx7ulpevk, imx8mqevk, imx8mmevk, imx8mnevk, imx8qxpc0mek, imx8qmmek, imx8mpevk, and imx8ulpevk*
 
 This example shows how to: - Build a perspective projection matrix - Render two simple 3d models using frame rate independent animation.
 
@@ -231,7 +231,7 @@ This example shows how to: - Build a perspective projection matrix - Render two 
 *Source: https://source.codeaurora.org/external/imx/cafatgithub/gtec-demo-framework/tree/DemoApps/GLES2/S04_Projection*
 
 #### GLES2 - S06_Texturing
-*Compatible with imx7ulpevk, imx8mqevk, imx8mmevk, imx8mnevk, imx8qxpc0mek, imx8qmmek, and imx8mpevk*
+*Compatible with imx7ulpevk, imx8mqevk, imx8mmevk, imx8mnevk, imx8qxpc0mek, imx8qmmek, imx8mpevk, and imx8ulpevk*
 
 This example shows how to use the Texture class to use a texture in a cube. It also shows you how to use the ContentManager service to load a 'png' file from the Content directory into a bitmap utility class which is then used to used to create a OpenGL ES texture.
 
@@ -242,7 +242,7 @@ This example shows how to use the Texture class to use a texture in a cube. It a
 *Source: https://source.codeaurora.org/external/imx/cafatgithub/gtec-demo-framework/tree/DemoApps/GLES2/S06_Texturing*
 
 #### GLES2 - Mapping
-*Compatible with imx7ulpevk, imx8mqevk, imx8mmevk, imx8mnevk, imx8qxpc0mek, imx8qmmek, and imx8mpevk*
+*Compatible with imx7ulpevk, imx8mqevk, imx8mmevk, imx8mnevk, imx8qxpc0mek, imx8qmmek, imx8mpevk, and imx8ulpevk*
 
 This sample shows how to use a cubemap texture to simulate a reflective material. It also shows you how to use the ContentManager service to load a 'dds' file from the Content directory into a Texture utility class which is then used to used to create a OpenGL ES cubemap texture.
 
@@ -253,7 +253,7 @@ This sample shows how to use a cubemap texture to simulate a reflective material
 *Source: https://source.codeaurora.org/external/imx/cafatgithub/gtec-demo-framework/tree/DemoApps/GLES2/S07_EnvironmentMapping*
 
 #### GLES2 - Mapping Refraction
-*Compatible with imx7ulpevk, imx8mqevk, imx8mmevk, imx8mnevk, imx8qxpc0mek, imx8qmmek, and imx8mpevk*
+*Compatible with imx7ulpevk, imx8mqevk, imx8mmevk, imx8mnevk, imx8qxpc0mek, imx8qmmek, imx8mpevk, and imx8ulpevk*
 
 This sample is a variation from the previous sample, again, a cubemap texture is used, but this time instead of simulating a reflective material a refractive material is simulated. It also shows you how to use the ContentManager service to load a 'dds' file from the Content directory into a Texture utility class which is then used to used to create a OpenGL ES cubemap texture.
 
