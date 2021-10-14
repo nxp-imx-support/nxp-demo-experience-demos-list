@@ -98,6 +98,9 @@ class ObjectDetection:
 
         if self.display == "X11":
             display = "ximagesink name=img_tensor "
+        elif self.display == "None":
+            self.print_time = GLib.get_monotonic_time()
+            display = "fakesink "
         else:
             display = "waylandsink name=img_tensor "
 
@@ -280,6 +283,12 @@ class ObjectDetection:
             mem_scores.unmap(info_scores)
             mem_num.unmap(info_num)
 
+            if self.display == "None":
+                if (GLib.get_monotonic_time() - self.print_time) > 1000000:
+                    inference = self.tensor_filter.get_property("latency")
+                    print("Inference time: " + str(inference/1000) + " ms (" + "{:5.2f}".format(1/(inference/1000000)) + " IPS)")
+                    self.print_time = GLib.get_monotonic_time()
+
 
     def get_detected_objects(self, boxes, detections, scores, num):
         """Pairs boxes with dectected objects"""
@@ -377,7 +386,7 @@ class ObjectDetection:
         context.move_to(
             int(50 * scale_width),
             int(self.VIDEO_HEIGHT-(100*scale_height)))
-        context.show_text("i.MX NNStreamer Dectection Demo")
+        context.show_text("i.MX NNStreamer Detection Demo")
         if inference == 0:
             context.move_to(
                 int(50 * scale_width),
@@ -471,7 +480,7 @@ class ObjectDetection:
 if __name__ == '__main__':
     if(
         len(sys.argv) != 7 and len(sys.argv) != 5
-        and len(sys.argv) != 9 and len(sys.argv) != 12):
+        and len(sys.argv) != 9 and len(sys.argv) != 12 and len(sys.argv) != 6):
         print(
             "Usage: python3 nndetection.py <dev/video*/video file>" +
             " <NPU/CPU> <model file> <label file>")
@@ -482,6 +491,9 @@ if __name__ == '__main__':
     if(len(sys.argv) == 5):
         example = ObjectDetection(sys.argv[1],sys.argv[2],sys.argv[3],
             sys.argv[4])
+    if(len(sys.argv) == 6):
+        example = ObjectDetection(sys.argv[1],sys.argv[2],sys.argv[3],
+            sys.argv[4], sys.argv[5])
     if(len(sys.argv) == 9):
         example = ObjectDetection(sys.argv[1],sys.argv[2],sys.argv[3],
             sys.argv[4],sys.argv[5],sys.argv[6],sys.argv[7],sys.argv[8])

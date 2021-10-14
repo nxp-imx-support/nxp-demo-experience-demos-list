@@ -107,6 +107,9 @@ class NNStreamerExample:
 
         if self.display == "X11":
             display = "ximagesink name=img_tensor"
+        elif self.display == "None":
+            self.print_time = GLib.get_monotonic_time()
+            display = "fakesink  name=img_tensor"
         else:
             display = "waylandsink name=img_tensor"
 
@@ -288,6 +291,15 @@ class NNStreamerExample:
             mem_heatmap.unmap(info_heatmap)
             mem_offset.unmap(info_offset)
 
+            if self.display == "None":
+                if (GLib.get_monotonic_time() - self.print_time) > 1000000:
+                    inference = self.tensor_filter.get_property("latency")
+                    print(
+                        "Inference time: " +
+                        str(inference/1000) + " ms (" +
+                        "{:5.2f}".format(1/(inference/1000000)) + " IPS)")
+                    self.print_time = GLib.get_monotonic_time()
+
     def prepare_overlay_cb(self, overlay, caps):
         """Store the information from the caps that we are interested in."""
         self.video_caps = caps
@@ -393,7 +405,7 @@ class NNStreamerExample:
                 pad.send_event(Gst.Event.new_tag(tags))
 
 if __name__ == '__main__':
-    if(len(sys.argv) != 7 and len(sys.argv) != 5):
+    if(len(sys.argv) != 7 and len(sys.argv) != 5 and len(sys.argv) != 6):
         print("Usage: python3 nnpose.py <dev/video*/video file> <NPU/CPU>"+
                 " <model file> <label file>")
         exit()
@@ -403,5 +415,8 @@ if __name__ == '__main__':
     if(len(sys.argv) == 5):
         example = NNStreamerExample(sys.argv[1],sys.argv[2],sys.argv[3],
             sys.argv[4])
+    if(len(sys.argv) == 6):
+        example = NNStreamerExample(sys.argv[1],sys.argv[2],sys.argv[3],
+            sys.argv[4], sys.argv[5])
     example.run_example()
 
