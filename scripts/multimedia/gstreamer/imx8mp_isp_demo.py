@@ -20,7 +20,7 @@ import time
 import gi
 gi.require_version("Gtk", "3.0")
 gi.require_version("Gst", "1.0")
-from gi.repository import Gtk, Gst
+from gi.repository import Gtk, Gst, Gio
 
 
 class ISPDemo(Gtk.Window):
@@ -39,6 +39,25 @@ class ISPDemo(Gtk.Window):
             no_cam = Gtk.Label.new("No Basler Camera!")
             self.add(no_cam)
             return
+
+        # Create Toolbar
+        header = Gtk.HeaderBar()
+        header.set_title("i.MX 8M Plus ISP Demo")
+        self.set_titlebar(header)
+
+        quit_button = Gtk.Button()
+        quit_icon = Gio.ThemedIcon(name="application-exit-symbolic")
+        quit_image = Gtk.Image.new_from_gicon(quit_icon, Gtk.IconSize.BUTTON)
+        quit_button.add(quit_image)
+        header.pack_end(quit_button)
+        quit_button.connect("clicked", on_close)
+
+        debug_button = Gtk.Button()
+        debug_icon = Gio.ThemedIcon(name="utilities-terminal-symbolic")
+        debug_image = Gtk.Image.new_from_gicon(debug_icon, Gtk.IconSize.BUTTON)
+        debug_button.add(debug_image)
+        header.pack_start(debug_button)
+        debug_button.connect("clicked", self.on_debug)
 
         # Create main layout
         main_grid = Gtk.Box(
@@ -60,8 +79,21 @@ class ISPDemo(Gtk.Window):
         options_combo.set_active(0)
         options_combo.connect('changed', self.on_options_change)
 
+        self.debug_buffer = Gtk.TextBuffer.new(None)
+        self.debug_output = Gtk.TextView.new_with_buffer(self.debug_buffer)
+        self.debug_output.set_wrap_mode(1)
+        self.debug_output.set_editable(False)
+        self.debug_output.set_cursor_visible(False)
+
+        self.debug_window = Gtk.ScrolledWindow.new()
+        self.debug_window.add(self.debug_output)
+        self.debug_window.set_size_request(100, 100)
+        self.debug_window.set_visible(False)
+
+        
         main_grid.pack_start(options_combo, True, True, 0)
         main_grid.pack_start(self.content_stack, True, True, 0)
+        main_grid.pack_start(self.debug_window, True, True, 0)
 
         # BLS Layout
         bls_grid = Gtk.Grid(row_homogeneous=True,
@@ -399,8 +431,7 @@ class ISPDemo(Gtk.Window):
 
         self.content_stack.add_named(filter_grid, "Filtering")
 
-
-    # Event Handlers 
+    # Event Handlers
     def on_change_bls(self, unused):
         """Set the BLS values (Red, Green.R/B, Blue)."""
         red = self.r_scale.get_value()
@@ -541,10 +572,20 @@ class ISPDemo(Gtk.Window):
         """Send a command to the ISP."""
         os.system(
             "v4l2-ctl -d " + CAM + " -c viv_ext_ctrl='{" + command + "}'")
+        self.debug_buffer.insert_at_cursor("\n" + command)
+        self.debug_output.scroll_to_mark(
+            self.debug_buffer.get_insert(), 0.0, True, 0.5, 0.5)
 
     def on_options_change(self, widght):
         """Change the currently visable options."""
         self.content_stack.set_visible_child_name(widght.get_active_text())
+
+    def on_debug(self, widget):
+        if self.debug_window.get_visible():
+            self.debug_window.set_visible(False)
+            window.set_size_request(440, 280)
+        else:
+            self.debug_window.set_visible(True)
 
 
 def on_close(unused):
@@ -580,4 +621,6 @@ if __name__ == "__main__":
     window = ISPDemo()
     window.connect("destroy", on_close)
     window.show_all()
+    window.debug_window.set_visible(False)
+    window.set_size_request(440, 280)
     Gtk.main()
