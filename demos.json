@@ -28,7 +28,28 @@
              "screenshot": "ml_brand.png",
              "icon": "photo-video-solid.svg",
              "description": "An example of how to use NNStreamer to detect a branded item from the United States in a video or camera feed. An internet connection may be required."
-         }]
+         },{
+            "name": "Object Classification",
+            "executable": "python3 /home/root/.nxp-demo-experience/scripts/machine_learning/pyeiq_launcher.py small_id",
+            "compatible": "imx8ulpevk",
+            "screenshot": "pyeiq_id.png",
+            "icon": "photo-video-solid.svg",
+            "description": "An example of how to use Python to classify objects in a photo. An internet connection may be required."
+        },{
+            "name": "Object Detection",
+            "executable": "python3 /home/root/.nxp-demo-experience/scripts/machine_learning/pyeiq_launcher.py small_detect",
+            "compatible": "imx8ulpevk",
+            "screenshot": "pyeiq_detect.png",
+            "icon": "photo-video-solid.svg",
+            "description": "An example of how to use Python to detect objects in a photo. An internet connection may be required."
+        },{
+            "name": "Mask Detection",
+            "executable": "python3 /home/root/.nxp-demo-experience/scripts/machine_learning/pyeiq_launcher.py small_mask",
+            "compatible": "imx8ulpevk",
+            "screenshot": "pyeiq_mask.png",
+            "icon": "photo-video-solid.svg",
+            "description": "An example of how to use Python to detect mask wearing in a photo. An internet connection may be required."
+        }]
      }]
      },
     {"Multimedia":[{

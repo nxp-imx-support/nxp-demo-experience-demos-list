@@ -326,6 +326,10 @@ A QML clock application that demonstrates using a ListView type to display data 
 
 An example of how to use NNStreamer to classify objects in a video or camera feed. An internet connection may be required.
 
+<a>
+<img src="screenshot/ml_id.png"  height="150px" alt="Screenshot">
+</a>
+
 *Source: https://github.com/nnstreamer/nnstreamer-example*
 
 #### NNStreamer - Object Detection
@@ -333,12 +337,20 @@ An example of how to use NNStreamer to classify objects in a video or camera fee
 
 An example of how to use NNStreamer to detect objects in a video or camera feed. An internet connection may be required.
 
+<a>
+<img src="screenshot/ml_detect.png"  height="150px" alt="Screenshot">
+</a>
+
 *Source: https://github.com/nnstreamer/nnstreamer-example*
 
 #### NNStreamer - Pose Detection
 *Compatible with imx8mpevk*
 
 An example of how to use NNStreamer to detect a pose in a video or camera feed. An internet connection may be required.
+
+<a>
+<img src="screenshot/ml_pose.png"  height="150px" alt="Screenshot">
+</a>
 
 *Source: https://github.com/nnstreamer/nnstreamer-example*
 
@@ -349,3 +361,29 @@ An example of how to use NNStreamer to detect a branded item in a video or camer
 
 *Source: https://github.com/nnstreamer/nnstreamer-example*
 
+#### PyeIQ - Object Classification
+*Compatible with imx8ulpevk*
+
+An example of how to use Python to classify objects in a photo. An internet connection may be required.
+
+<a>
+<img src="screenshot/pyeiq_id.png"  height="150px" alt="Screenshot">
+</a>
+
+#### PyeIQ - Object Detection
+*Compatible with imx8ulpevk*
+
+An example of how to use Python to detect objects in a photo. An internet connection may be required.
+
+<a>
+<img src="screenshot/pyeiq_detect.png"  height="150px" alt="Screenshot">
+</a>
+
+#### PyeIQ - Mask Detection
+*Compatible with imx8ulpevk*
+
+An example of how to use Python to detect mask wearing in a photo. An internet connection may be required.
+
+<a>
+<img src="screenshot/pyeiq_mask.png"  height="150px" alt="Screenshot">
+</a>
