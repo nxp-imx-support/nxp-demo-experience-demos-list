@@ -90,7 +90,6 @@ class ISPDemo(Gtk.Window):
         self.debug_window.set_size_request(100, 100)
         self.debug_window.set_visible(False)
 
-        
         main_grid.pack_start(options_combo, True, True, 0)
         main_grid.pack_start(self.content_stack, True, True, 0)
         main_grid.pack_start(self.debug_window, True, True, 0)
@@ -581,6 +580,7 @@ class ISPDemo(Gtk.Window):
         self.content_stack.set_visible_child_name(widght.get_active_text())
 
     def on_debug(self, widget):
+        """Shows and hides the debug output."""
         if self.debug_window.get_visible():
             self.debug_window.set_visible(False)
             window.set_size_request(440, 280)
@@ -621,6 +621,7 @@ if __name__ == "__main__":
     window = ISPDemo()
     window.connect("destroy", on_close)
     window.show_all()
-    window.debug_window.set_visible(False)
+    if hasattr(window, 'debug_window'):
+        window.debug_window.set_visible(False)
     window.set_size_request(440, 280)
     Gtk.main()
