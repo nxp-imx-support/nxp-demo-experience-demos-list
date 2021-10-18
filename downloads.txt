@@ -67,18 +67,18 @@ sha:8668498affbbe2ca7af3ac587a6eeb66625439bb
 
 name:small_keyboard.jpg
 path:
-url:https://github.com/NXP/nxp-demo-experience-assets/raw/imx_5.10.y/pictures/small_keyboard.jpg
+url:https://github.com/NXP/nxp-demo-experience-assets/raw/imx_5.10.y/images/small_keyboard.jpg
 alt_url:
 sha:
 
 name:small_dog.jpg
 path:
-url:https://github.com/NXP/nxp-demo-experience-assets/raw/imx_5.10.y/pictures/small_dog.jpg
+url:https://github.com/NXP/nxp-demo-experience-assets/raw/imx_5.10.y/images/small_dog.jpg
 alt_url:
 sha:
 
 name:small_mask.jpg
 path:
-url:https://github.com/NXP/nxp-demo-experience-assets/raw/imx_5.10.y/pictures/small_mask.jpg
+url:https://github.com/NXP/nxp-demo-experience-assets/raw/imx_5.10.y/images/small_mask.jpg
 alt_url:
 sha:
