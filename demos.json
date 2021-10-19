@@ -114,7 +114,7 @@
             "executable": "python3 /home/root/.nxp-demo-experience/scripts/multimedia/gstreamer/imx8mp_isp_demo.py",
             "source": "",
             "icon": "photo-video-solid.svg",
-            "screenshot": "",
+            "screenshot": "isp_demo.png",
             "compatible": "imx8mpevk",
             "description": "This program opens a GStreamer pipeline and allows the user to change various parameters of the ISP in real time. This demo will only work with a compatible Basler camera."
         }],
