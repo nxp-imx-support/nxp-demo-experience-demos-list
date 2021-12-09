@@ -109,14 +109,23 @@
             "screenshot": "gst_camera_preview_screenshot.png",
             "compatible": "imx8mpevk",
             "description": "This is a GStreamer pipeline able to create a camera preview example using a Basler camera and an OV5640 camera simultaneously."
-        },{
-            "name": "ISP Demo",
+        }],
+        "ISP":[{
+            "name": "ISP Control Demo",
             "executable": "python3 /home/root/.nxp-demo-experience/scripts/multimedia/gstreamer/imx8mp_isp_demo.py",
             "source": "",
             "icon": "photo-video-solid.svg",
             "screenshot": "isp_demo.png",
             "compatible": "imx8mpevk",
             "description": "This program opens a GStreamer pipeline and allows the user to change various parameters of the ISP in real time. This demo will only work with a compatible Basler camera."
+        },{
+            "name": "Video Dump Demo",
+            "executable": "python3 /home/root/.nxp-demo-experience/scripts/multimedia/gstreamer/imx8mp_isp_dump.py",
+            "source": "",
+            "icon": "photo-video-solid.svg",
+            "screenshot": "",
+            "compatible": "imx8mpevk",
+            "description": "This program allows users to dump the raw frame data from a camera onto a connected drive."
         }],
         "Audio":[{
             "name": "Audio Record",
