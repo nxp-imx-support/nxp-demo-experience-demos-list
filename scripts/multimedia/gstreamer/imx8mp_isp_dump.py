@@ -6,8 +6,8 @@ SPDX-License-Identifier: BSD-2-Clause
 This script provides a user interface for the “video_test” tool that is used
 to dump the raw data from a camera into a file. Through the GUI, users are
 able to select options such as the camera, mode, format, postprocessing
-options, and a save location. After this, users can button to run video_test
-and dump the frames onto the selected drive.
+options, and a save location. After this, users can push a button to run
+video_test and dump the frames onto the selected drive.
 
 This demo will only work with cameras that work with video_test.
 """
@@ -26,7 +26,7 @@ class VideoDump(Gtk.Window):
     """The GUI window for the launcher."""
 
     def __init__(self):
-        """Creates the UI window."""
+        """Create the UI window."""
         # Initialization
         Gtk.init_check()
         super().__init__()
@@ -189,7 +189,7 @@ class VideoDump(Gtk.Window):
         """Holds the mode details."""
 
         def __init__(self, index, width, height, fps, hdr):
-            """Creates modes."""
+            """Create the mode."""
             self.index = index
             self.width = width
             self.height = height
@@ -197,7 +197,7 @@ class VideoDump(Gtk.Window):
             self.hdr = hdr
 
     def get_mode(self):
-        """Does a dummy run to read the modes for a camera."""
+        """Do dummy run to read the modes for a camera."""
         mode_finder = subprocess.run(
             ['/opt/imx8-isp/bin/video_test', '-w', '999999999', '-h',
             '999999999', '-f', 'YUYV', '-t', '0', '-d',
@@ -230,7 +230,7 @@ class VideoDump(Gtk.Window):
         GLib.idle_add(self.update_gui_mode)
 
     def update_gui_mode(self):
-        '''Callback to update GUI with mode options.'''
+        """Run callback to update GUI with mode options."""
         if len(self.mode_set) == 0:
             error_dialog = Gtk.MessageDialog(
                 transient_for=self,
@@ -272,9 +272,8 @@ class VideoDump(Gtk.Window):
         self.load_button.set_sensitive(True)
         self.device_combo.set_sensitive(True)
 
-    
     def load_camera(self, button):
-        '''Gets the mode for the selected camera.'''
+        """Get the mode for the selected camera."""
         button.set_sensitive(False)
         self.device_combo.set_sensitive(False)
         self.mode_combo.set_sensitive(False)
@@ -292,7 +291,7 @@ class VideoDump(Gtk.Window):
         thread.start()
 
     def mode_change(self, combo_box):
-        '''Changes the UI for a given mode.'''
+        """Change the UI for a given mode."""
         if self.mode_combo.get_active_text() is not None:
             self.height_entry.set_value(
                 int(self.mode_set[self.mode_combo.get_active_text()].height))
@@ -302,7 +301,7 @@ class VideoDump(Gtk.Window):
                 int(self.mode_set[self.mode_combo.get_active_text()].fps))
 
     def process_change(self, combo_box):
-        '''Changes UI based on post-process selector'''
+        """Change UI based on post-process selector"""
         if (self.postprocess_combo.get_active_text() == "Crop" or
             self.postprocess_combo.get_active_text() == "Scale"):
             self.height_entry.set_sensitive(True)
@@ -342,7 +341,7 @@ class VideoDump(Gtk.Window):
         self.launch_button.set_sensitive(True)
 
     def throw_error(self, error):
-        """Creates an error dialog."""
+        """Create an error dialog."""
         error_dialog = Gtk.MessageDialog(
                     transient_for=self,
                     flags=0,
@@ -354,9 +353,9 @@ class VideoDump(Gtk.Window):
             "The following error occurred: " + error)
         error_dialog.run()
         error_dialog.destroy()
-    
+
     def run_video_test(self):
-        """Starts dumping frames onto a USB drive"""
+        """Start dumping frames onto a USB drive."""
         os.chdir(self.disk_combo.get_active_text())
         dirname = (self.mode_combo.get_active_text() + "_" + 
             self.format_combo.get_active_text() + "_" +
