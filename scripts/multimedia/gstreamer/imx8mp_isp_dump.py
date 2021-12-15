@@ -221,8 +221,18 @@ class VideoDump(Gtk.Window):
                 mode_cur.index = line[6:]
             elif line.startswith('width'):
                 mode_cur.width = line[6:]
+                if mode_cur.width == "0":
+                    if mode_cur.index == "0" or mode_cur.index == "2":
+                        mode_cur.width = "3840"
+                    else:
+                        mode_cur.width = "1920"
             elif line.startswith('height'):
                 mode_cur.height = line[7:]
+                if mode_cur.height == "0":
+                    if mode_cur.index == "0" or mode_cur.index == "2":
+                        mode_cur.height = "2160"
+                    else:
+                        mode_cur.height = "1080"
             elif line.startswith('fps'):
                 mode_cur.fps = line[4:]
             elif line.startswith('hdr_mode'):

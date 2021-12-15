@@ -221,24 +221,6 @@
             "description": "Uses the two pass linear technique and further reduces the bandwidth requirement by downscaling the 'source image' to 1/4 its size (1/2w x 1/2h) before applying the blur and and then upscaling the blurred image to provide the final image. This works well for large kernel sizes and relatively high sigma's but the downscaling produces visible artifacts with low sigma's."
         },
         {
-            "name": "DFGraphicsBasic2D",
-            "executable": "/opt/imx-gpu-sdk/GLES2/DFGraphicsBasic2D/GLES2.DFGraphicsBasic2D_Wayland --Window [0,0,1280,720]",
-            "source": "",
-            "icon": "object-group-regular.svg",
-            "screenshot": "dfgraphicsbasic2d.jpg",
-            "compatible": "imx8mq, imx8mm, imx8mn, imx8qxpc0mek, imx8qmmek, imx8mp",
-            "description": "Shows how to use the Demo Frameworks 'basic' 2d rendering capabilities that work across all backends. The basic2D interface allows you to render ASCII strings using a system provided font and draw colored points in batches. The functionality in Basic2D is used internally in the framework to render the profiling overlays like the frame rate counter and graphs."
-        },
-        {
-            "name": "DFGraphicsBasic2D",
-            "executable": "/opt/imx-gpu-sdk/GLES2/DFGraphicsBasic2D/GLES2.DFGraphicsBasic2D_Wayland --Window [0,0,480,360]",
-            "source": "",
-            "icon": "object-group-regular.svg",
-            "screenshot": "dfgraphicsbasic2d.jpg",
-            "compatible": "imx7ulp, imx8ulp",
-            "description": "Shows how to use the Demo Frameworks 'basic' 2d rendering capabilities that work across all backends. The basic2D interface allows you to render ASCII strings using a system provided font and draw colored points in batches. The functionality in Basic2D is used internally in the framework to render the profiling overlays like the frame rate counter and graphs."
-        },
-        {
             "name": "EightLayerBlend",
             "executable": "/opt/imx-gpu-sdk/GLES2/EightLayerBlend/GLES2.EightLayerBlend_Wayland --Window [0,0,1280,720]",
             "source": "",
