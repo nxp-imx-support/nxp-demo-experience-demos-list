@@ -90,7 +90,7 @@ class ObjectDetection:
         """Starts pipeline and run demo"""
 
         if self.backend == "CPU":
-            backend = "true:CPU"
+            backend = "true:CPU custom=NumThreads:4"
         elif self.backend == "GPU":
             backend = "true:gpu custom=Delegate:GPU"
         else:
