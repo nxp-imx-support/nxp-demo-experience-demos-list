@@ -3,14 +3,14 @@
         "NNStreamer":[{
              "name": "Object Classification",
              "executable": "python3 /home/root/.nxp-demo-experience/scripts/machine_learning/MLDemoLauncher.py id",
-             "compatible": "imx8mp",
+             "compatible": "imx8mp, imx8mm",
              "screenshot": "ml_id.png",
              "icon": "photo-video-solid.svg",
              "description": "An example of how to use NNStreamer to classify objects in a video or camera feed. An internet connection may be required."
          },{
              "name": "Object Detection",
              "executable": "python3 /home/root/.nxp-demo-experience/scripts/machine_learning/MLDemoLauncher.py detect",
-             "compatible": "imx8mp",
+             "compatible": "imx8mp, imx8mm",
              "screenshot": "ml_detect.png",
              "icon": "photo-video-solid.svg",
              "description": "An example of how to use NNStreamer to detect objects in a video or camera feed. An internet connection may be required."
@@ -24,7 +24,7 @@
          },{
              "name": "Brand Detection",
              "executable": "python3 /home/root/.nxp-demo-experience/scripts/machine_learning/MLDemoLauncher.py brand",
-             "compatible": "imx8mp",
+             "compatible": "imx8mp, imx8mm",
              "screenshot": "ml_brand.png",
              "icon": "photo-video-solid.svg",
              "description": "An example of how to use NNStreamer to detect a branded item from the United States in a video or camera feed. An internet connection may be required."
