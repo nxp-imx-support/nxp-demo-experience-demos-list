@@ -24,7 +24,7 @@ from gi.repository import Gst, GObject, GLib
 
 class NNStreamerExample:
     """The class that manages the demo"""
-    def __init__(self, device, backend,
+    def __init__(self, platform, device, backend,
         model, labels, display="Weston", callback=None, width=1920,
         height=1080, r=1, g=0, b=0):
         """Creates an instance of the demo
@@ -62,6 +62,7 @@ class NNStreamerExample:
         self.r = r
         self.b = b
         self.g = g
+        self.platform = platform
 
         if not self.tflite_init():
             raise Exception
@@ -85,12 +86,17 @@ class NNStreamerExample:
             self.print_time = GLib.get_monotonic_time()
             display = "fakesink"
         else:
-            display = "waylandsink name=img_tensor"
+            display = "waylandsink sync=false name=img_tensor"
 
         self.past_time = GLib.get_monotonic_time()
         self.interval_time = -1
         self.label_time = GLib.get_monotonic_time()
-       
+
+        if self.platform == "imx8qmmek":
+            decoder = "h264parse ! v4l2h264dec ! imxvideoconvert_g2d "
+        else:
+            decoder = "vpudec "
+
         if "/dev/video" in self.device:
             pipeline = 'v4l2src name=cam_src device=' + self.device
             pipeline += ' ! imxvideoconvert_g2d ! video/x-raw,width='
@@ -99,7 +105,7 @@ class NNStreamerExample:
             pipeline += ',format=BGRx ! tee name=t_raw'
         else:
             pipeline = 'filesrc location=' + self.device  + ' ! qtdemux'
-            pipeline += ' ! vpudec ! tee name=t_raw'
+            pipeline += ' ! ' + decoder + '! tee name=t_raw'
         # main loop
         self.loop = GObject.MainLoop()
         pipeline += ' t_raw. ! queue ! imxvideoconvert_g2d ! cairooverlay '
@@ -112,7 +118,7 @@ class NNStreamerExample:
         pipeline += 'tensorflow-lite model=' + self.tflite_model
         pipeline +=  ' accelerator=' + backend
         pipeline += ' silent=FALSE latency=1 ! tensor_sink name=tensor_sink'
-        
+
         # init pipeline
         self.pipeline = Gst.parse_launch(pipeline)
 
@@ -364,20 +370,22 @@ if __name__ == '__main__':
         print("Usage: python3 nnbrand.py </dev/video*/video file> <NPU/CPU>"+
                 " <model file> <label file>")
         exit()
+    # Get platform
+    platform = os.uname().nodename
     if(len(sys.argv) == 7):
-        example = NNStreamerExample(sys.argv[1],sys.argv[2],sys.argv[3],
+        example = NNStreamerExample(platform, sys.argv[1],sys.argv[2],sys.argv[3],
             sys.argv[4],sys.argv[5],sys.argv[6])
     if(len(sys.argv) == 5):
-        example = NNStreamerExample(sys.argv[1],sys.argv[2],sys.argv[3],
+        example = NNStreamerExample(platform, sys.argv[1],sys.argv[2],sys.argv[3],
             sys.argv[4])
     if(len(sys.argv) == 6):
-        example = NNStreamerExample(sys.argv[1],sys.argv[2],sys.argv[3],
+        example = NNStreamerExample(platform, sys.argv[1],sys.argv[2],sys.argv[3],
             sys.argv[4], sys.argv[5])
     if(len(sys.argv) == 9):
-        example = NNStreamerExample(sys.argv[1],sys.argv[2],sys.argv[3],
+        example = NNStreamerExample(platform, sys.argv[1],sys.argv[2],sys.argv[3],
             sys.argv[4],sys.argv[5],sys.argv[6],sys.argv[7],sys.argv[8])
     if(len(sys.argv) == 12):
-        example = NNStreamerExample(sys.argv[1],sys.argv[2],sys.argv[3],
+        example = NNStreamerExample(platform, sys.argv[1],sys.argv[2],sys.argv[3],
             sys.argv[4],sys.argv[5],sys.argv[6],sys.argv[7],sys.argv[8],
             sys.argv[9],sys.argv[10],sys.argv[11])
     example.run_example()

@@ -144,6 +144,9 @@ class MLLaunch(Gtk.Window):
             header.set_title("NNStreamer Demo")
         header.set_subtitle("NNStreamer Examples")
 
+        # Get platform
+        self.platform = os.uname().nodename
+
     def start(self, button):
         """Starts the ML Demo with selected settings"""
         self.update_time = GLib.get_monotonic_time()
@@ -276,6 +279,7 @@ class MLLaunch(Gtk.Window):
         if self.demo == "detect":
             import nndetection
             example = nndetection.ObjectDetection(
+                self.platform,
                 device,
                 self.backend_combo.get_active_text(),
                 model, labels, self.display_combo.get_active_text(),
@@ -285,6 +289,7 @@ class MLLaunch(Gtk.Window):
         if self.demo == "id":
             import nnclassification
             example = nnclassification.NNStreamerExample(
+                self.platform,
                 device,
                 self.backend_combo.get_active_text(),
                 model, labels, self.display_combo.get_active_text(),
@@ -294,6 +299,7 @@ class MLLaunch(Gtk.Window):
         if self.demo == "pose":
             import nnpose 
             example = nnpose.NNStreamerExample(
+                self.platform,
                 device,
                 self.backend_combo.get_active_text(),
                 model, labels, self.display_combo.get_active_text(),
@@ -303,6 +309,7 @@ class MLLaunch(Gtk.Window):
         if self.demo == "brand":
             import nnbrand
             example = nnbrand.NNStreamerExample(
+                self.platform,
                 device,
                 self.backend_combo.get_active_text(),
                 model, labels, self.display_combo.get_active_text(),
