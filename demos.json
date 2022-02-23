@@ -75,7 +75,7 @@
             "source": "",
             "icon": "photo-video-solid.svg",
             "screenshot": "gst_camera_preview_screenshot.png",
-            "compatible": "imx8qxpc0mek, imx8qmmek, imx8mq, imx8mm, imx8mn",
+            "compatible": "imx8qxpc0mek, imx8mq, imx8mm, imx8mn",
             "description": "This is a simple GStreamer pipeline able to create a camera preview example. Note that this example only works with the correct DTS file and needs a IMXTOCSI acessory connected to the board: gst-launch-1.0 v4l2src device=/dev/video0 ! video/x-raw,width=1280,height=720 ! queue ! glimagesink"
         },{
             "name": "Camera Preview",
