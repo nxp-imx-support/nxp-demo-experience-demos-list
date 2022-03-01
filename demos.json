@@ -125,7 +125,7 @@
             "icon": "photo-video-solid.svg",
             "screenshot": "",
             "compatible": "imx8mp",
-            "description": "This program allows users to dump the raw frame data from a camera onto a connected drive."
+            "description": "This program allows users to dump the raw frame data from a camera onto a connected drive. This demo will only work with a compatible Basler camera."
         }],
         "Audio":[{
             "name": "Audio Record",
