@@ -30,11 +30,11 @@ DEBUG = False
 class ObjectDetection:
     """The class that manages the demo"""
     def __init__(
-        self, device, backend, model, labels,
+        self, platform, device, backend, model, labels,
         display="Weston", callback=None, width=1920,
         height=1080, r=1, g=0, b=0):
         """Creates an instance of the demo
-        
+
         Arguments:
         device -- What camera or video file to use
         backend -- Whether to use NPU or CPU
@@ -80,6 +80,7 @@ class ObjectDetection:
         self.r = r
         self.b = b
         self.g = g
+        self.platform = platform
 
         if not self.tflite_init():
             raise Exception
@@ -102,7 +103,7 @@ class ObjectDetection:
             self.print_time = GLib.get_monotonic_time()
             display = "fakesink "
         else:
-            display = "waylandsink name=img_tensor "
+            display = "waylandsink sync=false name=img_tensor "
 
         # main loop
         self.loop = GObject.MainLoop()
@@ -111,6 +112,10 @@ class ObjectDetection:
         self.reload_time = -1
         self.interval_time = 999999
 
+        if self.platform == "imx8qmmek":
+            decoder = "h264parse ! v4l2h264dec ! imxvideoconvert_g2d "
+        else:
+            decoder = "vpudec "
 
         if "/dev/video" in self.device:
             gst_launch_cmdline = 'v4l2src name=cam_src device=' + self.device
@@ -120,7 +125,7 @@ class ObjectDetection:
             gst_launch_cmdline += ',format=BGRx ! tee name=t'
         else:
             gst_launch_cmdline = 'filesrc location=' + self.device
-            gst_launch_cmdline += ' ! qtdemux ! vpudec ! tee name=t'
+            gst_launch_cmdline += ' ! qtdemux ! ' + decoder + '! tee name=t'
 
         gst_launch_cmdline += ' t. ! queue name=thread-nn'
         gst_launch_cmdline += ' max-size-buffers=2 leaky=2 !'
@@ -138,7 +143,7 @@ class ObjectDetection:
         gst_launch_cmdline += ' imxvideoconvert_g2d !'
         gst_launch_cmdline += ' cairooverlay name=tensor_res ! queue ! '
         gst_launch_cmdline += display
-        
+
         self.pipeline = Gst.parse_launch(gst_launch_cmdline)
 
         # bus and message callback
@@ -485,20 +490,22 @@ if __name__ == '__main__':
             "Usage: python3 nndetection.py <dev/video*/video file>" +
             " <NPU/CPU> <model file> <label file>")
         exit()
+    # Get platform
+    platform = os.uname().nodename
     if(len(sys.argv) == 7):
-        example = ObjectDetection(sys.argv[1],sys.argv[2],sys.argv[3],
+        example = ObjectDetection(platform, sys.argv[1],sys.argv[2],sys.argv[3],
             sys.argv[4],sys.argv[5],sys.argv[6])
     if(len(sys.argv) == 5):
-        example = ObjectDetection(sys.argv[1],sys.argv[2],sys.argv[3],
+        example = ObjectDetection(platform, sys.argv[1],sys.argv[2],sys.argv[3],
             sys.argv[4])
     if(len(sys.argv) == 6):
-        example = ObjectDetection(sys.argv[1],sys.argv[2],sys.argv[3],
+        example = ObjectDetection(platform, sys.argv[1],sys.argv[2],sys.argv[3],
             sys.argv[4], sys.argv[5])
     if(len(sys.argv) == 9):
-        example = ObjectDetection(sys.argv[1],sys.argv[2],sys.argv[3],
+        example = ObjectDetection(platform, sys.argv[1],sys.argv[2],sys.argv[3],
             sys.argv[4],sys.argv[5],sys.argv[6],sys.argv[7],sys.argv[8])
     if(len(sys.argv) == 12):
-        example = ObjectDetection(sys.argv[1],sys.argv[2],sys.argv[3],
+        example = ObjectDetection(platform, sys.argv[1],sys.argv[2],sys.argv[3],
             sys.argv[4],sys.argv[5],sys.argv[6],sys.argv[7],sys.argv[8],
             sys.argv[9],sys.argv[10],sys.argv[11])
     example.run()
