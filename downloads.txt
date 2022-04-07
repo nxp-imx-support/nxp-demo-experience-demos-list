@@ -82,3 +82,15 @@ path:
 url:https://github.com/NXP/nxp-demo-experience-assets/raw/imx_5.10.y/images/small_mask.jpg
 alt_url:
 sha:
+
+name:ssd_mobilenet_v2_face_quant_postprocess.tflite
+path:
+url:https://raw.githubusercontent.com/google-coral/test_data/master/ssd_mobilenet_v2_face_quant_postprocess.tflite
+alt_url:
+sha:
+
+name:facenet_int_quantized.tflite
+path:
+url:https://github.com/shubham0204/FaceRecognition_With_FaceNet_Android/raw/master/app/src/main/assets/facenet_int_quantized.tflite
+alt_url:
+sha:
