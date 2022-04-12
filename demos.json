@@ -54,45 +54,13 @@
      },
     {"Multimedia":[{
         "GStreamer":[{
-            "name": "Video test source",
-            "executable": "gst-launch-1.0 videotestsrc ! imxvideoconvert_g2d ! waylandsink window-width=480 window-height=360",
+            "name": "Video Test Demo",
+            "executable": "python3 /home/root/.nxp-demo-experience/scripts/multimedia/gstreamer/video_test.py",
             "source": "",
             "icon": "photo-video-solid.svg",
             "screenshot": "gst_test_src_screenshot.png",
-            "compatible": "imx7ulp, imx8ulp",
-            "description": "This is a simple GStreamer pipeline able to play the Video Test Source example: gst-launch-1.0 videotestsrc ! imxvideoconvert_g2d ! waylandsink window-width=480 window-height=360"
-        },{
-            "name": "Video test source",
-            "executable": "gst-launch-1.0 videotestsrc ! video/x-raw, width=1280,height=720 ! glimagesink",
-            "source": "",
-            "icon": "photo-video-solid.svg",
-            "screenshot": "gst_test_src_screenshot.png",
-            "compatible": "imx8qxpc0mek, imx8qmmek, imx8mq, imx8mm, imx8mn, imx8mp",
-            "description": "This is a simple GStreamer pipeline able to create a video playback with the Video Test Source example. This pipeline limits the video screen to HD resolution: gst-launch-1.0 videotestsrc ! video/x-raw,width=1280,height=720 ! glimagesink"
-        },{
-            "name": "Camera Preview",
-            "executable": "gst-launch-1.0 v4l2src device=/dev/video0 ! video/x-raw,width=1280,height=720 ! queue ! glimagesink",
-            "source": "",
-            "icon": "photo-video-solid.svg",
-            "screenshot": "gst_camera_preview_screenshot.png",
-            "compatible": "imx8qxpc0mek, imx8mq, imx8mm, imx8mn",
-            "description": "This is a simple GStreamer pipeline able to create a camera preview example. Note that this example only works with the correct DTS file and needs a IMXTOCSI acessory connected to the board: gst-launch-1.0 v4l2src device=/dev/video0 ! video/x-raw,width=1280,height=720 ! queue ! glimagesink"
-        },{
-            "name": "Camera Preview",
-            "executable": "python3 /home/root/.nxp-demo-experience/scripts/multimedia/gstreamer/imx8mp_camera_demo.py --open_cam=True",
-            "source": "",
-            "icon": "photo-video-solid.svg",
-            "screenshot": "gst_camera_preview_screenshot.png",
-            "compatible": "imx8mp",
-            "description": "This is a simple GStreamer pipeline able to create a camera preview example."
-        },{
-            "name": "Camera Preview",
-            "executable": "gst-launch-1.0 v4l2src device=/dev/video0 ! video/x-raw,width=720,height=480 ! waylandsink",
-            "source": "",
-            "icon": "photo-video-solid.svg",
-            "screenshot": "gst_camera_preview_screenshot.png",
-            "compatible": "imx8ulp",
-            "description": "This is a simple GStreamer pipeline able to create a camera preview example. Note that this example only works with the correct DTS file and needs a IMXTOCSI acessory connected to the board: gst-launch-1.0 v4l2src device=/dev/video0 ! video/x-raw,width=720,height=480 ! waylandsink"
+            "compatible": "imx7ulp, imx8ulp, imx8qxpc0mek, imx8qmmek, imx8mq, imx8mm, imx8mn, imx8mp",
+            "description": "This is a simple demo utility that allows users to play back video captured on a camera or a test source."
         },{
             "name": "Camera using VPU",
             "executable": "python3 /home/root/.nxp-demo-experience/scripts/multimedia/gstreamer/imx8mp_camera_demo.py --vpu_enc=True",
