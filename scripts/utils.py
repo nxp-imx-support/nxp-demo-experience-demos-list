@@ -43,8 +43,8 @@ def download_file(name):
         loc = DOWNLOAD_FOLDER + name
     else:
         try:
-             urllib.request.urlopen(url, timeout=1)
-             urllib.request.urlretrieve(url,DOWNLOAD_FOLDER + name)
+            urllib.request.urlopen(url)
+            urllib.request.urlretrieve(url, DOWNLOAD_FOLDER + name)
         except:
             try:
                 urllib.request.urlopen(alt_url, timeout=1)
