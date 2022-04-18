@@ -221,7 +221,25 @@ class FaceDemo():
         return True
 
     def get_similarity(self, face_a, face_b):
-        """Finds the similarity between two masks"""
+        """Finds the similarity between two masks
+        This is done by taking the vectors in the face mask and finding the
+        cosine similarity between them. The formula to find this is:
+
+                                  f(a[n] * b[n])
+        sim (a[],b[]) = -----------------------------------
+                         sqrt(f(a[n]^2)) * sqrt(f(b[n]^2))
+
+        where:
+        - a[] and b[] both represent the array of values of a single face mask
+        - f(n) is the sum of values where n is 0 through the length of a[]
+          minus 1
+        - a[] and b[] have equal lengths and equal indexes map to the same
+          points on the face mask
+
+        The idea behind this method is that vectors that have smaller
+        vectors between them (independent of magnitude) should in theory be
+        similar.
+        """
         dot = 0
         a_sum = 0
         b_sum = 0
