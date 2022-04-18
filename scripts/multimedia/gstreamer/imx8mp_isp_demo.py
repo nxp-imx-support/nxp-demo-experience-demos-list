@@ -158,6 +158,7 @@ class ISPDemo(Gtk.Window):
         dwe_label.set_halign(1)
 
         self.dwe_switch = Gtk.Switch()
+        self.dwe_dropdown = Gtk.ComboBoxText()
         self.dwe_switch.connect("notify::active", self.on_change_dwe)
         self.dwe_switch.set_active(True)
         self.dwe_switch.set_halign(1)
@@ -166,11 +167,18 @@ class ISPDemo(Gtk.Window):
         dwe_mode_label = Gtk.Label.new("Dewarp Mode")
         dwe_mode_label.set_halign(1)
 
-        dwe_options = ["Lens Distortion", "Fisheye Expand", "Split Screen", "Fisheye Dewarp"]
-        self.dwe_dropdown = Gtk.ComboBoxText()
+        self.dwe_options = [{
+                        "name": "Lens Distortion",
+                        "id": 1},
+                       {"name": "Fisheye Expand",
+                        "id": 2},
+                       {"name": "Split Screen",
+                        "id": 4},
+                       {"name": "Fisheye Dewarp",
+                        "id": 8}]
         self.dwe_dropdown.set_entry_text_column(0)
-        for option in dwe_options:
-            self.dwe_dropdown.append_text(option)
+        for option in self.dwe_options:
+            self.dwe_dropdown.append_text(option["name"])
         self.dwe_dropdown.set_active(0)
         self.dwe_dropdown.connect('changed', self.on_change_dwe_mode)
         self.dwe_dropdown.set_hexpand(True)
@@ -477,18 +485,12 @@ class ISPDemo(Gtk.Window):
             self.dwe_dropdown.set_sensitive(False)
             self.change_isp("<id>:<dwe.s.bypass>; <dwe>:{<bypass>:true}")
     
-    def on_change_dwe_mode(self, widght):
-        """Set the mode for gamma control."""
-        mode = widght.get_active_text()
-        if mode == "Lens Distortion":
-            mode_num = "1"
-        elif mode == "Fisheye Expand":
-            mode_num = "2"
-        elif mode == "Split Screen":
-            mode_num = "4"
-        else:
-            mode_num = "8"
-        self.change_isp("<id>:<dwe.s.type>; <dwe>:{<type>:" + mode_num + "}")
+    def on_change_dwe_mode(self, widget):
+        """Set the mode for dwe control."""
+        mode = self.dwe_dropdown.get_active()
+        print(mode)
+        mode_num = self.dwe_options[mode]["id"]
+        self.change_isp("<id>:<dwe.s.type>; <dwe>:{<type>:" + str(mode_num) + "}")
 
     def on_change_vflip(self, widget, unused):
         """Flip the camera output vertically."""
