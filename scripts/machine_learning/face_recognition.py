@@ -19,6 +19,8 @@ import tflite_runtime.interpreter as tflite
 import numpy as np
 import threading
 import sys
+import argparse
+import json
 
 import gi
 gi.require_version("Gtk", "3.0")
@@ -47,14 +49,35 @@ class FaceDemo():
         """Starts the camera and sets up the inference engine"""
         self.face_models = []
         self.setup_inferences(backend)
-        cam_pipeline = cv2.VideoCapture(
-            "v4l2src device=" + cam + " ! imxvideoconvert_g2d ! "
-            "video/x-raw,format=RGBA,width=1280,height=720 ! "
-            "videoconvert ! appsink")
-        GLib.idle_add(main_window.destroy)
-        self.options_window = OptionsWindow()
-        GLib.idle_add(self.options_window.show_all)
-        GLib.idle_add(cv2.namedWindow, "i.MX Face Recognition Demo")
+        if GUI:
+            self.width = 1280
+            self.height = 720
+        else:
+            self.width = 1920
+            self.height = 1080
+        if cam == "fake":
+            cam_pipeline = cv2.VideoCapture(
+                "videotestsrc ! imxvideoconvert_g2d ! "
+                "video/x-raw,format=RGBA,width=" + str(self.width) + 
+                ",height=" + str(self.height) + " ! " +
+                "videoconvert ! appsink")
+        else:
+            cam_pipeline = cv2.VideoCapture(
+                "v4l2src device=" + cam + " ! imxvideoconvert_g2d ! "
+                "video/x-raw,format=RGBA,width=" + str(self.width) + 
+                ",height=" + str(self.height) + " ! " +
+                "videoconvert ! appsink")
+        if GUI:
+            GLib.idle_add(main_window.destroy)
+            self.options_window = OptionsWindow()
+            GLib.idle_add(self.options_window.show_all)
+            GLib.idle_add(cv2.namedWindow, "i.MX Face Recognition Demo")
+        elif OUTPUT:
+            cv2.namedWindow(
+                "i.MX Face Recognition Demo", cv2.WND_PROP_FULLSCREEN)
+            cv2.setWindowProperty(
+                "i.MX Face Recognition Demo", cv2.WND_PROP_FULLSCREEN,
+                cv2.WINDOW_FULLSCREEN)
         status, org_img = cam_pipeline.read()
         self.mode = 0
         self.countdown = None
@@ -71,9 +94,15 @@ class FaceDemo():
                 times = ["N/A", "N/A"]
             cv2.putText(
                     mod_img, "Overall time: " + times[0] + " IPS (" +
-                    times[1] + " ms)", (5,710),
+                    times[1] + " ms)", (5,self.height-10),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.75, (255,255,255), 2)
-            GLib.idle_add(cv2.imshow,"i.MX Face Recognition Demo", mod_img)
+            if GUI:
+                GLib.idle_add(
+                    cv2.imshow,"i.MX Face Recognition Demo", mod_img)
+            else:
+                if OUTPUT:
+                    cv2.imshow("i.MX Face Recognition Demo", mod_img)
+                    cv2.waitKey(1)
             status, org_img = cam_pipeline.read()
             self.write_time = True
             overall_time = time.perf_counter()
@@ -124,8 +153,8 @@ class FaceDemo():
                 self.mode = 2
         for face in faces:
             face_img = frame[
-                int(face[0]*720):int(face[2]*720),
-                int(face[1]*1280):int(face[3]*1280)]
+                int(face[0]*self.height):int(face[2]*self.height),
+                int(face[1]*self.width):int(face[3]*self.width)]
             face_info = self.id_face(face_img)
             if self.mode == 0 or self.mode == 1:
                 if face_info[0] == "Not found":
@@ -133,28 +162,39 @@ class FaceDemo():
                 else:
                     color = (0, 225, 0)
                 cv2.rectangle(
-                    frame, ((int(face[1]*1280)), (int(face[0]*720))),
-                    ((int(face[3]*1280)), (int(face[2]*720))), color, 2)
+                    frame, ((int(face[1]*self.width)),
+                    (int(face[0]*self.height))), ((int(face[3]*self.width)),
+                    (int(face[2]*self.height))), color, 2)
                 cv2.putText(
                     frame, face_info[0] + " " + str(face_info[1]) + "%",
-                    ((int(face[1]*1280)), (int(face[0]*720-10))),
-                    cv2.FONT_HERSHEY_SIMPLEX, 1.0, color, 4)
+                    ((int(face[1]*self.width)),
+                    (int(face[0]*self.height-10))), cv2.FONT_HERSHEY_SIMPLEX,
+                    1.0, color, 4)
             if self.mode == 2:
                 blank_frame = frame.copy()
                 cv2.rectangle(
-                    blank_frame, ((int(face[1]*1280)), (int(face[0]*720))),
-                    ((int(face[3]*1280)), (int(face[2]*720))), (225, 0, 0), 2)
-                GLib.idle_add(
-                    cv2.imshow,"i.MX Face Recognition Demo", blank_frame)
-                self.register_face(face_info[2])
+                    blank_frame, ((int(face[1]*self.width)),
+                    (int(face[0]*self.height))), ((int(face[3]*self.width)),
+                    (int(face[2]*self.height))), (225, 0, 0), 2)
+
+                if GUI:
+                    GLib.idle_add(
+                        cv2.imshow,"i.MX Face Recognition Demo", blank_frame)
+                    self.register_face(face_info[2])
+                elif OUTPUT:
+                    cv2.imshow("i.MX Face Recognition Demo", blank_frame)
+                    cv2.waitKey(1)
+                if not GUI:    
+                    self.register_face_cli(face_info[2])
         if self.mode == 2:
             self.mode = 0
             self.write_time = False
-            self.options_window.unlock_controls()
+            if GUI:
+                self.options_window.unlock_controls()
         detect_time = self.get_timings(self.detect_time)
         cv2.putText(
                         frame, "Detection time: " + detect_time[0] + " IPS (" +
-                        detect_time[1] + " ms)", (5,685),
+                        detect_time[1] + " ms)", (5,self.height - 35),
                         cv2.FONT_HERSHEY_SIMPLEX, 0.75, (255,255,255), 2)
         recog_time = 0
         for times in self.recog_time:
@@ -165,13 +205,15 @@ class FaceDemo():
         else:
             recog_time = ["N/A", "N/A"]
         cv2.putText(
-                        frame, "Recognition time: " + recog_time[0] + " IPS ("
-                        + recog_time[1] + " ms - " + str(len(self.recog_time))
-                        + " face(s))", (5,660),
-                        cv2.FONT_HERSHEY_SIMPLEX, 0.75, (255,255,255), 2)
+                        frame, "Recognition time: " + recog_time[0] +
+                        " IPS (" + recog_time[1] + " ms - " +
+                        str(len(self.recog_time)) + " face(s))",
+                        (5,self.height - 60), cv2.FONT_HERSHEY_SIMPLEX,
+                        0.75, (255,255,255), 2)
         cv2.putText(
-                        frame, "i.MX Face Recognition Demo", (5,635),
-                        cv2.FONT_HERSHEY_SIMPLEX, 0.75, (255,255,255), 2)
+                        frame, "i.MX Face Recognition Demo",
+                        (5,self.height - 85), cv2.FONT_HERSHEY_SIMPLEX, 0.75,
+                        (255,255,255), 2)
         return frame
 
     def find_faces(self, frame):
@@ -271,11 +313,42 @@ class FaceDemo():
         if face_window.named_face is not None:
             self.registered_faces.append([face_window.named_face, face_mask])
         GLib.idle_add(face_window.destroy)
+
+    def register_face_cli(self, face_mask):
+        """Registers a new face with command line"""
+        name = input("Name the face in the blue box: ")
+        self.registered_faces.append([name, face_mask])
+
     def get_timings(self, time):
         """Get timings to display"""
         fps = str(round(1/time, 2))
         ms = str(round(time*1000, 2))
         return [fps, ms]
+
+    def export_database(self):
+        """Exports database"""
+        out = []
+        for face in self.registered_faces:
+            obj = {"name":face[0], "mask":face[1].tolist()}
+            out.append(obj)
+        data = json.dumps(out)
+        file = open("/home/root/face.json", "w")
+        file.write(data)
+        file.close()
+        print("File written to /home/root/face.json")
+
+    def import_database(self, path):
+        """Imports database"""
+        file = open(path, 'r')
+        data = json.load(file)
+        file.close()
+        n = 0
+        for face in data:
+            self.registered_faces.append(
+                [face['name'], np.array(face['mask'], dtype=np.float32)])
+            n = n + 1
+        print(str(int(n)) + " faces imported")
+
 
     
 class Model(NamedTuple):
@@ -315,7 +388,7 @@ class MainWindow(Gtk.Window):
         self.set_titlebar(header)
 
         quit_button = Gtk.Button()
-        quit_icon = Gio.ThemedIcon(name="application-exit-symbolic")
+        quit_icon = Gio.ThemedIcon(name="process-stop-symbolic")
         quit_image = Gtk.Image.new_from_gicon(quit_icon, Gtk.IconSize.BUTTON)
         quit_button.add(quit_image)
         header.pack_end(quit_button)
@@ -390,7 +463,7 @@ class OptionsWindow(Gtk.Window):
         self.set_titlebar(header)
 
         quit_button = Gtk.Button()
-        quit_icon = Gio.ThemedIcon(name="application-exit-symbolic")
+        quit_icon = Gio.ThemedIcon(name="process-stop-symbolic")
         quit_image = Gtk.Image.new_from_gicon(quit_icon, Gtk.IconSize.BUTTON)
         quit_button.add(quit_image)
         header.pack_end(quit_button)
@@ -517,10 +590,73 @@ class FaceWindow(Gtk.Window):
         self.working = False
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        '--gui', type=int, default=1, help='Run with GUI')
+    parser.add_argument(
+        '--show', type=int, default=1, help='Show output')
+    parser.add_argument(
+        '--npu', type=int, default=1, help='Use NPU')
+    parser.add_argument(
+        '--camera', type=int, default=0, help='Which camera to use')
+    parser.add_argument(
+        '--faces', default="", help='Load existing faces')
+    args = parser.parse_args()
     os.environ["VIV_VX_CACHE_BINARY_GRAPH_DIR"] = ("/home/root/.cache"
             "/demoexperience")
     os.environ["VIV_VX_ENABLE_CACHE_GRAPH_BINARY"] = "1"
-    Gst.init(None)
-    main_window = MainWindow()
-    main_window.show_all()
-    Gtk.main()
+    if(args.gui == 0):
+        GUI = False
+        print("Command line mode!")
+        if args.show == 0:
+            OUTPUT = False
+            print("Will not show output!")
+            output = False
+        else:
+            OUTPUT = True
+            print("Will show output")
+            output = True
+        if args.npu == 0:
+            print("Will not use NPU!")
+            backend = "CPU"
+        else:
+            print("Will use NPU")
+            backend = "NPU"
+        if (args.camera == -1):
+            print("Using videotestsrc!")
+            device = "fake"
+        else:
+            print("Using /dev/video" + str(args.camera))
+            device = "/dev/video" + str(args.camera)
+        FACE_DEMO = FaceDemo()
+        cam_thread = threading.Thread(
+            target=FaceDemo.start,
+            args=(FACE_DEMO, backend, device))
+        cam_thread.daemon =True
+        cam_thread.start()
+        time.sleep(3)
+        if(args.faces != ""):
+            FACE_DEMO.import_database(args.faces)
+        print("##### HOW TO USE #####")
+        print("# R - Registar Face  #")
+        print("# E - Export Faces   #")
+        print("# Q - Quit Demo      #")
+        print("######################")
+        while(True):
+            if FACE_DEMO.mode == 0:
+                option = input("Select option: ")
+                if option == "R":
+                    print("Taking picture...")
+                    FACE_DEMO.mode = 1
+                elif option == "E":
+                    print("Exporting file...")
+                    FACE_DEMO.export_database()
+                elif option == "Q":
+                    print("Exiting...")
+                    sys.exit()
+    else:
+        GUI = True
+        Gst.init(None)
+        main_window = MainWindow()
+        main_window.show_all()
+        Gtk.main()
