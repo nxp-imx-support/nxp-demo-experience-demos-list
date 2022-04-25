@@ -11,6 +11,7 @@ camera is selected, users can use a test source.
 import glob
 import threading
 import subprocess
+import os
 
 import gi
 gi.require_version("Gtk", "3.0")
@@ -19,7 +20,6 @@ from gi.repository import Gtk, Gio, GLib
 def run_pipeline(pipeline, type):
     """Run the pipeline the user selects."""
     subprocess.run(pipeline.split(' '))
-    GLib.idle_add(Gtk.main_quit)
 
 class MainWindow(Gtk.Window):
     """Main UI window."""
@@ -41,21 +41,21 @@ class MainWindow(Gtk.Window):
         self.set_titlebar(header)
 
         quit_button = Gtk.Button()
-        quit_icon = Gio.ThemedIcon(name="application-exit-symbolic")
+        quit_icon = Gio.ThemedIcon(name="process-stop-symbolic")
         quit_image = Gtk.Image.new_from_gicon(quit_icon, Gtk.IconSize.BUTTON)
         quit_button.add(quit_image)
         header.pack_end(quit_button)
-        quit_button.connect("clicked", Gtk.main_quit)
+        quit_button.connect("clicked", self.on_exit)
 
         source_label = Gtk.Label(
             label="Source"
         )
 
-        devices = ["Test Source"]
+        self.devices = ["Test Source"]
         for device in glob.glob('/dev/video*'):
-            devices.append(device)
+            self.devices.append(device)
         self.source_select = Gtk.ComboBoxText()
-        for option in devices:
+        for option in self.devices:
             self.source_select.append_text(option)
         self.source_select.set_active(0)
         self.source_select.set_hexpand(True)
@@ -74,9 +74,9 @@ class MainWindow(Gtk.Window):
         self.scale_check = Gtk.CheckButton.new_with_label("Scale to output")
 
         quit_label = Gtk.Label(
-            label="Once started, users may stop the video feed in the NXP\n"
-            "Demo Experience window by pressing \"Stop Current Demo\".\n"
-            "Playback windows can be dragged with the mouse."
+            label="Once started, users may stop the video feed using the\n"
+            "quit button in this window. Playback windows can be dragged\n"
+            "with the mouse."
         )
 
         self.launch_button = Gtk.Button.new_with_label("Run")
@@ -93,6 +93,10 @@ class MainWindow(Gtk.Window):
         self.add(main_grid)
 
     def on_start(self, widget):
+        self.source_select.set_sensitive(False)
+        self.resolution_select.set_sensitive(False)
+        self.scale_check.set_sensitive(False)
+        self.launch_button.set_sensitive(False)
         """Set up and start the pipeline."""
         source = self.source_select.get_active_text()
         if source == "Test Source":
@@ -113,8 +117,19 @@ class MainWindow(Gtk.Window):
         stream_thread = threading.Thread(
             target=run_pipeline, args=(pipeline,"gstreamer"))
         stream_thread.start()
-        self.destroy()
-
+        if source != "videotestsrc":
+            index = self.devices.index(self.source_select.get_active_text())
+            self.devices.remove(self.devices[index])
+            self.source_select.remove(index)
+            self.source_select.set_active(0)
+        self.source_select.set_sensitive(True)
+        self.resolution_select.set_sensitive(True)
+        self.scale_check.set_sensitive(True)
+        self.launch_button.set_sensitive(True)
+    
+    def on_exit(self, widget):
+        subprocess.run(["pkill", "-P", str(os.getpid())])
+        Gtk.main_quit()
 
 if __name__ == "__main__":
     main_window = MainWindow()
