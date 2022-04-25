@@ -95,7 +95,7 @@ class ObjectDetection:
         elif self.backend == "GPU":
             backend = "true:gpu custom=Delegate:GPU"
         else:
-            backend = "true:npu custom=Delegate:NNAPI"
+            backend = "true:npu custom=Delegate:External,ExtDelegateLib:libvx_delegate.so"
 
         if self.display == "X11":
             display = "ximagesink name=img_tensor "
