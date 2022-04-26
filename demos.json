@@ -262,7 +262,7 @@
         },
         {
             "name": "FractalShader",
-            "id": "fractal_small2",
+            "id": "fract_shader_small2",
             "executable": "/opt/imx-gpu-sdk/GLES2/FractalShader/GLES2.FractalShader_Wayland --Window [0,0,650,400]",
             "source": "",
             "icon": "object-group-regular.svg",
