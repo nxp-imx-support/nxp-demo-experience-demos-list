@@ -242,7 +242,7 @@
         },
         {
             "name": "FractalShader",
-            "id": "fractal",
+            "id": "fract_shader",
             "executable": "/opt/imx-gpu-sdk/GLES2/FractalShader/GLES2.FractalShader_Wayland --Window [0,0,1280,720]",
             "source": "",
             "icon": "object-group-regular.svg",
@@ -252,7 +252,7 @@
         },
         {
             "name": "FractalShader",
-            "id": "fractal_small",
+            "id": "fract_shader_small",
             "executable": "/opt/imx-gpu-sdk/GLES2/FractalShader/GLES2.FractalShader_Wayland --Window [0,0,480,360]",
             "source": "",
             "icon": "object-group-regular.svg",
@@ -292,7 +292,7 @@
         },
         {
             "name": "Model Loader",
-            "id": "model",
+            "id": "model_loader",
             "executable": "/opt/imx-gpu-sdk/GLES2/ModelLoaderBasics/GLES2.ModelLoaderBasics_Wayland --Window [0,0,1280,720]",
             "source": "",
             "icon": "object-group-regular.svg",
@@ -302,7 +302,7 @@
         },
         {
             "name": "Model Loader",
-            "id": "model_small",
+            "id": "model_loader_small",
             "executable": "/opt/imx-gpu-sdk/GLES2/ModelLoaderBasics/GLES2.ModelLoaderBasics_Wayland --Window [0,0,480,360]",
             "source": "",
             "icon": "object-group-regular.svg",
