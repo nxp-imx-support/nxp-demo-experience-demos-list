@@ -10,7 +10,6 @@ a machine learning application. The models used in this demo are demo
 quality only, and should not be used in production software.
 """
 
-from multiprocessing import dummy
 import os
 import glob
 from typing import NamedTuple
