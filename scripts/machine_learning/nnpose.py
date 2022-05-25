@@ -135,20 +135,19 @@ class NNStreamerExample:
             gst_launch_cmdline = 'filesrc location=' + self.device
             gst_launch_cmdline += ' ! qtdemux ! ' + decoder + '! tee name=t'
 
-        gst_launch_cmdline += ' t. !'
-        gst_launch_cmdline += ' queue name=thread-nn max-size-buffers=2 '
-        gst_launch_cmdline += 'leaky=2 ! imxvideoconvert_g2d ! video/x-raw,'
+        gst_launch_cmdline += ' t. ! imxvideoconvert_g2d ! video/x-raw,'
         gst_launch_cmdline += 'width={:d},'.format(self.MODEL_INPUT_WIDTH)
         gst_launch_cmdline += 'height={:d},'.format(self.MODEL_INPUT_HEIGHT)
-        gst_launch_cmdline += 'format=ARGB ! videoconvert !'
-        gst_launch_cmdline += ' video/x-raw,format=RGB ! tensor_converter ! '
+        gst_launch_cmdline += 'format=ARGB ! ' 
+        gst_launch_cmdline += 'queue max-size-buffers=2 leaky=2 ! videoconvert'
+        gst_launch_cmdline += ' ! video/x-raw,format=RGB ! tensor_converter ! '
         gst_launch_cmdline += ' tensor_filter framework=tensorflow-lite model='
         gst_launch_cmdline += self.tflite_model + ' accelerator=' + backend
         gst_launch_cmdline += ' silent=FALSE name=tensor_filter latency=1 !'
         gst_launch_cmdline += ' tensor_sink name=tensor_sink t.'
-        gst_launch_cmdline += ' ! queue name=thread-img max-size-buffers=2 !'
-        gst_launch_cmdline += ' imxvideoconvert_g2d ! '
-        gst_launch_cmdline += 'cairooverlay name=tensor_res ! queue ! '
+        gst_launch_cmdline += ' ! imxvideoconvert_g2d ! '
+        gst_launch_cmdline += 'cairooverlay name=tensor_res ! '
+        gst_launch_cmdline += 'queue max-size-buffers=2 leaky=2 ! '
         gst_launch_cmdline += display
 
         # init pipeline

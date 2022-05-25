@@ -111,15 +111,15 @@ class NNStreamerExample:
         self.loop = GObject.MainLoop()
         pipeline += ' t_raw. ! imxvideoconvert_g2d ! '
         pipeline += 'video/x-raw,width=224,height=224,format=RGBA ! '
+        pipeline += 'queue max-size-buffers=2 leaky=2 ! '
         pipeline += 'videoconvert ! video/x-raw,format=RGB ! '
-        pipeline += 'queue leaky=2 max-size-buffers=2 ! tensor_converter ! '
-        pipeline += 'tensor_filter name=tensor_filter '
+        pipeline += 'tensor_converter ! tensor_filter name=tensor_filter '
         pipeline += 'framework=tensorflow-lite model='
         pipeline += self.tflite_model + ' accelerator=' + backend
         pipeline += ' silent=FALSE latency=1 ! tensor_sink name=tensor_sink'
-        pipeline += ' t_raw. ! queue ! imxvideoconvert_g2d ! cairooverlay '
+        pipeline += ' t_raw. ! imxvideoconvert_g2d ! cairooverlay '
         pipeline += 'name=tensor_res draw-on-transparent-surface=false ! '
-        pipeline += 'queue ! ' + display
+        pipeline += 'queue max-size-buffers=2 leaky=2 ! ' + display
 
         # init pipeline
         self.pipeline = Gst.parse_launch(pipeline)
