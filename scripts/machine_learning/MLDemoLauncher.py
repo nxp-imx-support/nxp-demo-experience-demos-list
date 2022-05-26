@@ -38,7 +38,7 @@ class MLLaunch(Gtk.Window):
         for device in glob.glob('/dev/video*'):
             devices.append(device)
 
-        if os.path.exists("/usr/lib/libneuralnetworks.so"):
+        if os.path.exists("/usr/lib/libneuralnetworks.so") and self.demo != "brand":
             backends_available = ["NPU", "CPU"]
         else:
             backends_available = ["CPU"]
