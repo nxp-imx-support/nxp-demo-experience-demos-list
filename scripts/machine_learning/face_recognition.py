@@ -508,7 +508,7 @@ class OptionsWindow(Gtk.Window):
         self.face_reg_entry.set_value(DEFAULT_RECOGNITION_ACCURACY*100)
         self.face_reg_entry.connect('value-changed', self.change_rec_acc)
 
-        self.launch_button = Gtk.Button.new_with_label("Registar Face")
+        self.launch_button = Gtk.Button.new_with_label("Register Face")
         self.launch_button.connect("clicked", self.register_faces)
         self.launch_button.set_hexpand(True)
 
@@ -521,7 +521,7 @@ class OptionsWindow(Gtk.Window):
         self.add(main_grid)
 
     def register_faces(self, widget):
-        """Changes mode to registar faces"""
+        """Changes mode to register faces"""
         self.lock_controls()
         FACE_DEMO.mode = 1
 
@@ -548,7 +548,7 @@ class OptionsWindow(Gtk.Window):
         DEFAULT_RECOGNITION_ACCURACY = widget.get_value()/100
 
 class FaceWindow(Gtk.Window):
-    """GUI for users to registar face"""
+    """GUI for users to register face"""
 
     def __init__(self):
         """Creates GUI elements for window"""
@@ -585,7 +585,7 @@ class FaceWindow(Gtk.Window):
         self.name_box.set_text(
             "Person " + str(len(FACE_DEMO.registered_faces) + 1))
 
-        self.add_button = Gtk.Button.new_with_label("Registar Face")
+        self.add_button = Gtk.Button.new_with_label("Register Face")
         self.add_button.connect("clicked", self.register_face)
         self.add_button.set_hexpand(True)
 
@@ -663,7 +663,7 @@ if __name__ == "__main__":
         if(args.faces != ""):
             FACE_DEMO.import_database(args.faces)
         print("##### HOW TO USE #####")
-        print("# R - Registar Face  #")
+        print("# R - Register Face  #")
         print("# E - Export Faces   #")
         print("# Q - Quit Demo      #")
         print("######################")

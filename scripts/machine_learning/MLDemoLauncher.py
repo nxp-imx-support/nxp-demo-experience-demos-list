@@ -58,7 +58,7 @@ class MLLaunch(Gtk.Window):
         self.launch_button = Gtk.Button.new_with_label("Run")
         header = Gtk.HeaderBar()
         quit_button = Gtk.Button()
-        quit_icon = Gio.ThemedIcon(name="application-exit-symbolic")
+        quit_icon = Gio.ThemedIcon(name="process-stop-symbolic")
         quit_image = Gtk.Image.new_from_gicon(quit_icon, Gtk.IconSize.BUTTON)
         separator = Gtk.Separator.new(0)
         time_title_label = Gtk.Label.new("Video Refresh")
