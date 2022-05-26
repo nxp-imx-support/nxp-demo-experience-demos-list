@@ -56,6 +56,7 @@ class MLLaunch(Gtk.Window):
         display_label = Gtk.Label.new("Display")
         self.display_combo = Gtk.ComboBoxText()
         self.launch_button = Gtk.Button.new_with_label("Run")
+        self.status_bar = Gtk.Label.new()
         header = Gtk.HeaderBar()
         quit_button = Gtk.Button()
         quit_icon = Gio.ThemedIcon(name="process-stop-symbolic")
@@ -104,15 +105,16 @@ class MLLaunch(Gtk.Window):
         main_grid.attach(self.color_combo, 2, 6, 2, 1)
 
         main_grid.attach(self.launch_button, 0, 7, 4, 1)
+        main_grid.attach(self.status_bar, 0, 8, 4, 1)
 
-        main_grid.attach(separator, 0, 8, 4, 1)
+        main_grid.attach(separator, 0, 9, 4, 1)
 
-        main_grid.attach(time_title_label, 0, 9, 2, 1)
-        main_grid.attach(self.time_label, 0, 10, 1, 1)
-        main_grid.attach(self.fps_label, 1, 10, 1, 1)
-        main_grid.attach(inference_title_label, 2, 9, 2, 1)
-        main_grid.attach(self.inference_label, 2, 10, 1, 1)
-        main_grid.attach(self.ips_label, 3, 10, 1, 1)
+        main_grid.attach(time_title_label, 0, 10, 2, 1)
+        main_grid.attach(self.time_label, 0, 11, 1, 1)
+        main_grid.attach(self.fps_label, 1, 11, 1, 1)
+        main_grid.attach(inference_title_label, 2, 10, 2, 1)
+        main_grid.attach(self.inference_label, 2, 11, 1, 1)
+        main_grid.attach(self.ips_label, 3, 11, 1, 1)
 
         # Configure widgets
         for device in devices:
@@ -233,6 +235,7 @@ class MLLaunch(Gtk.Window):
             elif device == -1 or device == -2 or device == -3:
                 error = "brand_example.mov"
         if (model == -1 or labels == -1 or device == -1):
+            """
             dialog = Gtk.MessageDialog(
                 transient_for=self,
                 flags=0,
@@ -245,9 +248,12 @@ class MLLaunch(Gtk.Window):
                 error)
             dialog.run()
             dialog.destroy()
+            """
+            self.status_bar.set_text("Cannot find files!")
             self.launch_button.set_sensitive(True)
             return
         if (model == -2 or labels == -2 or device == -2):
+            """
             dialog = Gtk.MessageDialog(
                 transient_for=self,
                 flags=0,
@@ -262,9 +268,12 @@ class MLLaunch(Gtk.Window):
                 "path to the file in \"PATH\" \n \n Cannot download " + error)
             dialog.run()
             dialog.destroy()
+            """
+            self.status_bar.set_text("Download failed!")
             self.launch_button.set_sensitive(True)
             return
         if (model == -3 or labels == -3 or device == -4):
+            """
             dialog = Gtk.MessageDialog(
                 transient_for=self,
                 flags=0,
@@ -277,6 +286,8 @@ class MLLaunch(Gtk.Window):
                 error)
             dialog.run()
             dialog.destroy()
+            """
+            self.status_bar.set_text("Downloaded bad file!")
             self.launch_button.set_sensitive(True)
             return
         if self.demo == "detect":
