@@ -56,7 +56,7 @@ sha:
 name:brand_model.tflite
 path:
 url:https://github.com/google-coral/test_data/raw/master/tfhub_tf1_popular_us_products_ptq_fc_split.tflite
-alt_url:https://github.com/NXP/nxp-demo-experience-assets/lf-5.15.32_2.0.0/models/brand_model.tflite
+alt_url:https://github.com/NXP/nxp-demo-experience-assets/raw/lf-5.15.32_2.0.0/models/brand_model.tflite
 sha:4926c7bdfe8b06c41cf166caed99fde7a63f8a12
 
 name:brand_labels.txt
