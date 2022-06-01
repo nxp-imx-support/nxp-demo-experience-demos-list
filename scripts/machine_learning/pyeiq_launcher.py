@@ -62,7 +62,7 @@ class PyeiqDemo(Gtk.Window):
         self.set_titlebar(header)
 
         quit_button = Gtk.Button()
-        quit_icon = Gio.ThemedIcon(name="application-exit-symbolic")
+        quit_icon = Gio.ThemedIcon(name="process-stop-symbolic")
         quit_image = Gtk.Image.new_from_gicon(quit_icon, Gtk.IconSize.BUTTON)
         quit_button.add(quit_image)
         header.pack_end(quit_button)
