@@ -39,7 +39,7 @@
              "compatible": "imx8mp, imx8mm",
              "screenshot": "",
              "icon": "",
-             "description": "An example of how to use NNStreamer to run ML inferences over local network. An internet connection may be required."
+             "description": "An example of how to use NNStreamer to run ML inferences over local network.An internet connection may be required."
          }],
          "pyeIQ":[{
             "name": "Object Classification",
