@@ -77,7 +77,7 @@
             "source": "",
             "icon": "photo-video-solid.svg",
             "screenshot": "gst_test_src_screenshot.png",
-            "compatible": "imx7ulp, imx8ulp, imx8qxpc0mek, imx8qmmek, imx8mq, imx8mm, imx8mn, imx8mp",
+            "compatible": "imx7ulp, imx8ulp, imx8qxpc0mek, imx8qmmek, imx8mq, imx8mm, imx8mn, imx8mp, imx93",
             "description": "This is a simple demo utility that allows users to play back video captured on a camera or a test source."
         },{
             "name": "Camera using VPU",
