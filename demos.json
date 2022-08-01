@@ -63,7 +63,7 @@
             "id": "face_recog",
             "executable": "python3 /home/root/.nxp-demo-experience/scripts/machine_learning/face_recognition.py",
             "compatible": "imx8mp",
-            "screenshot": "",
+            "screenshot": "face_rec.png",
             "icon": "photo-video-solid.svg",
             "description": "An OpenCV example of how to use machine learning to recognize faces. An internet connection is required."
         }]

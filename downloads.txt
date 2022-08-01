@@ -11,13 +11,13 @@ alt_url:https://github.com/NXP/nxp-demo-experience-assets/raw/lf-5.15.32_2.0.0/m
 sha:
 
 name:mobilenet_v1_1.0_224_quant.tflite
-path:/usr/bin/tensorflow-lite-2.6.0/examples/mobilenet_v1_1.0_224_quant.tflite
+path:/usr/bin/tensorflow-lite-2.8.0/examples/mobilenet_v1_1.0_224_quant.tflite
 url:https://github.com/google-coral/test_data/raw/master/mobilenet_v1_1.0_224_quant.tflite
 alt_url:https://github.com/NXP/nxp-demo-experience-assets/raw/lf-5.15.32_2.0.0/models/mobilenet_v1_1.0_224_quant.tflite
 sha:
 
 name:1_1.0_224_labels.txt
-path:/usr/bin/tensorflow-lite-2.6.0/examples/labels.txt
+path:/usr/bin/tensorflow-lite-2.8.0/examples/labels.txt
 url:https://github.com/google-coral/test_data/raw/master/imagenet_labels.txt
 alt_url:https://github.com/NXP/nxp-demo-experience-assets/raw/lf-5.15.32_2.0.0/models/imagenet_labels.txt
 sha:

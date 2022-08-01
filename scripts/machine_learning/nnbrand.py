@@ -108,12 +108,15 @@ class NNStreamerExample:
             pipeline += ' ! ' + decoder + '! tee name=t_raw'
         # main loop
         self.loop = GObject.MainLoop()
-        pipeline += ' t_raw. ! queue ! imxvideoconvert_g2d ! cairooverlay '
-        pipeline += 'name=tensor_res ! queue ! ' + display + ' t_raw. ! '
+        pipeline += ' t_raw. ! imxvideoconvert_g2d ! cairooverlay '
+        pipeline += 'name=tensor_res ! '
+        pipeline += 'queue max-size-buffers=2 leaky=2 ! '
+        pipeline += display + ' t_raw. ! '
         pipeline += 'imxvideoconvert_g2d ! '
         pipeline += 'video/x-raw,width=224,height=224,format=RGBA ! '
+        pipeline += 'queue max-size-buffers=2 leaky=2 ! '
         pipeline += 'videoconvert ! video/x-raw,format=RGB ! '
-        pipeline += 'queue leaky=2 max-size-buffers=2 ! tensor_converter ! '
+        pipeline += 'tensor_converter ! '
         pipeline += 'tensor_filter name=tensor_filter framework='
         pipeline += 'tensorflow-lite model=' + self.tflite_model
         pipeline +=  ' accelerator=' + backend

@@ -55,6 +55,9 @@ class FaceDemo():
         else:
             self.width = 1920
             self.height = 1080
+        if GUI:
+            GLib.idle_add(
+                main_window.status_bar.set_text, "Starting cameras...")
         if cam == "fake":
             cam_pipeline = cv2.VideoCapture(
                 "videotestsrc ! imxvideoconvert_g2d ! "
@@ -116,7 +119,19 @@ class FaceDemo():
 
     def setup_model(self, name, backend):
         """Gets the model from the server and enables it for use"""
+        if GUI:
+            GLib.idle_add(
+                main_window.status_bar.set_text, "Downloading " + name + "...")
         path = utils.download_file(name)
+        if path == -1 or path == -2 or path == -3:
+            GLib.idle_add(
+                main_window.status_bar.set_text, "Download failed! " +
+                "Restart demo and try again!")
+            while True:
+                time.sleep(9999)
+        if GUI:
+            GLib.idle_add(
+                main_window.status_bar.set_text, "Creating TFLite Engine...")
         if backend == "NPU":
             ext_delegate = tflite.load_delegate("/usr/lib/libvx_delegate.so")
             interpreter = tflite.Interpreter(
@@ -129,6 +144,12 @@ class FaceDemo():
         output_info = interpreter.get_output_details()
         input_size_w = input_info[0]['shape'][1]
         input_size_h = input_info[0]['shape'][2]
+        if GUI:
+            GLib.idle_add(
+                main_window.status_bar.set_text, "Warming up backend... (can take a couple minutes)")
+        dummy_data = np.zeros((1, input_size_w, input_size_h, 3), dtype=input_info[0]['dtype'])
+        interpreter.set_tensor(input_info[0]['index'], dummy_data)
+        interpreter.invoke()
         return Model(
             path, interpreter, input_size_w, input_size_h,
             input_info, output_info)
@@ -417,6 +438,8 @@ class MainWindow(Gtk.Window):
         self.launch_button = Gtk.Button.new_with_label("Run")
         self.launch_button.connect("clicked",self.on_change_start)
 
+        self.status_bar = Gtk.Label.new()
+
         main_grid.attach(source_label, 0, 1, 1, 1)
         main_grid.attach(backend_label, 0, 2, 1, 1)
 
@@ -424,12 +447,13 @@ class MainWindow(Gtk.Window):
         main_grid.attach(self.backend_select, 1, 2, 1, 1)
 
         main_grid.attach(self.launch_button, 0, 3, 2, 1)
+        main_grid.attach(self.status_bar, 0, 4, 2, 1)
 
         self.add(main_grid)
 
     def on_change_start(self, widget):
         """Starts the video stream"""
-        widget.set_label("Loading...")
+        self.status_bar.set_text("Starting demo...")
         widget.set_sensitive(False)
         self.backend_select.set_sensitive(False)
         self.source_select.set_sensitive(False)
@@ -484,7 +508,7 @@ class OptionsWindow(Gtk.Window):
         self.face_reg_entry.set_value(DEFAULT_RECOGNITION_ACCURACY*100)
         self.face_reg_entry.connect('value-changed', self.change_rec_acc)
 
-        self.launch_button = Gtk.Button.new_with_label("Registar Face")
+        self.launch_button = Gtk.Button.new_with_label("Register Face")
         self.launch_button.connect("clicked", self.register_faces)
         self.launch_button.set_hexpand(True)
 
@@ -497,7 +521,7 @@ class OptionsWindow(Gtk.Window):
         self.add(main_grid)
 
     def register_faces(self, widget):
-        """Changes mode to registar faces"""
+        """Changes mode to register faces"""
         self.lock_controls()
         FACE_DEMO.mode = 1
 
@@ -524,7 +548,7 @@ class OptionsWindow(Gtk.Window):
         DEFAULT_RECOGNITION_ACCURACY = widget.get_value()/100
 
 class FaceWindow(Gtk.Window):
-    """GUI for users to registar face"""
+    """GUI for users to register face"""
 
     def __init__(self):
         """Creates GUI elements for window"""
@@ -561,7 +585,7 @@ class FaceWindow(Gtk.Window):
         self.name_box.set_text(
             "Person " + str(len(FACE_DEMO.registered_faces) + 1))
 
-        self.add_button = Gtk.Button.new_with_label("Registar Face")
+        self.add_button = Gtk.Button.new_with_label("Register Face")
         self.add_button.connect("clicked", self.register_face)
         self.add_button.set_hexpand(True)
 
@@ -588,6 +612,7 @@ class FaceWindow(Gtk.Window):
         self.name_box.set_sensitive(False)
         self.add_button.set_sensitive(False)
         self.working = False
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -638,7 +663,7 @@ if __name__ == "__main__":
         if(args.faces != ""):
             FACE_DEMO.import_database(args.faces)
         print("##### HOW TO USE #####")
-        print("# R - Registar Face  #")
+        print("# R - Register Face  #")
         print("# E - Export Faces   #")
         print("# Q - Quit Demo      #")
         print("######################")

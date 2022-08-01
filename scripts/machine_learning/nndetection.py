@@ -127,21 +127,20 @@ class ObjectDetection:
             gst_launch_cmdline = 'filesrc location=' + self.device
             gst_launch_cmdline += ' ! qtdemux ! ' + decoder + '! tee name=t'
 
-        gst_launch_cmdline += ' t. ! queue name=thread-nn'
-        gst_launch_cmdline += ' max-size-buffers=2 leaky=2 !'
-        gst_launch_cmdline += ' imxvideoconvert_g2d !  video/x-raw, '
+        gst_launch_cmdline += ' t. ! imxvideoconvert_g2d !  video/x-raw,'
         gst_launch_cmdline += 'width={:d},'.format(self.MODEL_WIDTH)
         gst_launch_cmdline += 'height={:d},'.format(self.MODEL_HEIGHT)
-        gst_launch_cmdline += ' format=ARGB ! imxvideoconvert_g2d ! '
+        gst_launch_cmdline += 'format=ARGB ! imxvideoconvert_g2d ! '
+        gst_launch_cmdline += 'queue max-size-buffers=2 leaky=2 ! '
         gst_launch_cmdline += 'videoconvert ! video/x-raw,format=RGB !'
         gst_launch_cmdline += ' tensor_converter ! tensor_filter'
         gst_launch_cmdline += ' framework=tensorflow2-lite model='
         gst_launch_cmdline += self.tflite_model +' accelerator=' + backend
         gst_launch_cmdline += ' silent=FALSE name=tensor_filter latency=1 ! '
-        gst_launch_cmdline += 'tensor_sink name=tensor_sink t.'
-        gst_launch_cmdline += ' ! queue name=thread-img max-size-buffers=2 !'
+        gst_launch_cmdline += 'tensor_sink name=tensor_sink t. ! '
         gst_launch_cmdline += ' imxvideoconvert_g2d !'
-        gst_launch_cmdline += ' cairooverlay name=tensor_res ! queue ! '
+        gst_launch_cmdline += ' cairooverlay name=tensor_res ! '
+        gst_launch_cmdline += 'queue max-size-buffers=2 leaky=2 ! '
         gst_launch_cmdline += display
 
         self.pipeline = Gst.parse_launch(gst_launch_cmdline)
