@@ -37,11 +37,12 @@ class MLLaunch(Gtk.Window):
             devices = []
         for device in glob.glob('/dev/video*'):
             devices.append(device)
-
+        
+        backends_available = ["CPU"]
+        if os.path.exists("/usr/lib/libvx_delegate.so") and self.demo != "pose":
+            backends_available.insert(1, "GPU")
         if os.path.exists("/usr/lib/libneuralnetworks.so") and self.demo != "brand":
-            backends_available = ["NPU", "CPU"]
-        else:
-            backends_available = ["CPU"]
+            backends_available.insert(0, "NPU")
 
         displays_available = ["Weston"]
 

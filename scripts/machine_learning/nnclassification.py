@@ -77,9 +77,13 @@ class NNStreamerExample:
         if self.backend == "CPU":
             backend = "true:cpu custom=NumThreads:4"
         elif self.backend == "GPU":
-            backend = "true:gpu custom=Delegate:GPU"
+            os.environ["USE_GPU_INFERENCE"] = "1"
+            backend = ("true:gpu custom=Delegate:External,"
+                       "ExtDelegateLib:libvx_delegate.so")
         else:
-            backend = "true:npu custom=Delegate:External,ExtDelegateLib:libvx_delegate.so"
+            os.environ["USE_GPU_INFERENCE"] = "0"
+            backend = ("true:npu custom=Delegate:External,"
+                       "ExtDelegateLib:libvx_delegate.so")
 
         if self.display == "X11":
             display = "ximagesink name=img_tensor"
