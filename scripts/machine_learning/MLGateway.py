@@ -14,9 +14,9 @@ import logging
 import os
 import socket
 import sys
+import pip
 import tflite_runtime.interpreter as tflite
 import numpy as np
-import pip
 import gi
 from gi.repository import Gtk, Gst, GObject, Gio
 sys.path.append("/home/root/.nxp-demo-experience/scripts/")
