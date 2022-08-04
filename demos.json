@@ -136,6 +136,16 @@
             "screenshot": "",
             "compatible": "imx7ulp",
             "description": "This test plays the audio file recorded on the 'Audio Record' test. Make sure a Headphone is connected to the board. Need to run the 'Audio Record' test first."
+        }],
+        "Voice":[{
+            "name": "i.MX Voice Control",
+            "id": "voice",
+            "executable": "python3 /home/root/.nxp-demo-experience/scripts/audio/voice/voice_demo.py",
+            "source": "",
+            "icon": "volume-up-solid.svg",
+            "screenshot": "",
+            "compatible": "imx8mp, imx8mm",
+            "description": "See NXP's VoiceSeeker and VoiceSpot in action! Use you voice to open and close various applications. This requires a set up 8-MIC Array. Please note that this will override the /etc/asound.conf file."
         }]
     }]
     },
