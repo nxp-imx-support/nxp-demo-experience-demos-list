@@ -82,15 +82,13 @@ class VoiceGUI(Gtk.Window):
         """Sets up VoiceSpot and VoiceSeeker"""
         GLib.idle_add(self.status_label.set_text,
             "\n\nLoading required modules...")
-        lib = subprocess.check_output(
-            ['find', '/lib/', '-name', 'snd-aloop.ko']
-        ).decode('utf-8').splitlines()
-        if len(lib) < 1:
+        res = subprocess.getstatusoutput(
+            "modprobe snd-aloop"
+        )
+        if res[0] != 0:
             GLib.idle_add(self.status_label.set_text,
             "\n\nMissing snd-aloop.ko!")
             return
-        subprocess.run(["insmod",lib[0]])
-
         GLib.idle_add(self.status_label.set_text,
             "\n\nSetting configuration files...")
         subprocess.getstatusoutput(
