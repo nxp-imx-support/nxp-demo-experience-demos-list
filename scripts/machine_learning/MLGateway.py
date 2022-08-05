@@ -5,8 +5,9 @@ Copyright 2022 NXP
 
 SPDX-License-Identifier: Apache-2.0
 
-The following is a demo allows user to connect to a server
-capable to run faster ML models and return the results to client device.
+This application allows a ML-resource-constraint MCU/MPU systems (clients)
+to connect and run inferencing on a ML Gateway system (server) that has very
+high-performance ML capabilities.
 """
 
 from threading import Thread
@@ -80,8 +81,15 @@ def access_ip():
 
 def get_my_ip():
     """ Obtaining its own IP address """
-    self_ip = socket.gethostbyname(socket.gethostname()+".local")
-    return self_ip
+    sock_obj = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    sock_obj.connect(("8.8.8.8", 80))
+    self_ip = sock_obj.getsockname()[0]
+    loopback = socket.gethostbyname(socket.gethostname())
+    if self_ip == loopback:
+        print("ERROR: Connected to loopback device, try again")
+        sys.exit(1)
+    else:
+        return self_ip
 
 
 def cast_ip():
