@@ -461,7 +461,7 @@ if __name__ == "__main__":
     win = DisplayWindow()
     win.connect("destroy", Gtk.main_quit)
     win.show_all()
-    caching_address = os.getcwd() + "/.cache/demoexperience"
-    os.environ["VIV_VX_CACHE_BINARY_GRAPH_DIR"] = caching_address
+    os.environ["VIV_VX_CACHE_BINARY_GRAPH_DIR"] = ("/home/root/.cache"
+            "/demoexperience")
     os.environ["VIV_VX_ENABLE_CACHE_GRAPH_BINARY"] = "1"
     Gtk.main()
