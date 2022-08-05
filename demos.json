@@ -39,7 +39,7 @@
              "compatible": "imx8mp, imx8mm",
              "screenshot": "",
              "icon": "photo-video-solid.svg",
-             "description": "An example of how to use NNStreamer to run ML inferences over local network. An internet connection and a second compatible i.MX EVK board is required."
+             "description": "Application that allows a resource-constraint MCU/MPU systems (clients) to connect and run inferencing on a ML Gateway system (server) that has very high-performance ML capabilities"
          }],
          "pyeIQ":[{
             "name": "Object Classification",
