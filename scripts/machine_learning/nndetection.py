@@ -2,7 +2,7 @@
 
 """
 Copyright SSAFY Team 1 <jangjongha.sw@gmail.com>
-Copyright 2021 NXP
+Copyright 2021-2022 NXP
 
 SPDX-License-Identifier: LGPL-2.1-only
 Original Source: https://github.com/nnstreamer/nnstreamer-example
