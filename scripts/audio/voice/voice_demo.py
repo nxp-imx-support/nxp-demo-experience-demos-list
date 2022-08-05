@@ -2,7 +2,7 @@
 Copyright 2022 NXP Semiconductors
 SPDX-License-Identifier: BSD-3-Clause
 
-This demo sets up and runs the VoiceSeeker/VoiceSpot demo that has been
+This demo sets up and runs the VoiceSeeker/VoiceSpot/VIT demo that has been
 included in the BSP.
 
 The launcher will first attempt to set up a voice application. If
@@ -112,7 +112,7 @@ class VoiceGUI(Gtk.Window):
                 "\n\nConfigure files not found!")
             return
         GLib.idle_add(self.status_label.set_text,
-            "\n\nStarting VoiceSpot...")
+            "\n\nStarting Voice UI and VoiceSpot...")
         try:
             self.voicespot = subprocess.Popen(
                 ['script', '-q', '-c',
@@ -121,7 +121,7 @@ class VoiceGUI(Gtk.Window):
                 stderr=subprocess.STDOUT)
         except:
             GLib.idle_add(self.status_label.set_text,
-                "\n\nVoiceSpot was not found!")
+                "\n\nFailed to launch Voice UI!")
             return
         vs_watch = threading.Thread(
             target=self.handle_voicespot)
@@ -135,13 +135,14 @@ class VoiceGUI(Gtk.Window):
                 stderr=subprocess.STDOUT)
         except:
             GLib.idle_add(self.status_label.set_text,
-                "\n\nVoiceSeeker was not found!")
+                "\n\nFailed to start VoiceSeekerLite")
             return
         vse_watch = threading.Thread(
             target=self.handle_voiceseeker)
         vse_watch.start()
         GLib.idle_add(self.status_label.set_text,
             "\n\nFinishing up...")
+        # Wait until commands are read from VIT model
         while(self.commands_missing):
             time.sleep(0.1)
         GLib.idle_add(self.start_main)
@@ -210,7 +211,7 @@ class VoiceGUI(Gtk.Window):
             retcode = self.voiceseeker.poll()
             if retcode is not None:
                 GLib.idle_add(self.status_label.set_text,
-                    "VoiceSeeker stopped running!")
+                    "VoiceSeekerLite stopped running!")
                 break
             if DEBUG:
                 line = self.voiceseeker.stdout.readline().decode("utf-8")[:-1]
@@ -230,10 +231,14 @@ class VoiceGUI(Gtk.Window):
         )
         Gtk.main_quit()
 
-if __name__ == "__main__":
+def main():
+    """Starts the demo"""
     gui = VoiceGUI()
     gui.show_all()
     voice_start = threading.Thread(
         target=gui.start_up)
     voice_start.start()
     Gtk.main()
+
+if __name__ == "__main__":
+    main()
