@@ -44,6 +44,7 @@ SSDP_MX = 2
 SSDP_ST = "imx-ml-server"
 MODEL = "mobilenet_ssd_v2_coco_quant_postprocess.tflite"
 DATA_SET = "coco_labels_nonum.txt"
+ML_MODEL = utils.download_file(MODEL)
 
 
 def access_ip():
@@ -151,15 +152,19 @@ class ServerWindow(Gtk.Window):
         self.grid.attach(self.processor_select, 1, 2, 1, 1)
         self.grid.attach(self.button1, 0, 6, 2, 1)
         self.add(self.grid)
-        self.to_reduce_warmup()
+
+        def check_file(folder_path):
+            file = [f for f in os.listdir(folder_path) if f.endswith(".nb")]
+            return True if len(file) else False
+
+        if check_file("/home/root/.cache/demoexperience") is False:
+            self.to_reduce_warmup()
 
     def to_reduce_warmup(self):
         """ To reduce NPU warmup time"""
-        global ml_model
-        ml_model = utils.download_file(MODEL)
         ext_delegate = tflite.load_delegate("/usr/lib/libvx_delegate.so")
         # Load the TFLite model and allocate tensors.
-        interpreter = tflite.Interpreter(model_path=ml_model, num_threads=4,
+        interpreter = tflite.Interpreter(model_path=ML_MODEL, num_threads=4,
                                          experimental_delegates=[ext_delegate])
         interpreter.allocate_tensors()
 
@@ -206,7 +211,7 @@ class ServerWindow(Gtk.Window):
         server_pipeline += "tensor_filter framework=tensorflow-lite model={model} custom={custom} "
         server_pipeline += "! tensor_query_serversink host={ip}"
         server_pipeline = server_pipeline.format(ip=self.ip_address,
-                                                 model=ml_model, custom=self.custom)
+                                                 model=ML_MODEL, custom=self.custom)
 
         # creating the pipeline and launching it
         self.pipeline = Gst.parse_launch(server_pipeline)
