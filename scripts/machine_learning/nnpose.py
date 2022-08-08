@@ -3,7 +3,7 @@
 """
 Copyright Soonbeen Kim <ksb940925@gmail.com>
 Copyright Jongha Jang <jangjongha.sw@gmail.com>
-Copyright 2021 NXP
+Copyright 2021-2022 NXP
 
 SPDX-License-Identifier: LGPL-2.1-only
 Original Source: https://github.com/nnstreamer/nnstreamer-example
@@ -31,10 +31,10 @@ DEBUG = False
 
 class NNStreamerExample:
     def __init__(
-        self, device, backend, model, labels, display="Weston",
+        self, platform, device, backend, model, labels, display="Weston",
         callback=None, width=1920, height=1080, r=1, g=0, b=0):
         """Creates an instance of the demo
-        
+
         Arguments:
         device -- What camera or video file to use
         backend -- Whether to use NPU or CPU
@@ -65,6 +65,7 @@ class NNStreamerExample:
         self.r = r
         self.b = b
         self.g = g
+        self.platform = platform
 
         self.VIDEO_WIDTH = width
         self.VIDEO_HEIGHT = height
@@ -99,11 +100,15 @@ class NNStreamerExample:
         """Starts pipeline and runs demo"""
 
         if self.backend == "CPU":
-            backend = "true:cpu"
+            backend = "true:cpu custom=NumThreads:4"
         elif self.backend == "GPU":
-            backend = "true:gpu custom=Delegate:GPU"
+            os.environ["USE_GPU_INFERENCE"] = "1"
+            backend = ("true:gpu custom=Delegate:External,"
+                       "ExtDelegateLib:libvx_delegate.so")
         else:
-            backend = "true:npu custom=Delegate:NNAPI"
+            os.environ["USE_GPU_INFERENCE"] = "0"
+            backend = ("true:npu custom=Delegate:External,"
+                       "ExtDelegateLib:libvx_delegate.so")
 
         if self.display == "X11":
             display = "ximagesink name=img_tensor"
@@ -111,15 +116,19 @@ class NNStreamerExample:
             self.print_time = GLib.get_monotonic_time()
             display = "fakesink  name=img_tensor"
         else:
-            display = "waylandsink name=img_tensor"
+            display = "waylandsink sync=false name=img_tensor"
 
         # main loop
         self.loop = GObject.MainLoop()
 
         self.update_time = GLib.get_monotonic_time()
         self.old_time = GLib.get_monotonic_time()
-        
-        
+
+        if self.platform == "imx8qmmek":
+            decoder = "h264parse ! v4l2h264dec ! imxvideoconvert_g2d "
+        else:
+            decoder = "vpudec "
+
         if "/dev/video" in self.device:
             gst_launch_cmdline = 'v4l2src name=cam_src device=' + self.device
             gst_launch_cmdline += ' ! imxvideoconvert_g2d ! video/x-raw,width='
@@ -128,21 +137,21 @@ class NNStreamerExample:
             gst_launch_cmdline += ',format=BGRx ! tee name=t'
         else:
             gst_launch_cmdline = 'filesrc location=' + self.device
-            gst_launch_cmdline += ' ! qtdemux ! vpudec ! tee name=t'
-        gst_launch_cmdline += ' t. !'
-        gst_launch_cmdline += ' queue name=thread-nn max-size-buffers=2 '
-        gst_launch_cmdline += 'leaky=2 ! imxvideoconvert_g2d ! video/x-raw,'
+            gst_launch_cmdline += ' ! qtdemux ! ' + decoder + '! tee name=t'
+
+        gst_launch_cmdline += ' t. ! imxvideoconvert_g2d ! video/x-raw,'
         gst_launch_cmdline += 'width={:d},'.format(self.MODEL_INPUT_WIDTH)
         gst_launch_cmdline += 'height={:d},'.format(self.MODEL_INPUT_HEIGHT)
-        gst_launch_cmdline += 'format=ARGB ! videoconvert !'
-        gst_launch_cmdline += ' video/x-raw,format=RGB ! tensor_converter ! '
+        gst_launch_cmdline += 'format=ARGB ! ' 
+        gst_launch_cmdline += 'queue max-size-buffers=2 leaky=2 ! videoconvert'
+        gst_launch_cmdline += ' ! video/x-raw,format=RGB ! tensor_converter ! '
         gst_launch_cmdline += ' tensor_filter framework=tensorflow-lite model='
         gst_launch_cmdline += self.tflite_model + ' accelerator=' + backend
         gst_launch_cmdline += ' silent=FALSE name=tensor_filter latency=1 !'
         gst_launch_cmdline += ' tensor_sink name=tensor_sink t.'
-        gst_launch_cmdline += ' ! queue name=thread-img max-size-buffers=2 !'
-        gst_launch_cmdline += ' imxvideoconvert_g2d ! '
-        gst_launch_cmdline += 'cairooverlay name=tensor_res ! queue ! '
+        gst_launch_cmdline += ' ! imxvideoconvert_g2d ! '
+        gst_launch_cmdline += 'cairooverlay name=tensor_res ! '
+        gst_launch_cmdline += 'queue max-size-buffers=2 leaky=2 ! '
         gst_launch_cmdline += display
 
         # init pipeline
@@ -185,7 +194,7 @@ class NNStreamerExample:
 
         :return: True if successfully initialized
         """
-    
+
         if not os.path.exists(self.tflite_model):
             logging.error('cannot find tflite model [%s]', self.tflite_model)
             return False
@@ -409,14 +418,16 @@ if __name__ == '__main__':
         print("Usage: python3 nnpose.py <dev/video*/video file> <NPU/CPU>"+
                 " <model file> <label file>")
         exit()
+    # Get platform
+    platform = os.uname().nodename
     if(len(sys.argv) == 7):
-        example = NNStreamerExample(sys.argv[1],sys.argv[2],sys.argv[3],
+        example = NNStreamerExample(platform, sys.argv[1],sys.argv[2],sys.argv[3],
             sys.argv[4],sys.argv[5],sys.argv[6])
     if(len(sys.argv) == 5):
-        example = NNStreamerExample(sys.argv[1],sys.argv[2],sys.argv[3],
+        example = NNStreamerExample(platform, sys.argv[1],sys.argv[2],sys.argv[3],
             sys.argv[4])
     if(len(sys.argv) == 6):
-        example = NNStreamerExample(sys.argv[1],sys.argv[2],sys.argv[3],
+        example = NNStreamerExample(platform, sys.argv[1],sys.argv[2],sys.argv[3],
             sys.argv[4], sys.argv[5])
     example.run_example()
 

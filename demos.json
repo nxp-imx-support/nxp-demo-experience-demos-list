@@ -2,34 +2,40 @@
     "Machine Learning":[{
         "NNStreamer":[{
              "name": "Object Classification",
+             "id": "obj_class_nn",
              "executable": "python3 /home/root/.nxp-demo-experience/scripts/machine_learning/MLDemoLauncher.py id",
-             "compatible": "imx8mp",
+             "compatible": "imx8mp, imx8mm, imx8qmmek",
              "screenshot": "ml_id.png",
              "icon": "photo-video-solid.svg",
              "description": "An example of how to use NNStreamer to classify objects in a video or camera feed. An internet connection may be required."
          },{
              "name": "Object Detection",
+             "id": "obj_detect_nn",
              "executable": "python3 /home/root/.nxp-demo-experience/scripts/machine_learning/MLDemoLauncher.py detect",
-             "compatible": "imx8mp",
+             "compatible": "imx8mp, imx8mm, imx8qmmek",
              "screenshot": "ml_detect.png",
              "icon": "photo-video-solid.svg",
              "description": "An example of how to use NNStreamer to detect objects in a video or camera feed. An internet connection may be required."
          },{
              "name": "Pose Detection",
+             "id": "pose_detect_nn",
              "executable": "python3 /home/root/.nxp-demo-experience/scripts/machine_learning/MLDemoLauncher.py pose",
-             "compatible": "imx8mp",
+             "compatible": "imx8mp, imx8qmmek",
              "screenshot": "ml_pose.png",
              "icon": "photo-video-solid.svg",
              "description": "An example of how to use NNStreamer to detect a pose in a video or camera feed. An internet connection may be required."
          },{
              "name": "Brand Detection",
+             "id": "brand_detect_nn",
              "executable": "python3 /home/root/.nxp-demo-experience/scripts/machine_learning/MLDemoLauncher.py brand",
-             "compatible": "imx8mp",
+             "compatible": "imx8mp, imx8mm, imx8qmmek",
              "screenshot": "ml_brand.png",
              "icon": "photo-video-solid.svg",
              "description": "An example of how to use NNStreamer to detect a branded item from the United States in a video or camera feed. An internet connection may be required."
-         },{
+         }],
+         "pyeIQ":[{
             "name": "Object Classification",
+            "id": "obj_class_pyeiq",
             "executable": "python3 /home/root/.nxp-demo-experience/scripts/machine_learning/pyeiq_launcher.py small_id",
             "compatible": "imx8ulp",
             "screenshot": "pyeiq_id.png",
@@ -37,6 +43,7 @@
             "description": "An example of how to use Python to classify objects in a photo. An internet connection may be required."
         },{
             "name": "Object Detection",
+            "id": "obj_detect_pyeiq",
             "executable": "python3 /home/root/.nxp-demo-experience/scripts/machine_learning/pyeiq_launcher.py small_detect",
             "compatible": "imx8ulp",
             "screenshot": "pyeiq_detect.png",
@@ -44,6 +51,7 @@
             "description": "An example of how to use Python to detect objects in a photo. An internet connection may be required."
         },{
             "name": "Mask Detection",
+            "id": "mask_detect_pyeiq",
             "executable": "python3 /home/root/.nxp-demo-experience/scripts/machine_learning/pyeiq_launcher.py small_mask",
             "compatible": "imx8ulp",
             "screenshot": "pyeiq_mask.png",
@@ -57,52 +65,31 @@
             "screenshot": "",
             "icon": "cogs-solid.svg",
             "description": "This demo shows the performance of the NPU when compared to the CPU with TensorFlow Lite."
+        }],
+        "OpenCV":[{
+            "name": "Face Recognition",
+            "id": "face_recog",
+            "executable": "python3 /home/root/.nxp-demo-experience/scripts/machine_learning/face_recognition.py",
+            "compatible": "imx8mp",
+            "screenshot": "face_rec.png",
+            "icon": "photo-video-solid.svg",
+            "description": "An OpenCV example of how to use machine learning to recognize faces. An internet connection is required."
         }]
      }]
      },
     {"Multimedia":[{
         "GStreamer":[{
-            "name": "Video test source",
-            "executable": "gst-launch-1.0 videotestsrc ! imxvideoconvert_g2d ! waylandsink window-width=480 window-height=360",
+            "name": "Video Test Demo",
+            "id": "video_test",
+            "executable": "python3 /home/root/.nxp-demo-experience/scripts/multimedia/gstreamer/video_test.py",
             "source": "",
             "icon": "photo-video-solid.svg",
             "screenshot": "gst_test_src_screenshot.png",
-            "compatible": "imx7ulp, imx8ulp",
-            "description": "This is a simple GStreamer pipeline able to play the Video Test Source example: gst-launch-1.0 videotestsrc ! imxvideoconvert_g2d ! waylandsink window-width=480 window-height=360"
-        },{
-            "name": "Video test source",
-            "executable": "gst-launch-1.0 videotestsrc ! video/x-raw, width=1280,height=720 ! glimagesink",
-            "source": "",
-            "icon": "photo-video-solid.svg",
-            "screenshot": "gst_test_src_screenshot.png",
-            "compatible": "imx8qxpc0mek, imx8qmmek, imx8mq, imx8mm, imx8mn, imx8mp",
-            "description": "This is a simple GStreamer pipeline able to create a video playback with the Video Test Source example. This pipeline limits the video screen to HD resolution: gst-launch-1.0 videotestsrc ! video/x-raw,width=1280,height=720 ! glimagesink"
-        },{
-            "name": "Camera Preview",
-            "executable": "gst-launch-1.0 v4l2src device=/dev/video0 ! video/x-raw,width=1280,height=720 ! queue ! glimagesink",
-            "source": "",
-            "icon": "photo-video-solid.svg",
-            "screenshot": "gst_camera_preview_screenshot.png",
-            "compatible": "imx8qxpc0mek, imx8qmmek, imx8mq, imx8mm, imx8mn",
-            "description": "This is a simple GStreamer pipeline able to create a camera preview example. Note that this example only works with the correct DTS file and needs a IMXTOCSI acessory connected to the board: gst-launch-1.0 v4l2src device=/dev/video0 ! video/x-raw,width=1280,height=720 ! queue ! glimagesink"
-        },{
-            "name": "Camera Preview",
-            "executable": "python3 /home/root/.nxp-demo-experience/scripts/multimedia/gstreamer/imx8mp_camera_demo.py --open_cam=True",
-            "source": "",
-            "icon": "photo-video-solid.svg",
-            "screenshot": "gst_camera_preview_screenshot.png",
-            "compatible": "imx8mp",
-            "description": "This is a simple GStreamer pipeline able to create a camera preview example."
-        },{
-            "name": "Camera Preview",
-            "executable": "gst-launch-1.0 v4l2src device=/dev/video0 ! video/x-raw,width=720,height=480 ! waylandsink",
-            "source": "",
-            "icon": "photo-video-solid.svg",
-            "screenshot": "gst_camera_preview_screenshot.png",
-            "compatible": "imx8ulp",
-            "description": "This is a simple GStreamer pipeline able to create a camera preview example. Note that this example only works with the correct DTS file and needs a IMXTOCSI acessory connected to the board: gst-launch-1.0 v4l2src device=/dev/video0 ! video/x-raw,width=720,height=480 ! waylandsink"
+            "compatible": "imx7ulp, imx8ulp, imx8qxpc0mek, imx8qmmek, imx8mq, imx8mm, imx8mn, imx8mp, imx93",
+            "description": "This is a simple demo utility that allows users to play back video captured on a camera or a test source."
         },{
             "name": "Camera using VPU",
+            "id": "video_test_vpu",
             "executable": "python3 /home/root/.nxp-demo-experience/scripts/multimedia/gstreamer/imx8mp_camera_demo.py --vpu_enc=True",
             "source": "",
             "icon": "photo-video-solid.svg",
@@ -111,6 +98,7 @@
             "description": "This is a GStreamer pipeline able to create a camera preview example using VPU to encode and decode the image."
         },{
             "name": "Multi Cameras Preview",
+            "id": "video_test_multi",
             "executable": "python3 /home/root/.nxp-demo-experience/scripts/multimedia/gstreamer/imx8mp_camera_demo.py --multi_cam=True",
             "source": "",
             "icon": "photo-video-solid.svg",
@@ -120,6 +108,7 @@
         }],
         "ISP":[{
             "name": "ISP Control Demo",
+            "id": "isp_control",
             "executable": "python3 /home/root/.nxp-demo-experience/scripts/multimedia/gstreamer/imx8mp_isp_demo.py",
             "source": "",
             "icon": "photo-video-solid.svg",
@@ -128,15 +117,17 @@
             "description": "This program opens a GStreamer pipeline and allows the user to change various parameters of the ISP in real time. This demo will only work with a compatible Basler camera."
         },{
             "name": "Video Dump Demo",
+            "id": "video_dump",
             "executable": "python3 /home/root/.nxp-demo-experience/scripts/multimedia/gstreamer/imx8mp_isp_dump.py",
             "source": "",
             "icon": "photo-video-solid.svg",
             "screenshot": "",
             "compatible": "imx8mp",
-            "description": "This program allows users to dump the raw frame data from a camera onto a connected drive."
+            "description": "This program allows users to dump the raw frame data from a camera onto a connected drive. This demo will only work with a compatible Basler camera."
         }],
         "Audio":[{
             "name": "Audio Record",
+            "id": "audio_rec",
             "executable": "/home/root/.nxp-demo-experience/scripts/audio/audio_playback/audio_record.sh",
             "source": "",
             "icon": "volume-up-solid.svg",
@@ -146,6 +137,7 @@
         },
         {
             "name": "Audio Play",
+            "id": "audio_play",
             "executable": "/home/root/.nxp-demo-experience/scripts/audio/audio_playback/audio_play.sh",
             "source": "",
             "icon": "volume-up-solid.svg",
@@ -158,6 +150,7 @@
     {"GPU":[{
         "OpenVG 2D":[{
             "name": "Tiger G2D",
+            "id": "tiger",
             "executable": "/opt/viv_samples/tiger/tiger",
             "source": "",
             "icon": "cube-solid.svg",
@@ -167,6 +160,7 @@
         }],
         "GLES2":[{
             "name": "Vivante Launcher",
+            "id": "vivante_launch",
             "executable": "/opt/viv_samples/es20/vv_launcher/vv_launcher",
             "source": "",
             "icon": "object-group-regular.svg",
@@ -176,6 +170,7 @@
         },
         {
             "name": "Cover Flow",
+            "id": "cover",
             "executable": "/home/root/.nxp-demo-experience/scripts/opengl/vivante_cover_flow.sh",
             "source": "",
             "icon": "object-group-regular.svg",
@@ -185,6 +180,7 @@
         },
         {
             "name": "Vivante Tutorial",
+            "id": "vivante_tut",
             "executable": "/home/root/.nxp-demo-experience/scripts/opengl/vivante_tutorial7.sh",
             "source": "",
             "icon": "object-group-regular.svg",
@@ -194,6 +190,7 @@
         },
         {
             "name": "Bloom",
+            "id": "bloom",
             "executable": "/opt/imx-gpu-sdk/GLES2/Bloom/GLES2.Bloom_Wayland --Window [0,0,1280,720]",
             "source": "",
             "icon": "object-group-regular.svg",
@@ -203,6 +200,7 @@
         },
         {
             "name": "Bloom",
+            "id": "bloom_small",
             "executable": "/opt/imx-gpu-sdk/GLES2/Bloom/GLES2.Bloom_Wayland --Window [0,0,480,360]",
             "source": "",
             "icon": "object-group-regular.svg",
@@ -212,6 +210,7 @@
         },
         {
             "name": "Blur",
+            "id": "blur",
             "executable": "/opt/imx-gpu-sdk/GLES2/Blur/GLES2.Blur_Wayland --Window [0,0,1280,720]",
             "source": "",
             "icon": "object-group-regular.svg",
@@ -221,6 +220,7 @@
         },
         {
             "name": "Blur",
+            "id": "blur_small",
             "executable": "/opt/imx-gpu-sdk/GLES2/Blur/GLES2.Blur_Wayland --Window [0,0,480,360]",
             "source": "",
             "icon": "object-group-regular.svg",
@@ -230,6 +230,7 @@
         },
         {
             "name": "EightLayerBlend",
+            "id": "eight_layer",
             "executable": "/opt/imx-gpu-sdk/GLES2/EightLayerBlend/GLES2.EightLayerBlend_Wayland --Window [0,0,1280,720]",
             "source": "",
             "icon": "object-group-regular.svg",
@@ -239,6 +240,7 @@
         },
         {
             "name": "EightLayerBlend",
+            "id": "eight_layer_small",
             "executable": "/opt/imx-gpu-sdk/GLES2/EightLayerBlend/GLES2.EightLayerBlend_Wayland --Window [0,0,480,360]",
             "source": "",
             "icon": "object-group-regular.svg",
@@ -248,6 +250,7 @@
         },
         {
             "name": "FractalShader",
+            "id": "fract_shader",
             "executable": "/opt/imx-gpu-sdk/GLES2/FractalShader/GLES2.FractalShader_Wayland --Window [0,0,1280,720]",
             "source": "",
             "icon": "object-group-regular.svg",
@@ -257,6 +260,7 @@
         },
         {
             "name": "FractalShader",
+            "id": "fract_shader_small",
             "executable": "/opt/imx-gpu-sdk/GLES2/FractalShader/GLES2.FractalShader_Wayland --Window [0,0,480,360]",
             "source": "",
             "icon": "object-group-regular.svg",
@@ -266,6 +270,7 @@
         },
         {
             "name": "FractalShader",
+            "id": "fract_shader_small2",
             "executable": "/opt/imx-gpu-sdk/GLES2/FractalShader/GLES2.FractalShader_Wayland --Window [0,0,650,400]",
             "source": "",
             "icon": "object-group-regular.svg",
@@ -275,6 +280,7 @@
         },
         {
             "name": "LineBuilder101",
+            "id": "line_build",
             "executable": "/opt/imx-gpu-sdk/GLES2/LineBuilder101/GLES2.LineBuilder101_Wayland --Window [0,0,1280,720]",
             "source": "",
             "icon": "object-group-regular.svg",
@@ -284,6 +290,7 @@
         },
         {
             "name": "LineBuilder101",
+            "id": "line_build_small",
             "executable": "/opt/imx-gpu-sdk/GLES2/LineBuilder101/GLES2.LineBuilder101_Wayland --Window [0,0,480,360]",
             "source": "",
             "icon": "object-group-regular.svg",
@@ -293,6 +300,7 @@
         },
         {
             "name": "Model Loader",
+            "id": "model_loader",
             "executable": "/opt/imx-gpu-sdk/GLES2/ModelLoaderBasics/GLES2.ModelLoaderBasics_Wayland --Window [0,0,1280,720]",
             "source": "",
             "icon": "object-group-regular.svg",
@@ -302,6 +310,7 @@
         },
         {
             "name": "Model Loader",
+            "id": "model_loader_small",
             "executable": "/opt/imx-gpu-sdk/GLES2/ModelLoaderBasics/GLES2.ModelLoaderBasics_Wayland --Window [0,0,480,360]",
             "source": "",
             "icon": "object-group-regular.svg",
@@ -311,6 +320,7 @@
         },
         {
             "name": "S03_Transform",
+            "id": "transform",
             "executable": "/opt/imx-gpu-sdk/GLES2/S03_Transform/GLES2.S03_Transform_Wayland --Window [0,0,1280,720]",
             "source": "",
             "icon": "cubes-solid.svg",
@@ -320,6 +330,7 @@
         },
         {
             "name": "S03_Transform",
+            "id": "transform_small",
             "executable": "/opt/imx-gpu-sdk/GLES2/S03_Transform/GLES2.S03_Transform_Wayland --Window [0,0,480,360]",
             "source": "",
             "icon": "cubes-solid.svg",
@@ -329,6 +340,7 @@
         },
         {
             "name": "S04_Projection",
+            "id": "projection",
             "executable": "/opt/imx-gpu-sdk/GLES2/S04_Projection/GLES2.S04_Projection_Wayland --Window [0,0,1280,720]",
             "source": "",
             "icon": "cubes-solid.svg",
@@ -338,6 +350,7 @@
         },
         {
             "name": "S04_Projection",
+            "id": "projection_small",
             "executable": "/opt/imx-gpu-sdk/GLES2/S04_Projection/GLES2.S04_Projection_Wayland --Window [0,0,480,360]",
             "source": "",
             "icon": "cubes-solid.svg",
@@ -347,6 +360,7 @@
         },
         {
             "name": "S06_Texturing",
+            "id": "texturing",
             "executable": "/opt/imx-gpu-sdk/GLES2/S06_Texturing/GLES2.S06_Texturing_Wayland --Window [0,0,1280,720]",
             "source": "",
             "icon": "cubes-solid.svg",
@@ -356,6 +370,7 @@
         },
         {
             "name": "S06_Texturing",
+            "id": "texturing_small",
             "executable": "/opt/imx-gpu-sdk/GLES2/S06_Texturing/GLES2.S06_Texturing_Wayland --Window [0,0,480,360]",
             "source": "",
             "icon": "cubes-solid.svg",
@@ -365,6 +380,7 @@
         },
         {
             "name": "Mapping",
+            "id": "map",
             "executable": "/opt/imx-gpu-sdk/GLES2/S07_EnvMapping/GLES2.S07_EnvMapping_Wayland --Window [0,0,1280,720]",
             "source": "",
             "icon": "cubes-solid.svg",
@@ -374,6 +390,7 @@
         },
         {
             "name": "Mapping",
+            "id": "map_small",
             "executable": "/opt/imx-gpu-sdk/GLES2/S07_EnvMapping/GLES2.S07_EnvMapping_Wayland --Window [0,0,480,360]",
             "source": "",
             "icon": "cubes-solid.svg",
@@ -383,6 +400,7 @@
         },
         {
             "name": "Mapping Refraction",
+            "id": "refract",
             "executable": "/opt/imx-gpu-sdk/GLES2/S08_EnvMappingRefraction/GLES2.S08_EnvMappingRefraction_Wayland --Window [0,0,1280,720]",
             "source": "",
             "icon": "cubes-solid.svg",
@@ -392,60 +410,13 @@
         },
         {
             "name": "Mapping Refraction",
+            "id": "refract_small",
             "executable": "/opt/imx-gpu-sdk/GLES2/S08_EnvMappingRefraction/GLES2.S08_EnvMappingRefraction_Wayland --Window [0,0,480,360]",
             "source": "",
             "icon": "cubes-solid.svg",
             "screenshot": "s08_environmentmappingrefraction.jpg",
             "compatible": "imx7ulp, imx8ulp",
             "description": "This sample is a variation from the previous sample, again, a cubemap texture is used, but this time instead of simulating a reflective material a refractive material is simulated. It also shows you how to use the ContentManager service to load a 'dds' file from the Content directory into a Texture utility class which is then used to used to create a OpenGL ES cubemap texture."
-        }]
-    }]
-    },
-    {"QT5":[{
-        "OpenGL":[{
-            "name": "Qt5 Cube",
-            "executable": "/usr/share/qt5/examples/opengl/cube/cube --platform wayland-egl",
-            "source": "https://doc.qt.io/qt-5/qtopengl-cube-example.html",
-            "icon": "desktop-solid.svg",
-            "screenshot": "qt5_opengl_cube.png",
-            "compatible": "imx7ulp",
-            "description": "The Cube OpenGL ES 2.0 example shows how to write mouse rotateable textured 3D cube using OpenGL ES 2.0 with Qt. It shows how to handle polygon geometries efficiently and how to write simple vertex and fragment shader for programmable graphics pipeline. In addition it shows how to use quaternions for representing 3D object orientation."
-        },
-        {
-            "name": "Q5 Hello GL2",
-            "executable": "/usr/share/qt5/examples/opengl/hellowindow/hellowindow --platform wayland-egl",
-            "source": "https://doc.qt.io/qt-5/qtopengl-hellogl2-example.html",
-            "icon": "desktop-solid.svg",
-            "screenshot": "qt5_opengl_hellowindow.png",
-            "compatible": "imx7ulp",
-            "description": "The Hello GL2 example demonstrates the basic use of the OpenGL-related classes provided with Qt."
-        }],
-        "Qt Quick":[{
-            "name": "QT5 Everywhere",
-            "executable": "/usr/share/qt5everywheredemo-1.0/QtDemo --platform wayland-egl",
-            "source": "https://code.qt.io/cgit/qt-labs/qt5-everywhere-demo.git/",
-            "icon": "photo-video-solid.svg",
-            "screenshot": "qt5everywhere.png",
-            "compatible": "imx7ulp",
-            "description": "QT5 Demo Launcher."
-        },
-        {
-            "name": "Same Game",
-            "executable": "/usr/share/qt5/examples/quick/demos/samegame/samegame --platform wayland-egl",
-            "source": "https://doc.qt.io/qt-5/qtdoc-demos-samegame-example.html",
-            "icon": "photo-video-solid.svg",
-            "screenshot": "qt5_quick_samegame.png",
-            "compatible": "imx7ulp",
-            "description": "A QML implementation of the popular puzzle game by Kuniaki Moribe. Same Game demonstrates a QML game with custom types and logic written in JavaScript. The game uses various Qt Quick features such as particles, animation, and loading images."
-        },
-        {
-            "name": "QT5 Clocks",
-            "executable": "/usr/share/qt5/examples/quick/demos/clocks/clocks --platform wayland-egl",
-            "source": "https://doc.qt.io/qt-5/qtdoc-demos-clocks-example.html",
-            "icon": "photo-video-solid.svg",
-            "screenshot": "qt5_quick_clocks.png",
-            "compatible": "imx7ulp",
-            "description": "A QML clock application that demonstrates using a ListView type to display data generated by a ListModel and a SpringAnimation type to animate images."
         }]
     }]
     }

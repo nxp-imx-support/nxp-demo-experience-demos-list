@@ -1,16 +1,14 @@
 #!/usr/bin/env python3
 
 """
-Copyright 2021 NXP
+Copyright 2021-2022 NXP
 
 SPDX-License-Identifier: BSD-2-Clause
 
 This script manages downloads.
 """
 
-import sys
 from os.path import exists
-import urllib.request
 import subprocess
 
 DOWNLOAD_FOLDER = "/home/root/.cache/demoexperience/"
@@ -42,15 +40,15 @@ def download_file(name):
     elif exists(DOWNLOAD_FOLDER + name):
         loc = DOWNLOAD_FOLDER + name
     else:
-        try:
-             urllib.request.urlopen(url, timeout=1)
-             urllib.request.urlretrieve(url,DOWNLOAD_FOLDER + name)
-        except:
-            try:
-                urllib.request.urlopen(alt_url, timeout=1)
-                urllib.request.urlretrieve(alt_url,DOWNLOAD_FOLDER + name)
-            except:
-                return -2
+        out = subprocess.getstatusoutput(
+            "wget -O  /home/root/.cache/demoexperience/" +
+            name + " " + url)[0]
+        if out != 0:
+            out = subprocess.getstatusoutput(
+                "wget -O  /home/root/.cache/demoexperience/" +
+                name + " " + alt_url)[0]
+        if out != 0:
+            return -2
         loc = DOWNLOAD_FOLDER + name
 
     #SHA1 Check (if available)

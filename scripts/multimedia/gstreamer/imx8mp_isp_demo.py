@@ -46,7 +46,7 @@ class ISPDemo(Gtk.Window):
         self.set_titlebar(header)
 
         quit_button = Gtk.Button()
-        quit_icon = Gio.ThemedIcon(name="application-exit-symbolic")
+        quit_icon = Gio.ThemedIcon(name="process-stop-symbolic")
         quit_image = Gtk.Image.new_from_gicon(quit_icon, Gtk.IconSize.BUTTON)
         quit_button.add(quit_image)
         header.pack_end(quit_button)
@@ -154,6 +154,36 @@ class ISPDemo(Gtk.Window):
         dewarp_grid.set_margin_end(10)
         dewarp_grid.set_margin_start(10)
 
+        dwe_label = Gtk.Label.new("Enable Dewarp")
+        dwe_label.set_halign(1)
+
+        self.dwe_switch = Gtk.Switch()
+        self.dwe_dropdown = Gtk.ComboBoxText()
+        self.dwe_switch.connect("notify::active", self.on_change_dwe)
+        self.dwe_switch.set_active(True)
+        self.dwe_switch.set_halign(1)
+        self.dwe_switch.set_valign(3)
+
+        dwe_mode_label = Gtk.Label.new("Dewarp Mode")
+        dwe_mode_label.set_halign(1)
+
+        self.dwe_options = [{
+                        "name": "Lens Distortion",
+                        "id": 1},
+                       {"name": "Fisheye Expand",
+                        "id": 2},
+                       {"name": "Split Screen",
+                        "id": 4},
+                       {"name": "Fisheye Dewarp",
+                        "id": 8}]
+        self.dwe_dropdown.set_entry_text_column(0)
+        for option in self.dwe_options:
+            self.dwe_dropdown.append_text(option["name"])
+        self.dwe_dropdown.set_active(0)
+        self.dwe_dropdown.connect('changed', self.on_change_dwe_mode)
+        self.dwe_dropdown.set_hexpand(True)
+
+
         vflip_label = Gtk.Label.new("Vertical Flip")
         vflip_label.set_halign(1)
 
@@ -181,12 +211,16 @@ class ISPDemo(Gtk.Window):
         self.fps_scale.connect('value-changed', self.on_change_fps)
         self.fps_scale.set_hexpand(True)
 
-        dewarp_grid.attach(vflip_label, 0, 1, 1, 1)
-        dewarp_grid.attach(hflip_label, 0, 2, 1, 1)
-        dewarp_grid.attach(fps_label, 0, 3, 1, 1)
-        dewarp_grid.attach(self.vflip_switch, 1, 1, 1, 1)
-        dewarp_grid.attach(self.hflip_switch, 1, 2, 1, 1)
-        dewarp_grid.attach(self.fps_scale, 1, 3, 1, 1)
+        dewarp_grid.attach(dwe_label, 0, 1, 1, 1)
+        dewarp_grid.attach(dwe_mode_label, 0, 2, 1, 1)
+        dewarp_grid.attach(vflip_label, 0, 3, 1, 1)
+        dewarp_grid.attach(hflip_label, 0, 4, 1, 1)
+        dewarp_grid.attach(fps_label, 0, 5, 1, 1)
+        dewarp_grid.attach(self.dwe_switch, 1, 1, 1, 1)
+        dewarp_grid.attach(self.dwe_dropdown, 1, 2, 1, 1)
+        dewarp_grid.attach(self.vflip_switch, 1, 3, 1, 1)
+        dewarp_grid.attach(self.hflip_switch, 1, 4, 1, 1)
+        dewarp_grid.attach(self.fps_scale, 1, 5, 1, 1)
         self.content_stack.add_named(dewarp_grid, "Dewarp and FPS")
 
         # AWB Layout
@@ -441,6 +475,22 @@ class ISPDemo(Gtk.Window):
             "<id>:<bls.s.cfg>;<blue>:" + str(int(blue)) + ";<green.b>:" +
             str(int(green_b)) + ";<green.r>:" + str(int(green_r)) +
             ";<red>:" + str(int(red)))
+
+    def on_change_dwe(self, widget, unused):
+        """Flip the camera output vertically."""
+        if widget.get_active():
+            self.dwe_dropdown.set_sensitive(True)
+            self.change_isp("<id>:<dwe.s.bypass>; <dwe>:{<bypass>:false}")
+        else:
+            self.dwe_dropdown.set_sensitive(False)
+            self.change_isp("<id>:<dwe.s.bypass>; <dwe>:{<bypass>:true}")
+    
+    def on_change_dwe_mode(self, widget):
+        """Set the mode for dwe control."""
+        mode = self.dwe_dropdown.get_active()
+        print(mode)
+        mode_num = self.dwe_options[mode]["id"]
+        self.change_isp("<id>:<dwe.s.type>; <dwe>:{<type>:" + str(mode_num) + "}")
 
     def on_change_vflip(self, widget, unused):
         """Flip the camera output vertically."""

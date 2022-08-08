@@ -25,6 +25,7 @@ gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk, Gio
 sys.path.append("/home/root/.nxp-demo-experience/scripts/")
 import utils
+import importlib.metadata
 
 try:
     import eiq
@@ -61,7 +62,7 @@ class PyeiqDemo(Gtk.Window):
         self.set_titlebar(header)
 
         quit_button = Gtk.Button()
-        quit_icon = Gio.ThemedIcon(name="application-exit-symbolic")
+        quit_icon = Gio.ThemedIcon(name="process-stop-symbolic")
         quit_image = Gtk.Image.new_from_gicon(quit_icon, Gtk.IconSize.BUTTON)
         quit_button.add(quit_image)
         header.pack_end(quit_button)
@@ -94,7 +95,8 @@ class PyeiqDemo(Gtk.Window):
             if check_connection():
                 if PYEIQ is False:
                     self.label.set_text("Downloading pyeIQ...")
-                    Popen(["pip3", "install", "pyeiq", "requests"]).wait()
+                    Popen(
+                        ["pip3", "install", "pyeiq==3.0.1", "requests"]).wait()
                 if os.path.isfile(file_name) is False:
                     self.label.set_text("Downloading test image...")
                     pic = utils.download_file(self.file_name)
@@ -104,6 +106,12 @@ class PyeiqDemo(Gtk.Window):
             else:
                 self.label.set_text("No internet connection.")
                 return
+        version = importlib.metadata.version('pyeiq')
+        if (version != "3.0.1"):
+            self.label.set_text(
+                "pyeIQ version not compatible.\nUninstall pyeIQ"
+                " and rerun this demo!")
+            return
         self.label.set_text("Setting up demo...")
         pic = utils.download_file(self.file_name)
         Popen(["pyeiq", "--run", self.demo_name, "-i", str(pic)]).wait()
