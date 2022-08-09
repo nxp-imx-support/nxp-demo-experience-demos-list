@@ -32,6 +32,14 @@
              "screenshot": "ml_brand.png",
              "icon": "photo-video-solid.svg",
              "description": "An example of how to use NNStreamer to detect a branded item from the United States in a video or camera feed. An internet connection may be required."
+         },{
+             "name": "ML Gateway",
+             "id": "ml_gate_nn",
+             "executable": "python3 /home/root/.nxp-demo-experience/scripts/machine_learning/MLGateway.py",
+             "compatible": "imx8mp, imx8mm",
+             "screenshot": "",
+             "icon": "photo-video-solid.svg",
+             "description": "Application that allows a resource-constraint MCU/MPU systems (clients) to connect and run inferencing on a ML Gateway system (server) that has very high-performance ML capabilities"
          }],
          "pyeIQ":[{
             "name": "Object Classification",

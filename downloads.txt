@@ -10,6 +10,12 @@ url:https://github.com/google-coral/test_data/raw/master/coco_labels.txt
 alt_url:https://github.com/NXP/nxp-demo-experience-assets/raw/lf-5.15.32_2.0.0/models/coco_labels.txt
 sha:
 
+name:coco_labels_nonum.txt
+path:
+url:https://github.com/google-coral/test_data/raw/master/coco_labels.txt
+alt_url:https://github.com/NXP/nxp-demo-experience-assets/raw/lf-5.15.32_2.0.0/models/coco_labels.txt
+sha:
+
 name:mobilenet_v1_1.0_224_quant.tflite
 path:/usr/bin/tensorflow-lite-2.8.0/examples/mobilenet_v1_1.0_224_quant.tflite
 url:https://github.com/google-coral/test_data/raw/master/mobilenet_v1_1.0_224_quant.tflite
