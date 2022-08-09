@@ -144,7 +144,7 @@
             "source": "",
             "icon": "volume-up-solid.svg",
             "screenshot": "",
-            "compatible": "imx8mp, imx8mm, imx8mn",
+            "compatible": "imx8mp, imx8mm",
             "description": "See NXP's Voice Technology in action! Use your voice to open and close various applications. This requires 8-MIC Array Board (8MIC-RPI-MX8) installed on the i.MX hardware (Visit NXP.com for help). Please note that this will override '/etc/asound.conf' file. It will be restored if this application is gracefully terminated."
         }]
     }]
