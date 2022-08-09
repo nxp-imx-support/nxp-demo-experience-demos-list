@@ -5,7 +5,7 @@ Copyright 2022 NXP
 
 SPDX-License-Identifier: Apache-2.0 
 
-This script benchmarks the NPU and CPU
+This script benchmarks the ML performance on NPU and CPU
 """
 
 import gi
@@ -104,10 +104,10 @@ class DownloadGUI(Gtk.Window):
     def display_out(self):
         """Display the output"""
         if (self.npu_time < self.cpu_time):
-            ratio = str(round((self.cpu_time/self.npu_time)*100, 2))
+            ratio = str(round(((self.cpu_time/self.npu_time)-1)*100, 2))
             comp = "The NPU is " + ratio + "% faster then the CPU!"
         elif (self.npu_time > self.cpu_time):
-            ratio = str(round((self.npu_time/self.cpu_time)*100, 2))
+            ratio = str(round(((self.npu_time/self.cpu_time)-1)*100, 2))
             comp = "The CPU is " + ratio + "% faster then the NPU!"
         else:
              comp = "The CPU and NPU are equal!"
@@ -123,7 +123,7 @@ class DownloadGUI(Gtk.Window):
         GLib.idle_add(self.status_label.set_text, out)
 
     def get_time(self, output):
-        """Get the time from the output"""
+        """Get the time (in ms) from the output"""
         for line in output:
             if line.startswith("Inference timings in us:"):
                 time = float(line[line.find("Inference (avg):")+17:])/1000
