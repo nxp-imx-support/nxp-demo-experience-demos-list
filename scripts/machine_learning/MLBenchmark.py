@@ -104,10 +104,10 @@ class DownloadGUI(Gtk.Window):
     def display_out(self):
         """Display the output"""
         if (self.npu_time < self.cpu_time):
-            ratio = str(round(((self.cpu_time-self.npu_time)/self.npu_time)*100, 2))
+            ratio = str(round(((self.cpu_time-self.npu_time)/self.cpu_time)*100, 2))
             comp = "The NPU is " + ratio + "% faster than the CPU!"
         elif (self.npu_time > self.cpu_time):
-            ratio = str(round(((self.npu_time-self.cpu_time)/self.cpu_time)*100, 2))
+            ratio = str(round(((self.npu_time-self.cpu_time)/self.npu_time)*100, 2))
             comp = "The CPU is " + ratio + "% faster than the NPU!"
         else:
              comp = "The CPU and NPU are equal!"
