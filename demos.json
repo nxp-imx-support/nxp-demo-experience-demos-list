@@ -58,6 +58,14 @@
             "icon": "photo-video-solid.svg",
             "description": "An example of how to use Python to detect mask wearing in a photo. An internet connection may be required."
         }],
+        "TFLite":[{
+            "name": "ML Benchmark",
+            "executable": "python3 /home/root/.nxp-demo-experience/scripts/machine_learning/MLBenchmark.py",
+            "compatible": "imx93",
+            "screenshot": "",
+            "icon": "cogs-solid.svg",
+            "description": "This demo shows the performance of the NPU when compared to the CPU with TensorFlow Lite."
+        }],
         "OpenCV":[{
             "name": "Face Recognition",
             "id": "face_recog",
