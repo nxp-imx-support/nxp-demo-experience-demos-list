@@ -32,14 +32,16 @@ def initialize():
     """Initial package installation"""
     dwnwin = DownloadGUI()
     GLib.idle_add(dwnwin.show_all)
+    """
     GLib.idle_add(dwnwin.status_label.set_text, "\n\nTesting internet...")
     res = subprocess.getstatusoutput(
-                "ping -c 1 " + SSDP_ADDRESS
+                "ping -c 1 8.8.8.8"
             )[0]
     if res != 0:
         GLib.idle_add(
             dwnwin.status_label.set_text, "\n\nInternet connection required!")
         return
+    """
     if FIRST_RUN:
         GLib.idle_add(
             dwnwin.status_label.set_text, "\n\nInstalling packages...")
