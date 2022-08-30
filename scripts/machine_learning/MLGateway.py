@@ -19,7 +19,7 @@ import pip
 import tflite_runtime.interpreter as tflite
 import numpy as np
 import gi
-from gi.repository import Gtk, Gst, GObject, Gio
+from gi.repository import Gtk, Gst, GObject, Gio, GLib
 sys.path.append("/home/root/.nxp-demo-experience/scripts/")
 import utils
 
@@ -29,13 +29,20 @@ gi.require_version('Gst', '1.0')
 
 def initialize():
     """Initial package installation"""
-    pip.main(['install', 'ssdpy'])
+    if FIRST_RUN:
+        dwnwin = DownloadGUI()
+        GLib.idle_add(dwnwin.show_all)
+        pip.main(['install', 'ssdpy'])
+    win.connect("destroy", Gtk.main_quit)
+    GLib.idle_add(win.show_all)
+    if FIRST_RUN:
+        GLib.idle_add(dwnwin.destroy)
 
-
+FIRST_RUN = False
 try:
     from ssdpy import SSDPServer
 except ModuleNotFoundError:
-    initialize()
+    FIRST_RUN = True
 
 MAX_TRY = 4
 SSDP_ADDRESS = "239.255.255.250"
@@ -98,6 +105,37 @@ def cast_ip():
     server = SSDPServer("imx-server", device_type=SSDP_ST)
     server.serve_forever()
 
+class DownloadGUI(Gtk.Window):
+    """The main voice GUI application."""
+
+    def __init__(self):
+        """Creates the loading window and then shows it"""
+        super().__init__()
+
+        self.set_default_size(450, 100)
+        self.set_resizable(False)
+        self.set_border_width(10)
+
+        header = Gtk.HeaderBar()
+        header.set_title("ML Gateway")
+        header.set_subtitle("NNStreamer Demo")
+        self.set_titlebar(header)
+
+        quit_button = Gtk.Button()
+        quit_icon = Gio.ThemedIcon(name="process-stop-symbolic")
+        quit_image = Gtk.Image.new_from_gicon(quit_icon, Gtk.IconSize.BUTTON)
+        quit_button.add(quit_image)
+        header.pack_end(quit_button)
+        quit_button.connect("clicked", Gtk.main_quit)
+
+        self.main_grid = Gtk.Grid(
+            row_homogeneous=False, column_homogeneous=True,
+            column_spacing=15, row_spacing=15)
+        self.main_grid.set_margin_end(10)
+        self.main_grid.set_margin_start(10)
+        self.status_label = Gtk.Label.new("Setting up...")
+        self.main_grid.attach(self.status_label, 0, 0, 1, 1)
+        self.add(self.main_grid)
 
 class ServerWindow(Gtk.Window):
     """ Server Window """
@@ -463,10 +501,10 @@ class DisplayWindow(Gtk.Window):
 
 
 if __name__ == "__main__":
-    win = DisplayWindow()
-    win.connect("destroy", Gtk.main_quit)
-    win.show_all()
     os.environ["VIV_VX_CACHE_BINARY_GRAPH_DIR"] = ("/home/root/.cache"
             "/demoexperience")
     os.environ["VIV_VX_ENABLE_CACHE_GRAPH_BINARY"] = "1"
+    win = DisplayWindow()
+    initialize_thread = Thread(target=initialize)
+    initialize_thread.start()
     Gtk.main()
