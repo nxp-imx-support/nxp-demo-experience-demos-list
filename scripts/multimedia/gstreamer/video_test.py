@@ -65,7 +65,7 @@ class MainWindow(Gtk.Window):
         )
 
         resolutions = ["3840x2160", "2560x1440", "1920x1080",
-        "1280x720", "720x480"]
+        "1280x720", "800x600", "720x480"]
         self.resolution_select = Gtk.ComboBoxText()
         for res in resolutions:
             self.resolution_select.append_text(res)
