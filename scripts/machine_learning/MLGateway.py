@@ -15,13 +15,14 @@ import logging
 import os
 import socket
 import sys
-import pip
 import tflite_runtime.interpreter as tflite
 import numpy as np
 import gi
-from gi.repository import Gtk, Gst, GObject, Gio
+import subprocess
+from gi.repository import Gtk, Gst, GObject, Gio, GLib
 sys.path.append("/home/root/.nxp-demo-experience/scripts/")
 import utils
+import glob
 
 gi.require_version('Gtk', '3.0')
 gi.require_version('Gst', '1.0')
@@ -29,13 +30,39 @@ gi.require_version('Gst', '1.0')
 
 def initialize():
     """Initial package installation"""
-    pip.main(['install', 'ssdpy'])
+    dwnwin = DownloadGUI()
+    GLib.idle_add(dwnwin.show_all)
+    """
+    GLib.idle_add(dwnwin.status_label.set_text, "\n\nTesting internet...")
+    res = subprocess.getstatusoutput(
+                "ping -c 1 8.8.8.8"
+            )[0]
+    if res != 0:
+        GLib.idle_add(
+            dwnwin.status_label.set_text, "\n\nInternet connection required!")
+        return
+    """
+    if FIRST_RUN:
+        GLib.idle_add(
+            dwnwin.status_label.set_text, "\n\nInstalling packages...")
+        res = subprocess.getstatusoutput(
+                "pip3 --retries 0 install ssdpy"
+            )[0]
+        if res != 0:
+            GLib.idle_add(
+                dwnwin.status_label.set_text, "\n\nPackage install failed!")
+            return
+    win.connect("destroy", Gtk.main_quit)
+    GLib.idle_add(win.show_all)
+    GLib.idle_add(dwnwin.destroy)
+        
 
-
+FIRST_RUN = False
+BOARD = None
 try:
     from ssdpy import SSDPServer
 except ModuleNotFoundError:
-    initialize()
+    FIRST_RUN = True
 
 MAX_TRY = 4
 SSDP_ADDRESS = "239.255.255.250"
@@ -98,6 +125,37 @@ def cast_ip():
     server = SSDPServer("imx-server", device_type=SSDP_ST)
     server.serve_forever()
 
+class DownloadGUI(Gtk.Window):
+    """The main voice GUI application."""
+
+    def __init__(self):
+        """Creates the loading window and then shows it"""
+        super().__init__()
+
+        self.set_default_size(450, 100)
+        self.set_resizable(False)
+        self.set_border_width(10)
+
+        header = Gtk.HeaderBar()
+        header.set_title("ML Gateway")
+        header.set_subtitle("NNStreamer Demo")
+        self.set_titlebar(header)
+
+        quit_button = Gtk.Button()
+        quit_icon = Gio.ThemedIcon(name="process-stop-symbolic")
+        quit_image = Gtk.Image.new_from_gicon(quit_icon, Gtk.IconSize.BUTTON)
+        quit_button.add(quit_image)
+        header.pack_end(quit_button)
+        quit_button.connect("clicked", Gtk.main_quit)
+
+        self.main_grid = Gtk.Grid(
+            row_homogeneous=False, column_homogeneous=True,
+            column_spacing=15, row_spacing=15)
+        self.main_grid.set_margin_end(10)
+        self.main_grid.set_margin_start(10)
+        self.status_label = Gtk.Label.new("\n\nSetting up...")
+        self.main_grid.attach(self.status_label, 0, 0, 1, 1)
+        self.add(self.main_grid)
 
 class ServerWindow(Gtk.Window):
     """ Server Window """
@@ -281,18 +339,33 @@ class ClientWindow(Gtk.Window):
 
         maximum_search = MAX_TRY
         addresses = []
+        attempt = 0
+        self.devices = []
+        for device in glob.glob('/dev/video*'):
+            self.devices.append(device)
 
-        while maximum_search != 0:
+        source_label = Gtk.Label(
+            label="Source"
+        )
+        self.source_select = Gtk.ComboBoxText()
+        for option in self.devices:
+            self.source_select.append_text(option)
+        self.source_select.set_active(0)
+
+        while maximum_search != 0 and attempt <= 1:
+            # write a loop to attempt x times
             if access_ip() is not False:
                 if ssdp_address[0] not in addresses:
                     addresses.append(ssdp_address[0])
                 maximum_search -= 1
-
-        self.server_ip = addresses[0]
+            attempt = attempt + 1
+        if len(addresses) !=  0:
+            self.server_ip = addresses[0]
+        else:
+            self.server_ip = "Not found!"
         self.radio_ip = Gtk.RadioButton()
         self.radio_ip.set_label(self.server_ip)
         self.radio_ip.connect("toggled", self.ip_changed)
-        self.radio_ip.set_active(True)
 
         self.radio_savedip = Gtk.RadioButton(group=self.radio_ip)
         self.enter_ip = "Type IP address :"
@@ -304,6 +377,12 @@ class ClientWindow(Gtk.Window):
         button3_label = self.button3.get_child()
         button3_label.set_markup("<b> Connect to Server </b>")
         self.button3.connect("clicked", self.connect_to_server_thread)
+        if len(addresses) != 0:
+            self.radio_ip.set_active(True)
+        else:
+            self.radio_savedip.set_active(True)
+            self.radio_ip.set_sensitive(False)
+        
         self.header = Gtk.HeaderBar()
         self.header.set_show_close_button(False)
         self.header.props.title = "ML Client Setup"
@@ -315,11 +394,13 @@ class ClientWindow(Gtk.Window):
         self.header.pack_end(quit_button)
         quit_button.connect("clicked", Gtk.main_quit)
 
-        self.grid.attach(self.label1, 0, 0, 1, 1)
-        self.grid.attach(self.radio_ip, 0, 1, 1, 1)
-        self.grid.attach(self.radio_savedip, 0, 2, 1, 1)
-        self.grid.attach(self.entry2, 1, 2, 1, 1)
-        self.grid.attach(self.button3, 0, 3, 2, 2)
+        self.grid.attach(source_label, 0, 0, 1, 1)
+        self.grid.attach(self.source_select, 1, 0, 1, 1)
+        self.grid.attach(self.label1, 0, 1, 1, 1)
+        self.grid.attach(self.radio_ip, 0, 2, 1, 1)
+        self.grid.attach(self.radio_savedip, 0, 3, 1, 1)
+        self.grid.attach(self.entry2, 1, 3, 1, 1)
+        self.grid.attach(self.button3, 0, 4, 2, 2)
         self.add(self.grid)
 
     def ip_changed(self, widget):
@@ -349,8 +430,9 @@ class ClientWindow(Gtk.Window):
         ml_data_set = utils.download_file(DATA_SET)
         if self.entry2.get_activates_default() is True:
             self.server_ip = self.entry2.get_text()
+        src = self.source_select.get_active_text()
 
-        client_pipeline = "v4l2src device=/dev/video0 ! "
+        client_pipeline = "v4l2src device={dev} ! "
         client_pipeline += "video/x-raw,width=640,height=480,framerate=30/1 ! tee name=t t. ! "
         client_pipeline += "queue max-size-buffers=2 leaky=2 ! imxvideoconvert_g2d ! "
         client_pipeline += "video/x-raw,width=300,height=300,format=RGBA ! "
@@ -361,7 +443,7 @@ class ClientWindow(Gtk.Window):
         client_pipeline += " mix. t. ! queue max-size-buffers=2 ! imxcompositor_g2d name=mix"
         client_pipeline += " sink_0::zorder=2 sink_1::zorder=1 ! waylandsink"
         client_pipeline = client_pipeline.format(
-            ip=self.server_ip, label=ml_data_set)
+            dev=src, ip=self.server_ip, label=ml_data_set)
         # creating the pipeline and launching it
         self.pipeline = Gst.parse_launch(client_pipeline)
         monitor_status = self.pipeline.set_state(Gst.State.PLAYING)
@@ -374,7 +456,7 @@ class ClientWindow(Gtk.Window):
         self.button3.set_label("Connected to server")
         button3_label = self.button3.get_child()
         button3_label.set_markup("<b> Connected to server </b>")
-        self.main_loop.run()
+        rtn = self.main_loop.run()
 
         # disconnecting the pipeline
         self.pipeline.set_state(Gst.State.NULL)
@@ -395,6 +477,9 @@ class ClientWindow(Gtk.Window):
             # Handle Errors
             err, debug = message.parse_error()
             print(err, debug)
+            self.button3.set_label("GStreamer crashed!")
+            button3_label = self.button3.get_child()
+            button3_label.set_markup("<b> GStreamer crashed! </b>")
             self.main_loop.quit()
         elif mtype == Gst.MessageType.WARNING:
             # Handle warnings
@@ -439,6 +524,12 @@ class DisplayWindow(Gtk.Window):
         self.client_button = Gtk.Button(label="Set up a client...")
         self.server_button.connect("clicked", self.server_initiate)
         self.client_button.connect("clicked", self.client_initiate)
+        global BOARD
+        print(BOARD)
+        if BOARD == "i.MX8MP":
+            self.client_button.set_sensitive(False)
+        else:
+            self.server_button.set_sensitive(False)
         self.grid_display.attach(self.server_button, 0, 0, 1, 1)
         self.grid_display.attach(self.client_button, 0, 2, 1, 1)
         self.add(self.grid_display)
@@ -463,10 +554,13 @@ class DisplayWindow(Gtk.Window):
 
 
 if __name__ == "__main__":
-    win = DisplayWindow()
-    win.connect("destroy", Gtk.main_quit)
-    win.show_all()
     os.environ["VIV_VX_CACHE_BINARY_GRAPH_DIR"] = ("/home/root/.cache"
             "/demoexperience")
     os.environ["VIV_VX_ENABLE_CACHE_GRAPH_BINARY"] = "1"
+    BOARD = subprocess.check_output(
+            ['cat', '/sys/devices/soc0/soc_id']
+            ).decode('utf-8')[:-1]
+    win = DisplayWindow()
+    initialize_thread = Thread(target=initialize)
+    initialize_thread.start()
     Gtk.main()
