@@ -106,3 +106,15 @@ path:
 url:https://github.com/shubham0204/FaceRecognition_With_FaceNet_Android/raw/master/app/src/main/assets/facenet_int_quantized.tflite
 alt_url:https://github.com/NXP/nxp-demo-experience-assets/raw/lf-5.15.52_2.1.0/models/facenet_int_quantized.tflite
 sha:
+
+name:face_landmark_192_integer_quant_vela.tflite
+path:
+url:https://github.com/NXP/nxp-demo-experience-assets/raw/lf-5.15.52_2.1.0/models/face_landmark_192_integer_quant_vela.tflite
+alt_url:
+sha:
+
+name:yoloface_int8_vela.tflite
+path:
+url:https://github.com/NXP/nxp-demo-experience-assets/raw/lf-5.15.52_2.1.0/models/yoloface_int8_vela.tflite
+alt_url:
+sha:

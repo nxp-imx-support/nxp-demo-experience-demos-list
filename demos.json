@@ -82,6 +82,14 @@
             "screenshot": "face_rec.png",
             "icon": "photo-video-solid.svg",
             "description": "An OpenCV example of how to use machine learning to recognize faces. An internet connection is required."
+        },{
+            "name": "DMS Demo",
+            "id": "dms",
+            "executable": "python3 /home/root/.nxp-demo-experience/scripts/machine_learning/dms/dms_demo.py",
+            "compatible": "imx93",
+            "screenshot": "",
+            "icon": "photo-video-solid.svg",
+            "description": "An example over how to implement a Driver Monitoring System (DMS)  using the NPU. An internet connection is required."
         }]
      }]
      },
