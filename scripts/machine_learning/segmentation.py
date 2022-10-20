@@ -19,20 +19,35 @@ import cv2
 import numpy as np
 import tflite_runtime.interpreter as tflite
 import time
+import os
+import subprocess
+import sys
+
+sys.path.append("/home/root/.nxp-demo-experience/scripts/")
+
+import utils
 
 if __name__ == "__main__":
-
+    out = subprocess.run(["python3", "/home/root/.nxp-demo-experience/scripts/machine_learning/segmentation_launch.py"]).returncode
+    print(out)
+    if out == -1:
+        exit()
+    model_path = utils.download_file("selfie_segmentation_quant.tflite")
+    bg_path = utils.download_file("bg_image.jpg")
     # Load model and use VX delegate for acceleration
     ext_delegate = tflite.load_delegate("/usr/lib/libvx_delegate.so")
     interpreter = tflite.Interpreter(
-        model_path="./selfie_segmentation_ptq.tflite", num_threads=4, experimental_delegates=[ext_delegate])
+        model_path=model_path, num_threads=4, experimental_delegates=[ext_delegate])
+    os.environ["VIV_VX_CACHE_BINARY_GRAPH_DIR"] = ("/home/root/.cache"
+        "/demoexperience")
+    os.environ["VIV_VX_ENABLE_CACHE_GRAPH_BINARY"] = "1"
     interpreter.allocate_tensors()
     input_index = interpreter.get_input_details()[0]['index']
     input_shape = interpreter.get_input_details()[0]['shape']
     output = interpreter.get_output_details()[0]['index']
 
     # Get video src
-    video_src = "v4l2src device=/dev/video3 ! imxvideoconvert_g2d ! video/x-raw,width=640,height=480,framerate=30/1 ! videoconvert ! appsink"
+    video_src = "v4l2src device=/dev/video" + str(out) + " ! imxvideoconvert_g2d ! video/x-raw,width=640,height=480,framerate=30/1 ! videoconvert ! appsink"
     cap = cv2.VideoCapture(video_src)
 
     frame_width = 640
@@ -83,7 +98,7 @@ if __name__ == "__main__":
         # This can be changed for any image or color
         # background_img = np.zeros(frame.shape, dtype=np.uint8)
         # background_img[:] = (0, 255, 0)        
-        background_img = cv2.imread('bg_image.jpg')
+        background_img = cv2.imread(bg_path)
         background_img = cv2.resize(background_img, (640,480))
 
         # Only print segmentation over background
@@ -101,9 +116,7 @@ if __name__ == "__main__":
         cv2.putText(output_image, f'Inf: {float(total_inference_time / 1000000.0)} ms',
                     (20, 55), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (0, 0, 0), 2)
 
-        cv2.namedWindow("Selfie Segmentation", cv2.WND_PROP_FULLSCREEN)
-        cv2.setWindowProperty("Selfie Segmentation",
-                              cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
+        cv2.namedWindow("Selfie Segmentation")
         cv2.imshow("Selfie Segmentation", output_image)
 
         if cv2.waitKey(1) == 27:
