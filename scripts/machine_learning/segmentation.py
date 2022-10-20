@@ -9,8 +9,10 @@ Model's License: Apache-2.0
 Original model available at: https://google.github.io/mediapipe/solutions/models.html
 Model Card: https://drive.google.com/file/d/1dCfozqknMa068vVsO2j_1FgZkW_e3VWv/preview
 
-The following is a demo to show human segmentation from video. 
-The original MediaPipe model was quantized using per-tensor quantization.
+The following is a demo to show human segmentation from video.
+Application could be aimed at video conference.
+The original MediaPipe model was quantized using per-tensor quantization to be
+accelerated by the NPU on the i.MX8M Plus EVK.
 """
 
 import cv2
@@ -33,8 +35,6 @@ if __name__ == "__main__":
     video_src = "v4l2src device=/dev/video3 ! imxvideoconvert_g2d ! video/x-raw,width=640,height=480,framerate=30/1 ! videoconvert ! appsink"
     cap = cv2.VideoCapture(video_src)
 
-    cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
-    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
     frame_width = 640
     frame_height = 480
 
@@ -42,7 +42,6 @@ if __name__ == "__main__":
     while True:
 
         got_frame, frame = cap.read()
-
         if got_frame is False:
             print("No frame... exiting program!")
             break
@@ -82,8 +81,10 @@ if __name__ == "__main__":
 
         # Create background image. In this demo, a green background is used.
         # This can be changed for any image or color
-        background_img = np.zeros(frame.shape, dtype=np.uint8)
-        background_img[:] = (0, 255, 0)
+        # background_img = np.zeros(frame.shape, dtype=np.uint8)
+        # background_img[:] = (0, 255, 0)        
+        background_img = cv2.imread('bg_image.jpg')
+        background_img = cv2.resize(background_img, (640,480))
 
         # Only print segmentation over background
         frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
@@ -98,7 +99,7 @@ if __name__ == "__main__":
         cv2.putText(output_image, f'FPS: {int(fps)}', (20, 30),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.75, (0, 0, 0), 2)
         cv2.putText(output_image, f'Inf: {float(total_inference_time / 1000000.0)} ms',
-                    (20, 70), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (0, 0, 0), 2)
+                    (20, 55), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (0, 0, 0), 2)
 
         cv2.namedWindow("Selfie Segmentation", cv2.WND_PROP_FULLSCREEN)
         cv2.setWindowProperty("Selfie Segmentation",
