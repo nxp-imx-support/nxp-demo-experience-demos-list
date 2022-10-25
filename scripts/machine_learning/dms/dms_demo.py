@@ -244,8 +244,8 @@ class MLVideoDemo(Gtk.Window):
         # the most straight forward
         cam_pipeline = (
             "v4l2src device=" + VIDEO + " ! imxvideoconvert_pxp " +
-            " ! video/x-raw,format=RGB16,width=" + str(FRAME_WIDTH) +
-            ",height=" + str(FRAME_HEIGHT) + "! " +
+            " ! video/x-raw,format=RGB16,width=" + str(int(FRAME_WIDTH)) +
+            ",height=" + str(int(FRAME_HEIGHT)) + "! " +
             "tee name=t t. ! queue max-size-buffers=2 leaky=2 ! " +
             "appsink emit-signals=true name=sink t. ! queue " +
             "max-size-buffers=2 leaky=2 ! videoconvert ! " +
@@ -715,8 +715,8 @@ class StartWindow(Gtk.Window):
         self.set_resizable(False)
 
         header = Gtk.HeaderBar()
-        header.set_title("Settings")
-        header.set_subtitle("Driver Monitoring System Demo")
+        header.set_title("Driver Monitoring System Demo")
+        header.set_subtitle("i.MX 93 Demos")
         self.set_titlebar(header)
 
         quit_button = Gtk.Button()
@@ -744,8 +744,10 @@ class StartWindow(Gtk.Window):
         self.height_spin.set_value(FRAME_HEIGHT)
         self.width_spin = Gtk.SpinButton.new_with_range(0, 1920, 10)
         self.width_spin.set_value(FRAME_WIDTH)
-        button = Gtk.Button.new_with_label("Start")
-        button.connect("clicked", self.start)
+        self.button = Gtk.Button.new_with_label("Start")
+        self.button.connect("clicked", self.start)
+        self.width_spin.set_sensitive(False)
+        self.height_spin.set_sensitive(False)
 
         grid = Gtk.Grid.new()
         grid.attach(vid_label, 0, 0, 1, 1)
@@ -755,7 +757,7 @@ class StartWindow(Gtk.Window):
         grid.attach(width_label, 0, 2, 1, 1)
         grid.attach(self.width_spin, 1, 2, 1, 1)
         grid.attach(self.status_label, 0, 3, 2, 1)
-        grid.attach(button, 0, 4, 2, 1)
+        grid.attach(self.button, 0, 4, 2, 1)
         grid.props.margin = 30
         grid.set_column_spacing(30)
         grid.set_row_spacing(30)
@@ -772,6 +774,9 @@ class StartWindow(Gtk.Window):
         VIDEO = self.source_select.get_active_text()
         FRAME_WIDTH = self.width_spin.get_value()
         FRAME_HEIGHT = self.height_spin.get_value()
+        self.button.set_sensitive(False)
+        self.width_spin.set_sensitive(False)
+        self.height_spin.set_sensitive(False)
         GLib.idle_add(
                 self.status_label.set_text, "Downloading landmark model...")
         LANDMARK_MODEL = utils.download_file(
