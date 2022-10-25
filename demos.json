@@ -82,6 +82,14 @@
             "screenshot": "face_rec.png",
             "icon": "photo-video-solid.svg",
             "description": "An OpenCV example of how to use machine learning to recognize faces. An internet connection is required."
+        },{
+            "name": "Selfie Segmentation",
+            "id": "self_seg",
+            "executable": "python3 /home/root/.nxp-demo-experience/scripts/machine_learning/segmentation.py",
+            "compatible": "imx8mp",
+            "screenshot": "",
+            "icon": "photo-video-solid.svg",
+            "description": "An OpenCV example of how to use machine learning to remove a background from a video. An internet connection is required."
         }]
      }]
      },
