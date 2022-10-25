@@ -118,3 +118,15 @@ path:
 url:https://github.com/NXP/nxp-demo-experience-assets/raw/lf-5.15.52_2.1.0/models/yoloface_int8_vela.tflite
 alt_url:
 sha:
+
+name:selfie_segmentation_quant.tflite
+path:
+url:https://github.com/NXP/nxp-demo-experience-assets/raw/lf-5.15.52_2.1.0/models/selfie_segmentation_quant.tflite
+alt_url:
+sha:
+
+name:bg_image.jpg
+path:
+url:https://github.com/NXP/nxp-demo-experience-assets/raw/lf-5.15.52_2.1.0/images/bg_image.jpg
+alt_url:
+sha:
