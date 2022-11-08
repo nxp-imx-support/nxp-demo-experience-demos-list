@@ -28,7 +28,8 @@ sys.path.append("/home/root/.nxp-demo-experience/scripts/")
 import utils
 
 if __name__ == "__main__":
-    out = subprocess.run(["python3", "/home/root/.nxp-demo-experience/scripts/machine_learning/segmentation_launch.py"]).returncode
+    out = subprocess.run(
+        ["python3", "/home/root/.nxp-demo-experience/scripts/machine_learning/segmentation_launch.py"]).returncode
     print(out)
     if out == -1:
         exit()
@@ -37,9 +38,11 @@ if __name__ == "__main__":
     # Load model and use VX delegate for acceleration
     ext_delegate = tflite.load_delegate("/usr/lib/libvx_delegate.so")
     interpreter = tflite.Interpreter(
-        model_path=model_path, num_threads=4, experimental_delegates=[ext_delegate])
+        model_path=model_path,
+        num_threads=4,
+        experimental_delegates=[ext_delegate])
     os.environ["VIV_VX_CACHE_BINARY_GRAPH_DIR"] = ("/home/root/.cache"
-        "/demoexperience")
+                                                   "/demoexperience")
     os.environ["VIV_VX_ENABLE_CACHE_GRAPH_BINARY"] = "1"
     interpreter.allocate_tensors()
     input_index = interpreter.get_input_details()[0]['index']
@@ -47,11 +50,15 @@ if __name__ == "__main__":
     output = interpreter.get_output_details()[0]['index']
 
     # Get video src
-    video_src = "v4l2src device=/dev/video" + str(out) + " ! imxvideoconvert_g2d ! video/x-raw,width=640,height=480,framerate=30/1 ! videoconvert ! appsink"
+    video_src = "v4l2src device=/dev/video" + \
+        str(out) + " ! imxvideoconvert_g2d ! video/x-raw,width=640,height=480,framerate=30/1 ! videoconvert ! appsink"
     cap = cv2.VideoCapture(video_src)
 
     frame_width = 640
     frame_height = 480
+
+    background_img = cv2.imread(bg_path)
+    background_img = cv2.resize(background_img, (640, 480))
 
     # Loop through the video frames
     while True:
@@ -63,11 +70,10 @@ if __name__ == "__main__":
 
         start = time.time()
 
-        # Flip frame and change channel layout
-        frame = cv2.cvtColor(cv2.flip(frame, 1), cv2.COLOR_BGR2RGB)
-
         # fit the image into a 256,256 square for input model
         input_frame = cv2.resize(frame, (256, 256))
+        # Change channel layout
+        input_frame = cv2.cvtColor(input_frame, cv2.COLOR_BGR2RGB)
         input_frame = np.ascontiguousarray(input_frame)
 
         # Reshape tensors to fit input size of model
@@ -86,7 +92,7 @@ if __name__ == "__main__":
         segmentation = interpreter.get_tensor(output)[0]
 
         # Interpret segmentation
-        condition = segmentation > 0.10
+        condition = segmentation > 0.15
         condition_frame = np.zeros((256, 256, 3), dtype=np.uint8)
         condition_frame[:, :, 0] = condition[:, :, 0]
         condition_frame[:, :, 1] = condition[:, :, 0]
@@ -94,15 +100,7 @@ if __name__ == "__main__":
         condition_frame = cv2.resize(
             condition_frame, (frame_width, frame_height), cv2.INTER_CUBIC)
 
-        # Create background image. In this demo, a green background is used.
-        # This can be changed for any image or color
-        # background_img = np.zeros(frame.shape, dtype=np.uint8)
-        # background_img[:] = (0, 255, 0)        
-        background_img = cv2.imread(bg_path)
-        background_img = cv2.resize(background_img, (640,480))
-
         # Only print segmentation over background
-        frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
         output_image = np.where(condition_frame, frame, background_img)
 
         # Get inference time for model and FPS for pipeline
@@ -113,11 +111,19 @@ if __name__ == "__main__":
 
         cv2.putText(output_image, f'FPS: {int(fps)}', (20, 30),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.75, (0, 0, 0), 2)
-        cv2.putText(output_image, f'Inf: {float(total_inference_time / 1000000.0)} ms',
-                    (20, 55), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (0, 0, 0), 2)
+        cv2.putText(
+            output_image,
+            f'Inf: {float(total_inference_time / 1000000.0)} ms',
+            (20, 55), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (0, 0, 0), 2)
 
         cv2.namedWindow("Selfie Segmentation")
         cv2.imshow("Selfie Segmentation", output_image)
 
+        # cv2.imwrite('/home/root/img.png', output_image)
+
         if cv2.waitKey(1) == 27:
             break
+
+    cap.release()
+    cv2.destroyAllWindows()
+

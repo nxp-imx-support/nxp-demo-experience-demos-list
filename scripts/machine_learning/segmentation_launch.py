@@ -46,7 +46,7 @@ class MainWindow(Gtk.Window):
         for device in glob.glob('/dev/video*'):
             devices.append(device)
         backends_available = ["NPU"]
-        
+
         main_grid = Gtk.Grid(
             row_homogeneous=True, column_spacing=15, row_spacing=15)
         main_grid.set_margin_end(10)
@@ -85,7 +85,7 @@ class MainWindow(Gtk.Window):
         self.backend_select.set_hexpand(True)
 
         self.launch_button = Gtk.Button.new_with_label("Run")
-        self.launch_button.connect("clicked",self.on_change_start)
+        self.launch_button.connect("clicked", self.on_change_start)
 
         self.status_bar = Gtk.Label.new()
 
@@ -109,40 +109,43 @@ class MainWindow(Gtk.Window):
         cam_thread = threading.Thread(
             target=start_demo,
             args=(self.backend_select.get_active_text(),
-            self.source_select.get_active_text()))
-        cam_thread.daemon =True
+                  self.source_select.get_active_text()))
+        cam_thread.daemon = True
         cam_thread.start()
+
 
 def start_demo(backend, camera):
     global cam
     # Get assets
     GLib.idle_add(
-                main_window.status_bar.set_text, "Downloading model...")
+        main_window.status_bar.set_text, "Downloading model...")
     model_path = utils.download_file("selfie_segmentation_quant.tflite")
     if model_path == -1 or model_path == -2 or model_path == -3:
-            GLib.idle_add(
-                main_window.status_bar.set_text, "Download failed! " +
-                "Restart demo and try again!")
-            while True:
-                time.sleep(9999)
+        GLib.idle_add(
+            main_window.status_bar.set_text, "Download failed! " +
+            "Restart demo and try again!")
+        while True:
+            time.sleep(9999)
     GLib.idle_add(
-                main_window.status_bar.set_text, "Downloading background...")
+        main_window.status_bar.set_text, "Downloading background...")
     bg_path = utils.download_file("bg_image.jpg")
     if bg_path == -1 or bg_path == -2 or bg_path == -3:
-            GLib.idle_add(
-                main_window.status_bar.set_text, "Download failed! " +
-                "Restart demo and try again!")
-            while True:
-                time.sleep(9999)
-    GLib.idle_add(
-                main_window.status_bar.set_text, "Warming up backend... (can take a couple minutes)")
+        GLib.idle_add(
+            main_window.status_bar.set_text, "Download failed! " +
+            "Restart demo and try again!")
+        while True:
+            time.sleep(9999)
+    GLib.idle_add(main_window.status_bar.set_text,
+                  "Warming up backend... (can take a couple minutes)")
     # Load model and use VX delegate for acceleration
     if backend == "NPU":
         ext_delegate = tflite.load_delegate("/usr/lib/libvx_delegate.so")
         interpreter = tflite.Interpreter(
-            model_path=model_path, num_threads=4, experimental_delegates=[ext_delegate])
+            model_path=model_path,
+            num_threads=4,
+            experimental_delegates=[ext_delegate])
         os.environ["VIV_VX_CACHE_BINARY_GRAPH_DIR"] = ("/home/root/.cache"
-            "/demoexperience")
+                                                       "/demoexperience")
         os.environ["VIV_VX_ENABLE_CACHE_GRAPH_BINARY"] = "1"
     else:
         interpreter = tflite.Interpreter(
@@ -155,10 +158,11 @@ def start_demo(backend, camera):
     interpreter.invoke()
 
     GLib.idle_add(
-                main_window.status_bar.set_text, "Starting demo...")
+        main_window.status_bar.set_text, "Starting demo...")
     cam = int(camera[-1])
     GLib.idle_add(main_window.close)
     GLib.idle_add(Gtk.main_quit)
+
 
 if __name__ == "__main__":
     cam = -1
@@ -166,3 +170,5 @@ if __name__ == "__main__":
     main_window.show_all()
     Gtk.main()
     exit(cam)
+
+
