@@ -10,7 +10,6 @@ not present.
 
 import cairo
 import gi
-import cv2
 import time
 import numpy as np
 import os
@@ -19,7 +18,8 @@ import math
 import glob
 import sys
 
-from face_detection import YoloFace
+from face_detection import MediapipeFace
+from face_landmark import FaceLandmark
 from eye import Eye
 from mouth import Mouth
 
@@ -34,13 +34,21 @@ FACE_MODEL = ""
 
 LANDMARK_MODEL = ""
 
+IRIS_MODEL = ""
+
 VIDEO = "/dev/video0"
 ''' Camera to use '''
+
+MONO = 0
+''' Camera is monochrome '''
 
 FRAME_WIDTH = 1280
 ''' Width of incoming video '''
 
-FRAME_HEIGHT = 720
+if MONO == 1:
+    FRAME_HEIGHT = 800
+else:
+    FRAME_HEIGHT = 720
 ''' Height of incoming video '''
 
 BAD_FACE_PENALTY = 0.01
@@ -64,15 +72,18 @@ RESTORE_CREDIT = -0.01
 FACE_THRESHOLD = 0.7
 ''' The threshold value for face detection '''
 
-LEFT_EYE_THRESHOLD = 50
+LEFT_EYE_THRESHOLD = 0.3
 ''' if the left_eye ratio is greater then this value, then left eye will be
     considered as open, otherwise be considered as closed. '''
 
-RIGHT_EYE_THRESHOLD = 50
+RIGHT_EYE_THRESHOLD = 0.3
 """ if the right_eye ratio is greater then this value, then right eye will be
     considered as open, otherwise be considered as closed. """
 
-MOUTH_THRESHOLD = 0.4
+if MONO == 1:
+    MOUTH_THRESHOLD = 0.2
+else:
+    MOUTH_THRESHOLD = 0.4
 """ if the mouth ratio is greater then this value, then mouth will be
     considered as open, otherwise be considered as closed. """
 
@@ -242,15 +253,25 @@ class MLVideoDemo(Gtk.Window):
         # GStreamer pipeline to use. Note that the format is in RGB16. I'm
         # not sure if this is the only format that can be used, but it seems
         # the most straight forward
-        cam_pipeline = (
-            "v4l2src device=" + VIDEO + " ! imxvideoconvert_pxp " +
-            " ! video/x-raw,format=RGB16,width=" + str(int(FRAME_WIDTH)) +
-            ",height=" + str(int(FRAME_HEIGHT)) + "! " +
-            "tee name=t t. ! queue max-size-buffers=2 leaky=2 ! " +
-            "appsink emit-signals=true name=sink t. ! queue " +
-            "max-size-buffers=2 leaky=2 ! videoconvert ! " +
-            "video/x-raw,format=RGB ! appsink " +
-            "emit-signals=true name=sink2")
+        if MONO == 1:
+            cam_pipeline = (
+                "v4l2src device=" + VIDEO +
+                " ! video/x-raw,format=GRAY16_LE,width=" + str(int(FRAME_WIDTH)) +
+                ",height=" + str(int(FRAME_HEIGHT)) + "! " +
+                "tee name=t t. ! queue max-size-buffers=2 leaky=2 ! " +
+                "appsink emit-signals=true name=sink t. ! queue " +
+                "max-size-buffers=2 leaky=2 ! appsink " +
+                "emit-signals=true name=sink2")
+        else:
+            cam_pipeline = (
+                "v4l2src device=" + VIDEO + " ! imxvideoconvert_pxp " +
+                " ! video/x-raw,format=RGB16,width=" + str(int(FRAME_WIDTH)) +
+                ",height=" + str(int(FRAME_HEIGHT)) + "! " +
+                "tee name=t t. ! queue max-size-buffers=2 leaky=2 ! " +
+                "appsink emit-signals=true name=sink t. ! queue " +
+                "max-size-buffers=2 leaky=2 ! videoconvert ! " +
+                "video/x-raw,format=RGB ! appsink " +
+                "emit-signals=true name=sink2")
         self.refresh_clock = time.perf_counter()
 
         # Parse the above pipeline
@@ -271,18 +292,10 @@ class MLVideoDemo(Gtk.Window):
         """Sets up inference"""
         self.tflite_labels = []
         os.system("echo 4 > /proc/sys/kernel/printk")
-        self.detector = YoloFace(FACE_MODEL, FACE_THRESHOLD)
-        self.eye = Eye()
+        self.detector = MediapipeFace(FACE_MODEL, FACE_THRESHOLD)
+        self.eye = Eye(IRIS_MODEL)
         self.mouth = Mouth()
-
-        # Restore the model.
-        self.interpreter = tflite.Interpreter(model_path=LANDMARK_MODEL)
-        self.interpreter.allocate_tensors()
-        self.input_index = self.interpreter.get_input_details()[0]['index']
-        self.input_shape = self.interpreter.get_input_details()[0]['shape']
-        self.face_landmarks = self.interpreter.get_output_details()[0]['index']
-        self.face_scores = self.interpreter.get_output_details()[1]['index']
-
+        self.face_landmark = FaceLandmark(LANDMARK_MODEL)
 
     def on_new_data(self, element):
         """Get the new frame and signal a redraw."""
@@ -304,18 +317,29 @@ class MLVideoDemo(Gtk.Window):
         ret, mem_buf = buffer.map(Gst.MapFlags.READ)
         height = caps.get_structure(0).get_value("height")
         width = caps.get_structure(0).get_value("width")
-        frame_org = np.ndarray(
-            shape=(height,width,3), dtype=np.uint8, buffer=mem_buf.data)
+        if MONO == 1:
+            frame_org = np.ndarray(
+                shape=(height,width), dtype=np.uint16, buffer=mem_buf.data)
+            frame_org = (frame_org / 16).astype(np.uint8)
+            frame_org = self.increase_brightness(frame_org)
+            frame_org = np.expand_dims(frame_org, 2).repeat(3, axis=2)
+        else:
+            frame_org = np.ndarray(
+                shape=(height,width,3), dtype=np.uint8, buffer=mem_buf.data)
         frame = frame_org[...,::-1].copy()
         boxes = self.detector.detect(frame)
         self.face_cords = []
         if np.size(boxes,0) > 0:
+            mark_group = []
             for i in range(np.size(boxes,0)):
                 boxes[i][[0,2]] *= FRAME_WIDTH
                 boxes[i][[1,3]] *= FRAME_HEIGHT
 
             # Transform the boxes into squares.
-            boxes = self.transform_to_square(boxes, scale=1.26, offset=(0, 0.0))
+            if MONO == 1:
+                boxes = self.transform_to_square(boxes, scale=1.5, offset=(0, 0))
+            else:
+                boxes = self.transform_to_square(boxes, scale=1.26, offset=(0, 0))
 
             # Clip the boxes if they cross the image boundaries.
             boxes, _ = self.clip_boxes(boxes, (0, 0, FRAME_WIDTH, FRAME_HEIGHT))
@@ -338,60 +362,29 @@ class MLVideoDemo(Gtk.Window):
             x1, y1, x2, y2 = boxes[face_in_center]
             self.face_cords.append([x1, y1, x2, y2])
 
-            # Preprocess it.
+            # now do face landmark inference
             face_image = frame[y1:y2, x1:x2]
-            face_image = cv2.resize(face_image, (192, 192))
-            face_image = cv2.cvtColor(face_image, cv2.COLOR_BGR2RGB)
+            face_marks = self.face_landmark.get_landmark(face_image, (x1, y1, x2, y2))
+            face_marks = np.array(face_marks)
+            mark_group.append(face_marks)
 
-            # Do prediction.
-            face = np.expand_dims(face_image, 0)
-            face = 2 * ((face / 255.0) - 0.5).astype('float32')
-            # print(face)
-            
-            # input quantization
-            # face = face / 0.01865844801068306 - 14
-            # face = face.astype(np.int8)
+            # process landmarks for left eye
+            x1, y1, x2, y2 = self.eye.get_eye_roi(face_marks, 0)
+            left_eye_image = frame[y1:y2, x1:x2]
+            left_eye_marks, left_iris_marks = self.eye.get_landmark(left_eye_image, (x1,y1,x2,y2), 0)
+            mark_group.append(np.array(left_iris_marks))
 
-            self.interpreter.set_tensor(self.input_index, face)
-            self.interpreter.invoke()
-            self.landmarks = self.interpreter.get_tensor(self.face_landmarks)[0]
-            self.face_flag_socres = self.interpreter.get_tensor(self.face_scores)[0]
-
-            
-            # output dequantization
-            self.landmarks = self.landmarks.astype(np.float32)
-            self.landmarks = np.reshape(self.landmarks, (468, 3))
-
-            facebox = boxes[face_in_center]
-            mark_group = []
-            left, top, right, bottom = facebox
-            width = height = (bottom - top)
-            #print(width)
-
-            face_landmark_x = self.landmarks[:, 0:1] / 192.0
-            face_landmark_y = self.landmarks[:, 1:2] / 192.0
-
-            marks = []
-            for i in range(0, face_landmark_x.shape[0]):
-                x = int(face_landmark_x[i] * width)
-                y = int(face_landmark_y[i] * height)
-                marks.append((x, y))
-
-            marks = np.array(marks)
-            # print(marks)
-
-            #marks, heatmap_grid = parse_heatmaps(heatmap, (width, height))
-
-            # Convert the marks locations from local CNN to global image.
-            marks[:, 0] += left
-            marks[:, 1] += top
-            mark_group.append(marks)
+            # process landmarks for right eye
+            x1, y1, x2, y2 = self.eye.get_eye_roi(face_marks, 1)
+            right_eye_image = frame[y1:y2, x1:x2]
+            right_eye_marks, right_iris_marks = self.eye.get_landmark(right_eye_image, (x1,y1,x2,y2), 1)
+            mark_group.append(np.array(right_iris_marks))
 
             self.marks = mark_group
 
             # process landmarks for eyes
-            left_eye_ratio = self.eye.blinking_ratio(frame, marks, 0)
-            right_eye_ratio = self.eye.blinking_ratio(frame, marks, 1)
+            left_eye_ratio = self.eye.blinking_ratio(left_eye_marks, 0)
+            right_eye_ratio = self.eye.blinking_ratio(right_eye_marks, 1)
             #print(left_eye_ratio, right_eye_ratio)
 
             # average the left eye status in a window of LEFT_W frames
@@ -418,14 +411,14 @@ class MLVideoDemo(Gtk.Window):
             else:
                 self.sleep = True
             
-            mouth_ratio = self.mouth.yawning_ratio(marks)
+            mouth_ratio = self.mouth.yawning_ratio(face_marks)
             #print(mouth_ratio)
             if mouth_ratio > MOUTH_THRESHOLD:
                 self.yawn = False
             else:
                 self.yawn = True
             
-            mouth_face_ratio = self.mouth.mouth_face_ratio(marks)
+            mouth_face_ratio = self.mouth.mouth_face_ratio(face_marks)
             if (mouth_face_ratio < FACING_LEFT_THRESHOLD or
                 mouth_face_ratio > FACING_RIGHT_THRESHOLD):
                 self.attention = False
@@ -462,13 +455,19 @@ class MLVideoDemo(Gtk.Window):
         frame = np.ndarray(
             shape=(height,width), dtype=np.uint16, buffer=mem_buf.data)
         frame = frame.copy()
-        surface = cairo.ImageSurface.create_for_data(
-            frame, cairo.Format.RGB16_565, width, height)
+        if MONO == 1:
+            frame = (frame / 16).astype(np.uint8)
+            frame = self.increase_brightness(frame)
+            # expand GRAY to RGB, the upper 8 bits will not be used
+            frame = np.expand_dims(frame, 2).repeat(4, axis=2).view("uint32")
+            surface = cairo.ImageSurface.create_for_data(
+                frame, cairo.Format.RGB24, width, height)
+        else:
+            surface = cairo.ImageSurface.create_for_data(
+                frame, cairo.Format.RGB16_565, width, height)
         context.set_source_surface(surface)
         context.paint()
         context.set_source_rgb(255, 0, 0)
-        face_in_center = -1
-        distance_to_center = math.hypot(FRAME_WIDTH / 2, FRAME_HEIGHT / 2)
         ok = True
         if(len(self.face_cords) != 0):
             for face in self.face_cords:
@@ -614,11 +613,13 @@ class MLVideoDemo(Gtk.Window):
 
         return boxes, clip_mark
 
-    def draw_marks(self, image, marks):
-        """Draw the dots on face"""
-        for m in marks:
-            for mark in m:
-                cv2.circle(image, tuple(mark.astype(int)), 2, (0, 255, 0), -1)
+    def increase_brightness(self, image):
+        #print("max {0}, min {1}, mean {2}".format(np.max(image), np.min(image), np.mean(image)))
+        image = image.astype(np.uint16) * 4
+        image[image > 255] = 255
+        #print("max {0}, min {1}, mean {2}".format(np.max(image), np.min(image), np.mean(image)))
+        image = image.astype(np.uint8)
+        return image
 
     def open_settings(self, unused):
          GLib.idle_add(self.settings.show_all)
@@ -771,6 +772,7 @@ class StartWindow(Gtk.Window):
         global FRAME_HEIGHT
         global LANDMARK_MODEL
         global FACE_MODEL
+        global IRIS_MODEL
         VIDEO = self.source_select.get_active_text()
         FRAME_WIDTH = self.width_spin.get_value()
         FRAME_HEIGHT = self.height_spin.get_value()
@@ -779,23 +781,30 @@ class StartWindow(Gtk.Window):
         self.height_spin.set_sensitive(False)
         GLib.idle_add(
                 self.status_label.set_text, "Downloading landmark model...")
-        LANDMARK_MODEL = utils.download_file(
-            "face_landmark_192_integer_quant_vela.tflite")
+        LANDMARK_MODEL = utils.download_file("face_landmark_ptq_vela.tflite")
         if (LANDMARK_MODEL == -1 or LANDMARK_MODEL == -2 or
             LANDMARK_MODEL == -3):
             GLib.idle_add(
-                self.status_label.set_text, "Download failed! " +
+                self.status_label.set_text, "Download landmark model failed! " +
                 "Restart demo and try again!")
         else:
             GLib.idle_add(
                 self.status_label.set_text, "Downloading face model...")
-            FACE_MODEL = utils.download_file("yoloface_int8_vela.tflite")
+            FACE_MODEL = utils.download_file("face_detection_ptq_vela.tflite")
             if FACE_MODEL == -1 or FACE_MODEL == -2 or FACE_MODEL == -3:
                 GLib.idle_add(
-                    self.status_label.set_text, "Download failed! " +
+                    self.status_label.set_text, "Download face model failed! " +
                     "Restart demo and try again!")
             else:
-                GLib.idle_add(self.launch)
+                GLib.idle_add(
+                    self.status_label.set_text, "Downloading iris model...")
+                IRIS_MODEL = utils.download_file("iris_landmark_ptq_vela.tflite")
+                if IRIS_MODEL == -1 or IRIS_MODEL == -2 or IRIS_MODEL == -3:
+                    GLib.idle_add(
+                        self.status_label.set_text, "Download iris model failed! " +
+                        "Restart demo and try again!")
+                else:
+                    GLib.idle_add(self.launch)
 
     def launch(self):
         """Launch demo"""

@@ -2,21 +2,109 @@
 # SPDX-License-Identifier: BSD-3-Clause
 
 import numpy as np
+import cv2
+#import tensorflow.lite as tflite
+import tflite_runtime.interpreter as tflite
+import math
 
 class Eye(object):
     """
-    This class use 468 points landmark to analyze eye behavior
+    This class use 468 points face landmark and iris detection model
+    from mediapipe to get 71 normalized eye contour landmarks and a
+    separate list of 5 normalized iris landmarks.
     """
 
-    LEFT_EYE_POINTS = [33, 160, 158, 133, 153, 144]
-    RIGHT_EYE_POINTS = [362, 385, 387, 263, 373, 380]
-    LEFT_EYE_EDGE = 8
-    RIGHT_EYE_EDGE = 8
+    LEFT_EYE_START = 33
+    LEFT_EYE_END = 133
+    RIGHT_EYE_START = 362
+    RIGHT_EYE_END = 263
+    ROI_SCALE = 2
 
-    def __init__(self, landmarks = None):
-        self.landmark_points = landmarks
+    EYE_LANDMARK_CONNECTIONS = [
+        (0, 1), (1, 2), (2, 3), (3, 4), (4, 5),
+        (5, 6), (6, 7), (7, 8), (9, 10), (10, 11),
+        (11, 12), (12, 13), (13, 14), (0, 9), (8, 14)
+    ]
 
-    def blinking_ratio(self, frame, landmarks, side):
+    def __init__(self, model_path):
+        self.interpreter = tflite.Interpreter(model_path=model_path)
+        self.interpreter.allocate_tensors()
+
+        self.input_index = self.interpreter.get_input_details()[0]['index']
+        self.input_shape = self.interpreter.get_input_details()[0]['shape']
+        self.eye_index = self.interpreter.get_output_details()[0]['index']
+        self.iris_index = self.interpreter.get_output_details()[1]['index']
+
+    def get_eye_roi(self, face_landmarks, side):
+        if side == 0:
+            x1, y1 = face_landmarks[self.LEFT_EYE_START]
+            x2, y2 = face_landmarks[self.LEFT_EYE_END]
+        else:
+            x1, y1 = face_landmarks[self.RIGHT_EYE_START]
+            x2, y2 = face_landmarks[self.RIGHT_EYE_END]
+
+        mid_point_x = int((x1 + x2) / 2)
+        mid_point_y = int((y1 + y2) / 2)
+        half_eye_width = int((x2 - x1) / 2)
+        roi_xmin = int(mid_point_x - self.ROI_SCALE * half_eye_width)
+        roi_xmax = int(mid_point_x + self.ROI_SCALE * half_eye_width)
+        roi_ymin = int(mid_point_y - self.ROI_SCALE * half_eye_width)
+        roi_ymax = int(mid_point_y + self.ROI_SCALE * half_eye_width)
+        return roi_xmin, roi_ymin, roi_xmax, roi_ymax
+
+    def _pre_processing(self, input_data):
+        input_data = cv2.cvtColor(input_data, cv2.COLOR_BGR2RGB)
+        input_data = cv2.resize(input_data, self.input_shape[1:3]).astype(np.float32)
+        input_data = input_data[np.newaxis,:,:,:] / 255.0
+        #input_data = (input_data[np.newaxis,:,:,:] - 128).astype(np.int8)
+        return input_data
+
+    def get_landmark(self, frame, roi, side):
+        if side == 1:
+            frame = cv2.flip(frame, 1)
+        input_data = self._pre_processing(frame)
+        self.interpreter.set_tensor(self.input_index, input_data)
+        self.interpreter.invoke()
+        eye_points = self.interpreter.get_tensor(self.eye_index)
+        iris_points = self.interpreter.get_tensor(self.iris_index)
+
+        eye_points = eye_points.reshape(-1, 3)
+        iris_points = iris_points.reshape(-1, 3)
+        height, width = self.input_shape[1:3]
+
+        eye_points /= (width, height, width)
+        iris_points /= (width, height, width)
+        if side == 1:
+            eye_points[:, 0] *= -1
+            eye_points[:, 0] += 1
+            iris_points[:, 0] *= -1
+            iris_points[:, 0] += 1
+
+        xmin, ymin, xmax, ymax = roi
+        roi_width = xmax - xmin
+        roi_height = ymax - ymin
+
+        eye_landmarks = []
+        iris_landmarks = []
+        for i in range(np.size(eye_points, 0)):
+            x1 = int(eye_points[i][0] * roi_width + xmin)
+            y1 = int(eye_points[i][1] * roi_height + ymin)
+            eye_landmarks.append([x1, y1])
+        for i in range(np.size(iris_points, 0)):
+            x1 = int(iris_points[i][0] * roi_width + xmin)
+            y1 = int(iris_points[i][1] * roi_height + ymin)
+            iris_landmarks.append([x1, y1])
+
+        return eye_landmarks, iris_landmarks
+
+    def draw_eye_contour(self, frame, eye_landmarks):
+        for connection in self.EYE_LANDMARK_CONNECTIONS:
+            idx1, idx2 = connection
+            cv2.line(frame, tuple(eye_landmarks[idx1]), tuple(eye_landmarks[idx2]), (255,0,0), thickness=2)
+        return frame
+
+
+    def blinking_ratio(self, landmarks, side):
         """Calculates a ratio that can indicate whether an eye is closed or not.
         It's calculating the absolute differenc between eye area's color to the
         skin color that at eye edge
@@ -28,34 +116,22 @@ class Eye(object):
         Returns:
             The computed ratio
         """
-
-        points = []
-        edge_point = 0
         if side == 0:
-            for i in self.LEFT_EYE_POINTS:
-                point = landmarks[i]
-                points.append(point)
-            edge_point = landmarks[self.LEFT_EYE_EDGE]
+            point_left = landmarks[0]
+            point_right = landmarks[8]
         else:
-            for i in self.RIGHT_EYE_POINTS:
-                point = landmarks[i]
-                points.append(point)
-            edge_point = landmarks[self.RIGHT_EYE_EDGE]
+            point_left = landmarks[8]
+            point_right = landmarks[0]
 
-        x1 = points[1][0]
-        y1 = points[1][1]
-        x2 = points[4][0]
-        y2 = points[4][1]
+        point_top = landmarks[12]
+        point_bottom = landmarks[4]
 
-        x3 = edge_point[0]
-        y3 = edge_point[1]
+        eye_width = math.hypot((point_right[0] - point_left[0]), (point_right[1] - point_left[1]))
+        eye_height = math.hypot((point_bottom[0] - point_top[0]), (point_bottom[1] - point_top[1]))
 
-        eye_center_mean = np.mean(np.array(frame[y1:y2, x1:x2]), axis=(0,1))
-        #print(np.shape(eye_center_mean))
-        eye_edge = np.array(frame[y3, x3])
-        #print(np.shape(eye_edge))
+        try:
+            ratio = eye_height / eye_width
+        except ZeroDivisionError:
+            ratio = 0
 
-        diff_3_mean = np.abs(np.mean(eye_center_mean - eye_edge))
-
-        return diff_3_mean
-
+        return ratio
