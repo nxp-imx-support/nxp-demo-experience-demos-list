@@ -1,64 +1,187 @@
+# Copyright © 2021 Patrick Levin
 # Copyright 2022 NXP Semiconductors
-# SPDX-License-Identifier: BSD-3-Clause
+# SPDX-Identifier: MIT
 
 import numpy as np
 import cv2
+#import tensorflow.lite as tflite
 import tflite_runtime.interpreter as tflite
-import time
+
+# score limit is 100 in mediapipe and leads to overflows with IEEE 754 floats
+# this lower limit is safe for use with the sigmoid functions and float32
+RAW_SCORE_LIMIT = 80
+
+# NMS similarity threshold
+MIN_SUPPRESSION_THRESHOLD = 0.5
+
 
 def sigmoid(x):
     return 1 / (1 + np.exp(-x))
 
-class YoloFace(object):
+
+class MediapipeFace(object):
     def __init__(self, model_path, threshold = 0.75):
         self.interpreter = tflite.Interpreter(model_path=model_path)
         self.interpreter.allocate_tensors()
-        self.ips = "N/A IPS"
 
-        self.input_details = self.interpreter.get_input_details()
-        self.output_details = self.interpreter.get_output_details()
-        self.input_shape = self.input_details[0]['shape'][1:3]
+        self.input_index = self.interpreter.get_input_details()[0]['index']
+        self.input_shape = self.interpreter.get_input_details()[0]['shape']
+        self.bbox_index = self.interpreter.get_output_details()[1]['index']
+        self.score_index = self.interpreter.get_output_details()[0]['index']
+
+        # (reference: modules/face_detection/face_detection_short_range_common.pbtxt)
+        self.ssd_opts = {
+            'num_layers': 4,
+            'input_size_height': 128,
+            'input_size_width': 128,
+            'anchor_offset_x': 0.5,
+            'anchor_offset_y': 0.5,
+            'strides': [8, 16, 16, 16],
+            'interpolated_scale_aspect_ratio': 1.0
+        }
+
+        self.anchors = self._ssd_generate_anchors(self.ssd_opts)
         self.threshold = threshold
-
-    def detect(self, img):
-        input_data = self._pre_processing(img)
-        self.interpreter.set_tensor(self.input_details[0]['index'], input_data)
-        self.interpreter.invoke()
-        output_data = self.interpreter.get_tensor(self.output_details[0]['index'])
-        return self._post_processing(output_data)
 
     def _pre_processing(self, input_data):
         input_data = cv2.cvtColor(input_data, cv2.COLOR_BGR2RGB)
-        input_data = cv2.resize(input_data, self.input_shape).astype(np.float32)
-        input_data = (input_data[np.newaxis,:,:,:] - 128).astype(np.int8)
+        input_data = cv2.resize(input_data, self.input_shape[1:3]).astype(np.float32)
+        input_data = (input_data[np.newaxis,:,:,:] - 128) / 128.0
+        #input_data = (input_data[np.newaxis,:,:,:] - 128).astype(np.int8)
         return input_data
 
-    def _post_processing(self, output_data):
-        output = output_data[0].astype(np.float32)
-        output = (output + 15) * 0.14218327403068542
-        nx,ny,_ = output.shape
-        anchors = np.zeros([3, 1, 1, 2], dtype=np.float32)
-        anchors[0,0,0,:] = [9, 14]
-        anchors[1,0,0,:] = [12, 17]
-        anchors[2,0,0,:] = [22, 21]
-        output = output.reshape((7,7,3,6)).transpose([2,0,1,3])
-        yv, xv = np.meshgrid(np.arange(ny), np.arange(nx))
-        grid = np.stack((yv, xv), 2).reshape((1, ny, nx, 2)).astype(np.float32)
-        output[..., 0:2] = (sigmoid(output[..., 0:2]) + grid) * 8
-        output[..., 2:4] = np.exp(output[..., 2:4]) * anchors
-        output[..., 4:] = sigmoid(output[..., 4:])
 
-        #non max suppression
-        prediction = output.reshape((-1, 6))
-        x = prediction[prediction[..., 4] > self.threshold]
-        if not x.shape[0]:
-            return []
-        x = x[:, :4]
-        boxes = np.zeros(x.shape, dtype=np.float32)
-        boxes[..., 0] = (x[..., 0] - x[..., 2] / 2) / self.input_shape[1]
-        boxes[..., 1] = (x[..., 1] - x[..., 3] / 2) / self.input_shape[0]
-        boxes[..., 2] = (x[..., 0] + x[..., 2] / 2) / self.input_shape[1]
-        boxes[..., 3] = (x[..., 1] + x[..., 3] / 2) / self.input_shape[0]
+    def detect(self, img):
+        input_data = self._pre_processing(img)
+        self.interpreter.set_tensor(self.input_index, input_data)
+        self.interpreter.invoke()
+        raw_boxes = self.interpreter.get_tensor(self.bbox_index)
+        raw_scores = self.interpreter.get_tensor(self.score_index)
+
+        #raw_boxes = (raw_boxes + 60) * 2.0457184314727783
+        #print(np.shape(raw_boxes))
+        #raw_scores = (raw_scores - 125) * 2.295069694519043
+        #print(np.shape(raw_scores))
+
+        boxes = self._decode_boxes(raw_boxes)
+        scores = self._get_sigmoid_scores(raw_scores)
+        #print(np.shape(boxes))
+
+        score_above_threshold = scores > self.threshold
+        filtered_boxes = boxes[np.argwhere(score_above_threshold)[:, 1], :]
+        filtered_scores = scores[score_above_threshold]
+
+        output_boxes = np.array(self._non_maximum_suppression(filtered_boxes, filtered_scores, MIN_SUPPRESSION_THRESHOLD))
+
+        #print(output_boxes)
+
+        return output_boxes
+
+    def _overlap_similarity(self, box1, box2):
+        if box1 is None or box2 is None:
+            return 0
+        x1_min, y1_min, x1_max, y1_max = box1
+        x2_min, y2_min, x2_max, y2_max = box2
+        box1_area = (x1_max - x1_min) * (y1_max - y1_min)
+        box2_area = (x2_max - x2_min) * (y2_max - y2_min)
+        x3_min = max(x1_min, x2_min)
+        x3_max = min(x1_max, x2_max)
+        y3_min = max(y1_min, y2_min)
+        y3_max = min(y1_max, y2_max)
+        intersect_area = (x3_max - x3_min) * (y3_max - y3_min)
+        denominator = box1_area + box2_area - intersect_area
+        return intersect_area / denominator if denominator > 0. else 0.
+
+    def _non_maximum_suppression(self, boxes, scores, min_suppression_threshold):
+        candidates_list = []
+        for i in range(np.size(boxes,0)):
+            candidates_list.append((boxes[i], scores[i]))
+        #print(candidates_list)
+        candidates_list = sorted(candidates_list, key=lambda x: x[1], reverse=True)
+        #print(candidates_list)
+        kept_list = []
+        for sorted_boxes, sorted_scores in candidates_list:
+            suppressed = False
+            for kept in kept_list:
+                similarity = self._overlap_similarity(kept, sorted_boxes)
+                if similarity > min_suppression_threshold:
+                    suppressed = True
+                    break
+            if not suppressed:
+                kept_list.append(sorted_boxes)
+        return kept_list
+
+
+    def _decode_boxes(self, raw_boxes: np.ndarray) -> np.ndarray:
+        """Simplified version of
+        mediapipe/calculators/tflite/tflite_tensors_to_detections_calculator.cc
+        """
+        # width == height so scale is the same across the board
+        scale = self.input_shape[1]
+        num_points = raw_boxes.shape[-1] // 2
+        # scale all values (applies to positions, width, and height alike)
+        boxes = raw_boxes.reshape(-1, num_points, 2) / scale
+        # adjust center coordinates and key points to anchor positions
+        boxes[:, 0] += self.anchors
+        for i in range(2, num_points):
+            boxes[:, i] += self.anchors
+        # convert x_center, y_center, w, h to xmin, ymin, xmax, ymax
+        center = np.array(boxes[:, 0])
+        half_size = boxes[:, 1] / 2
+        boxes[:, 0] = center - half_size
+        boxes[:, 1] = center + half_size
+
+        #only need boxes xmin, ymin, xmax, ymax
+        boxes = boxes[:, 0:2, :].reshape(-1, 4)
         return boxes
 
+
+    def _get_sigmoid_scores(self, raw_scores: np.ndarray) -> np.ndarray:
+        """Extracted loop from ProcessCPU (line 327) in
+        mediapipe/calculators/tflite/tflite_tensors_to_detections_calculator.cc
+        """
+        # just a single class ("face"), which simplifies this a lot
+        # 1) thresholding; adjusted from 100 to 80, since sigmoid of [-]100
+        #    causes overflow with IEEE single precision floats (max ~10e38)
+        raw_scores[raw_scores < -RAW_SCORE_LIMIT] = -RAW_SCORE_LIMIT
+        raw_scores[raw_scores > RAW_SCORE_LIMIT] = RAW_SCORE_LIMIT
+        # 2) apply sigmoid function on clipped confidence scores
+        return sigmoid(raw_scores)
+
+
+
+    def _ssd_generate_anchors(self, opts: dict) -> np.ndarray:
+        """This is a trimmed down version of the C++ code; all irrelevant parts
+        have been removed.
+        (reference: mediapipe/calculators/tflite/ssd_anchors_calculator.cc)
+        """
+        layer_id = 0
+        num_layers = opts['num_layers']
+        strides = opts['strides']
+        assert len(strides) == num_layers
+        input_height = opts['input_size_height']
+        input_width = opts['input_size_width']
+        anchor_offset_x = opts['anchor_offset_x']
+        anchor_offset_y = opts['anchor_offset_y']
+        interpolated_scale_aspect_ratio = opts['interpolated_scale_aspect_ratio']
+        anchors = []
+        while layer_id < num_layers:
+            last_same_stride_layer = layer_id
+            repeats = 0
+            while (last_same_stride_layer < num_layers and
+                   strides[last_same_stride_layer] == strides[layer_id]):
+                last_same_stride_layer += 1
+                # aspect_ratios are added twice per iteration
+                repeats += 2 if interpolated_scale_aspect_ratio == 1.0 else 1
+            stride = strides[layer_id]
+            feature_map_height = input_height // stride
+            feature_map_width = input_width // stride
+            for y in range(feature_map_height):
+                y_center = (y + anchor_offset_y) / feature_map_height
+                for x in range(feature_map_width):
+                    x_center = (x + anchor_offset_x) / feature_map_width
+                    for _ in range(repeats):
+                        anchors.append((x_center, y_center))
+            layer_id = last_same_stride_layer
+        return np.array(anchors, dtype=np.float32)
 
