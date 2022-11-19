@@ -9,5 +9,5 @@ Description and comments:  NXP Demo Experience configuration and
                            launchers
 Release Location:          https://github.com/nxp-imx-support/nxp-demo-experience-demos-list
 Origin:                    NXP (BSD-2-Clause)
-                           Font Awesome (CC-BY-SA-4.0) http://fontawesome.com/icons?d=gallery
+                           Font Awesome (CC-BY-4.0) http://fontawesome.com/icons?d=gallery
                            NNStreamer (LGPL-2.1-only) https://github.com/nnstreamer/nnstreamer-example/

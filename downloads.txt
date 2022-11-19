@@ -1,138 +1,138 @@
 name:mobilenet_ssd_v2_coco_quant_postprocess.tflite
 path:/usr/share/gstnninferencedemo/google-coral/examples-camera/mobilenet_ssd_v2_coco_quant_postprocess.tflite
 url:https://github.com/google-coral/test_data/raw/master/ssd_mobilenet_v2_coco_quant_postprocess.tflite
-alt_url:https://github.com/NXP/nxp-demo-experience-assets/raw/lf-5.15.52_2.1.0/models/ssd_mobilenet_v2_coco_quant_postprocess.tflite
+alt_url:https://github.com/NXP/nxp-demo-experience-assets/raw/lf-5.15.71_2.2.0/models/ssd_mobilenet_v2_coco_quant_postprocess.tflite
 sha:
 
 name:coco_labels.txt
 path:/usr/share/gstnninferencedemo/google-coral/examples-camera/coco_labels.txt
 url:https://github.com/google-coral/test_data/raw/master/coco_labels.txt
-alt_url:https://github.com/NXP/nxp-demo-experience-assets/raw/lf-5.15.52_2.1.0/models/coco_labels.txt
+alt_url:https://github.com/NXP/nxp-demo-experience-assets/raw/lf-5.15.71_2.2.0/models/coco_labels.txt
 sha:
 
 name:coco_labels_nonum.txt
 path:
 url:https://github.com/google-coral/test_data/raw/master/coco_labels.txt
-alt_url:https://github.com/NXP/nxp-demo-experience-assets/raw/lf-5.15.52_2.1.0/models/coco_labels.txt
+alt_url:https://github.com/NXP/nxp-demo-experience-assets/raw/lf-5.15.71_2.2.0/models/coco_labels.txt
 sha:
 
 name:mobilenet_v1_1.0_224_quant.tflite
 path:/usr/bin/tensorflow-lite-2.8.0/examples/mobilenet_v1_1.0_224_quant.tflite
 url:https://github.com/google-coral/test_data/raw/master/mobilenet_v1_1.0_224_quant.tflite
-alt_url:https://github.com/NXP/nxp-demo-experience-assets/raw/lf-5.15.52_2.1.0/models/mobilenet_v1_1.0_224_quant.tflite
+alt_url:https://github.com/NXP/nxp-demo-experience-assets/raw/lf-5.15.71_2.2.0/models/mobilenet_v1_1.0_224_quant.tflite
 sha:
 
 name:mobilenet_v1_1.0_224_quant_vela.tflite
 path:
-url:https://github.com/NXP/nxp-demo-experience-assets/raw/lf-5.15.52_2.1.0/models/mobilenet_v1_1.0_224_quant_vela.tflite
+url:https://github.com/NXP/nxp-demo-experience-assets/raw/lf-5.15.71_2.2.0/models/mobilenet_v1_1.0_224_quant_vela.tflite
 alt_url:
 sha:
 
 name:1_1.0_224_labels.txt
 path:/usr/bin/tensorflow-lite-2.8.0/examples/labels.txt
 url:https://github.com/google-coral/test_data/raw/master/imagenet_labels.txt
-alt_url:https://github.com/NXP/nxp-demo-experience-assets/raw/lf-5.15.52_2.1.0/models/imagenet_labels.txt
+alt_url:https://github.com/NXP/nxp-demo-experience-assets/raw/lf-5.15.71_2.2.0/models/imagenet_labels.txt
 sha:
 
 
 name:posenet_resnet50_uint8_float32_quant.tflite
 path:
-url:https://github.com/NXP/nxp-demo-experience-assets/raw/lf-5.15.52_2.1.0/models/posenet_resnet50_uint8_float32_quant.tflite
+url:https://github.com/NXP/nxp-demo-experience-assets/raw/lf-5.15.71_2.2.0/models/posenet_resnet50_uint8_float32_quant.tflite
 alt_url:
 sha:
 
 name:key_point_labels.txt
 path:
-url:https://github.com/NXP/nxp-demo-experience-assets/raw/lf-5.15.52_2.1.0/models/key_point_labels.txt
+url:https://github.com/NXP/nxp-demo-experience-assets/raw/lf-5.15.71_2.2.0/models/key_point_labels.txt
 alt_url:
 sha:
 
 name:id_example.mov
 path:
-url:https://github.com/NXP/nxp-demo-experience-assets/raw/lf-5.15.52_2.1.0/videos/id_example.mov
+url:https://github.com/NXP/nxp-demo-experience-assets/raw/lf-5.15.71_2.2.0/videos/id_example.mov
 alt_url:
 sha:
 
 name:detect_example.mov
 path:
-url:https://github.com/NXP/nxp-demo-experience-assets/raw/lf-5.15.52_2.1.0/videos/detect_example.mov
+url:https://github.com/NXP/nxp-demo-experience-assets/raw/lf-5.15.71_2.2.0/videos/detect_example.mov
 alt_url:
 sha:
 
 name:pose_example.mov
 path:
-url:https://github.com/NXP/nxp-demo-experience-assets/raw/lf-5.15.52_2.1.0/videos/pose_example.mov
+url:https://github.com/NXP/nxp-demo-experience-assets/raw/lf-5.15.71_2.2.0/videos/pose_example.mov
 alt_url:
 sha:
 
 name:brand_model.tflite
 path:
 url:https://github.com/google-coral/test_data/raw/master/tfhub_tf1_popular_us_products_ptq_fc_split.tflite
-alt_url:https://github.com/NXP/nxp-demo-experience-assets/raw/lf-5.15.52_2.1.0/models/brand_model.tflite
+alt_url:https://github.com/NXP/nxp-demo-experience-assets/raw/lf-5.15.71_2.2.0/models/brand_model.tflite
 sha:4926c7bdfe8b06c41cf166caed99fde7a63f8a12
 
 name:brand_labels.txt
 path:
 url:https://www.gstatic.com/aihub/tfhub/labelmaps/popular_us_products_V1_labelmap.csv
-alt_url:https://github.com/NXP/nxp-demo-experience-assets/raw/lf-5.15.52_2.1.0/models/brand_labels.csv
+alt_url:https://github.com/NXP/nxp-demo-experience-assets/raw/lf-5.15.71_2.2.0/models/brand_labels.csv
 sha:8668498affbbe2ca7af3ac587a6eeb66625439bb
 
 name:small_keyboard.jpg
 path:
-url:https://github.com/NXP/nxp-demo-experience-assets/raw/lf-5.15.52_2.1.0/images/small_keyboard.jpg
+url:https://github.com/NXP/nxp-demo-experience-assets/raw/lf-5.15.71_2.2.0/images/small_keyboard.jpg
 alt_url:
 sha:
 
 name:small_dog.jpg
 path:
-url:https://github.com/NXP/nxp-demo-experience-assets/raw/lf-5.15.52_2.1.0/images/small_dog.jpg
+url:https://github.com/NXP/nxp-demo-experience-assets/raw/lf-5.15.71_2.2.0/images/small_dog.jpg
 alt_url:
 sha:
 
 name:small_mask.jpg
 path:
-url:https://github.com/NXP/nxp-demo-experience-assets/raw/lf-5.15.52_2.1.0/images/small_mask.jpg
+url:https://github.com/NXP/nxp-demo-experience-assets/raw/lf-5.15.71_2.2.0/images/small_mask.jpg
 alt_url:
 sha:
 
 name:ssd_mobilenet_v2_face_quant_postprocess.tflite
 path:
 url:https://raw.githubusercontent.com/google-coral/test_data/master/ssd_mobilenet_v2_face_quant_postprocess.tflite
-alt_url:https://github.com/NXP/nxp-demo-experience-assets/raw/lf-5.15.52_2.1.0/models/ssd_mobilenet_v2_face_quant_postprocess.tflite
+alt_url:https://github.com/NXP/nxp-demo-experience-assets/raw/lf-5.15.71_2.2.0/models/ssd_mobilenet_v2_face_quant_postprocess.tflite
 sha:
 
 name:facenet_int_quantized.tflite
 path:
 url:https://github.com/shubham0204/FaceRecognition_With_FaceNet_Android/raw/master/app/src/main/assets/facenet_int_quantized.tflite
-alt_url:https://github.com/NXP/nxp-demo-experience-assets/raw/lf-5.15.52_2.1.0/models/facenet_int_quantized.tflite
+alt_url:https://github.com/NXP/nxp-demo-experience-assets/raw/lf-5.15.71_2.2.0/models/facenet_int_quantized.tflite
 sha:
 
 name:face_landmark_ptq_vela.tflite
 path:
-url:https://github.com/NXP/nxp-demo-experience-assets/raw/lf-5.15.52_2.1.0/models/face_landmark_ptq_vela.tflite
+url:https://github.com/NXP/nxp-demo-experience-assets/raw/lf-5.15.71_2.2.0/models/face_landmark_ptq_vela.tflite
 alt_url:
 sha:
 
 name:face_detection_ptq_vela.tflite
 path:
-url:https://github.com/NXP/nxp-demo-experience-assets/raw/lf-5.15.52_2.1.0/models/face_detection_ptq_vela.tflite
+url:https://github.com/NXP/nxp-demo-experience-assets/raw/lf-5.15.71_2.2.0/models/face_detection_ptq_vela.tflite
 alt_url:
 sha:
 
 name:iris_landmark_ptq_vela.tflite
 path:
-url:https://github.com/NXP/nxp-demo-experience-assets/raw/lf-5.15.52_2.1.0/models/iris_landmark_ptq_vela.tflite
+url:https://github.com/NXP/nxp-demo-experience-assets/raw/lf-5.15.71_2.2.0/models/iris_landmark_ptq_vela.tflite
 alt_url:
 sha:
 
 name:selfie_segmentation_quant.tflite
 path:
-url:https://github.com/NXP/nxp-demo-experience-assets/raw/lf-5.15.52_2.1.0/models/selfie_segmentation_quant.tflite
+url:https://github.com/NXP/nxp-demo-experience-assets/raw/lf-5.15.71_2.2.0/models/selfie_segmentation_quant.tflite
 alt_url:
 sha:
 
 name:bg_image.jpg
 path:
-url:https://github.com/NXP/nxp-demo-experience-assets/raw/lf-5.15.52_2.1.0/images/bg_image.jpg
+url:https://github.com/NXP/nxp-demo-experience-assets/raw/lf-5.15.71_2.2.0/images/bg_image.jpg
 alt_url:
 sha:
