@@ -212,6 +212,8 @@ class VoiceGUI(Gtk.Window):
             if line.startswith("  Number of Commands"):
                 com_len = int(line.split()[5])
                 self.voicespot.stdout.readline().decode("utf-8")[:-1]
+                self.voicespot.stdout.readline().decode("utf-8")[:-1]
+                self.voicespot.stdout.readline().decode("utf-8")[:-1]
                 for i in range(com_len):
                     item = self.voicespot.stdout.readline().decode(
                         "utf-8")[3:-1]
