@@ -1,5 +1,5 @@
 # Copyright © 2021 Patrick Levin
-# Copyright 2022 NXP Semiconductors
+# Copyright 2022 NXP
 # SPDX-Identifier: MIT
 
 import numpy as np

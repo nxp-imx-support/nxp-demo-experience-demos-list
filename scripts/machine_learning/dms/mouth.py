@@ -1,4 +1,4 @@
-# Copyright 2022 NXP Semiconductors
+# Copyright 2022 NXP
 # SPDX-License-Identifier: BSD-3-Clause
 
 import math

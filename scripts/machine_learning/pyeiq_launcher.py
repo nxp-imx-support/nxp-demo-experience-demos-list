@@ -1,7 +1,7 @@
 """
 pyeIQ Launcher.
 
-Copyright 2021 NXP Semiconductors
+Copyright 2021 NXP
 SPDX-License-Identifier: BSD-3-Clause
 
 This python script launches demos from pyeIQ. It as checks if pyeIQ is

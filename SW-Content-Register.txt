@@ -1,13 +1,12 @@
 NXP Software Content Register
 
-Package:                   NXP Demo Experience Demo Files
-Outgoing License:          BSD-2-Clause
-License File:              LICENSE
-Package Category:          Configuration
-Type of content:           Scripts, graphics images and data files
-Description and comments:  NXP Demo Experience configuration and
-                           launchers
-Release Location:          https://github.com/nxp-imx-support/nxp-demo-experience-demos-list
-Origin:                    NXP (BSD-2-Clause)
-                           Font Awesome (CC-BY-4.0) http://fontawesome.com/icons?d=gallery
-                           NNStreamer (LGPL-2.1-only) https://github.com/nnstreamer/nnstreamer-example/
+Package:                    NXP Demo Experience Demo Files
+Outgoing License:           BSD-2-Clause
+License File:               LICENSE
+Package Category:           Configuration
+Type of content:            Scripts, graphics images and data files
+Description and comments:   NXP Demo Experience configuration and launchers
+Release Location:           https://github.com/nxp-imx-support/nxp-demo-experience-demos-list
+Origin:                     NXP (BSD-2-Clause)
+                            Font Awesome (CC-BY-4.0) https://fontawesome.com/icons
+                            NNStreamer (LGPL-2.1-only) https://github.com/nnstreamer/nnstreamer-example/

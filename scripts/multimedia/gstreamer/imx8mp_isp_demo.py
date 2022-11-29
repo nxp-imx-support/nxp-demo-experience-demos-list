@@ -1,7 +1,7 @@
 """
 ISP Demo for the i.MX 8M Plus.
 
-Copyright 2021 NXP Semiconductors
+Copyright 2021 NXP
 SPDX-License-Identifier: BSD-3-Clause
 
 Python example on how to control the ISP on the i.Mx 8M Plus. This demo shows
