@@ -188,7 +188,17 @@
             "screenshot": "bluetooth.svg",
             "compatible": "imx8mm, imx8mp, imx93",
             "description": "This is an application for controlling an audio player using the Bluetooth communication protocol by the use of voice commands.\nWakeWord supported :\n    'HEY NXP'\nVoice commands supported :\n    PLAY MUSIC\n    PAUSE\n    PREVIOUS SONG\n    NEXT SONG\n    VOLUME UP\n    VOLUME DOWN\n    MUTE\n    STOP\n    STOP PLAYER\n\nThis application requires 8-MIC Array Board (8MIC-RPI-MX8) installed on the i.MX hardware (Visit NXP.com for help).\n\n\n\n\n\n\n\n\n"
-        }]
+        },
+		{
+            "name": "Smart Kitchen",
+            "id": "smart-kitchen",
+            "executable": "/home/root/.nxp-demo-experience/scripts/multimedia/smart-kitchen/run.sh",
+            "source": "",
+            "icon": "smart-kitchen-icon.svg",
+            "screenshot": "smart-kitchen-screenshot.png",
+            "compatible": "imx8mm, imx8mp, imx93",
+            "description": "This application simulates a smart kitchen trough a GUI, controlled by voice commands using NXP's Voice Intelligent Technology (VIT).\nHow to use: First say a wakeword to select a kitchen item (Hood, Oven or Aircon) and then say one of the item's available command (e.g. \"Hey Hood, light on\"). The commands supported are:\nWakeWords supported:\n	HEY HOOD\n	HEY OVEN\n	HEY AIRCON\nCommands supported:\nGlobal Commands:	ENTER\n	EXIT\n	RUN DEMO\n	STOP DEMO\nHood commands:\n	FAN OFF\n	FAN ON\n	FAN LOW\n	FAN HIGH\n	LIGHT OFF\n	LIGHT ON\nAircon commands:\n	DRY MODE\n	COOL MODE\n	FAN MODE\n	SWING OFF\n	SWING ON\n	FAN LOW\n   FAN HIGH\nOven commands:\n	CLOSE DOOR\n	OPEN DOOR\n\nThe item's functions can also be activated by clicking on the item's controls using a mouse or touchscreen.\nHardware requirements:\n	8-MIC Array Board (8MIC-RPI-MX8)\n	HDMI Display or Monitor."
+		}]
     }]
     },
     {"TSN":[{
