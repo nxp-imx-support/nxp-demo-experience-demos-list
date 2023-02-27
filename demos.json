@@ -225,7 +225,7 @@
         {
             "name": "Bloom",
             "id": "bloom",
-            "executable": "/opt/imx-gpu-sdk/GLES2/Bloom/GLES2.Bloom_Wayland --Window [0,0,1280,720]",
+            "executable": "/opt/imx-gpu-sdk/GLES2/Bloom/GLES2.Bloom_Wayland_XDG --Window [0,0,1280,720]",
             "source": "",
             "icon": "object-group-regular.svg",
             "screenshot": "bloom.jpg",
@@ -235,7 +235,7 @@
         {
             "name": "Bloom",
             "id": "bloom_small",
-            "executable": "/opt/imx-gpu-sdk/GLES2/Bloom/GLES2.Bloom_Wayland --Window [0,0,480,360]",
+            "executable": "/opt/imx-gpu-sdk/GLES2/Bloom/GLES2.Bloom_Wayland_XDG --Window [0,0,480,360]",
             "source": "",
             "icon": "object-group-regular.svg",
             "screenshot": "bloom.jpg",
@@ -245,7 +245,7 @@
         {
             "name": "Blur",
             "id": "blur",
-            "executable": "/opt/imx-gpu-sdk/GLES2/Blur/GLES2.Blur_Wayland --Window [0,0,1280,720]",
+            "executable": "/opt/imx-gpu-sdk/GLES2/Blur/GLES2.Blur_Wayland_XDG --Window [0,0,1280,720]",
             "source": "",
             "icon": "object-group-regular.svg",
             "screenshot": "blur.jpg",
@@ -255,7 +255,7 @@
         {
             "name": "Blur",
             "id": "blur_small",
-            "executable": "/opt/imx-gpu-sdk/GLES2/Blur/GLES2.Blur_Wayland --Window [0,0,480,360]",
+            "executable": "/opt/imx-gpu-sdk/GLES2/Blur/GLES2.Blur_Wayland_XDG --Window [0,0,480,360]",
             "source": "",
             "icon": "object-group-regular.svg",
             "screenshot": "blur.jpg",
@@ -265,7 +265,7 @@
         {
             "name": "EightLayerBlend",
             "id": "eight_layer",
-            "executable": "/opt/imx-gpu-sdk/GLES2/EightLayerBlend/GLES2.EightLayerBlend_Wayland --Window [0,0,1280,720]",
+            "executable": "/opt/imx-gpu-sdk/GLES2/EightLayerBlend/GLES2.EightLayerBlend_Wayland_XDG --Window [0,0,1280,720]",
             "source": "",
             "icon": "object-group-regular.svg",
             "screenshot": "eightlayerblend.jpg",
@@ -275,7 +275,7 @@
         {
             "name": "EightLayerBlend",
             "id": "eight_layer_small",
-            "executable": "/opt/imx-gpu-sdk/GLES2/EightLayerBlend/GLES2.EightLayerBlend_Wayland --Window [0,0,480,360]",
+            "executable": "/opt/imx-gpu-sdk/GLES2/EightLayerBlend/GLES2.EightLayerBlend_Wayland_XDG --Window [0,0,480,360]",
             "source": "",
             "icon": "object-group-regular.svg",
             "screenshot": "eightlayerblend.jpg",
@@ -285,7 +285,7 @@
         {
             "name": "FractalShader",
             "id": "fract_shader",
-            "executable": "/opt/imx-gpu-sdk/GLES2/FractalShader/GLES2.FractalShader_Wayland --Window [0,0,1280,720]",
+            "executable": "/opt/imx-gpu-sdk/GLES2/FractalShader/GLES2.FractalShader_Wayland_XDG --Window [0,0,1280,720]",
             "source": "",
             "icon": "object-group-regular.svg",
             "screenshot": "fractalshader.jpg",
@@ -295,7 +295,7 @@
         {
             "name": "FractalShader",
             "id": "fract_shader_small",
-            "executable": "/opt/imx-gpu-sdk/GLES2/FractalShader/GLES2.FractalShader_Wayland --Window [0,0,480,360]",
+            "executable": "/opt/imx-gpu-sdk/GLES2/FractalShader/GLES2.FractalShader_Wayland_XDG --Window [0,0,480,360]",
             "source": "",
             "icon": "object-group-regular.svg",
             "screenshot": "fractalshader.jpg",
@@ -305,7 +305,7 @@
         {
             "name": "FractalShader",
             "id": "fract_shader_small2",
-            "executable": "/opt/imx-gpu-sdk/GLES2/FractalShader/GLES2.FractalShader_Wayland --Window [0,0,650,400]",
+            "executable": "/opt/imx-gpu-sdk/GLES2/FractalShader/GLES2.FractalShader_Wayland_XDG --Window [0,0,650,400]",
             "source": "",
             "icon": "object-group-regular.svg",
             "screenshot": "fractalshader.jpg",
@@ -315,7 +315,7 @@
         {
             "name": "LineBuilder101",
             "id": "line_build",
-            "executable": "/opt/imx-gpu-sdk/GLES2/LineBuilder101/GLES2.LineBuilder101_Wayland --Window [0,0,1280,720]",
+            "executable": "/opt/imx-gpu-sdk/GLES2/LineBuilder101/GLES2.LineBuilder101_Wayland_XDG --Window [0,0,1280,720]",
             "source": "",
             "icon": "object-group-regular.svg",
             "screenshot": "linebuilder101.jpg",
@@ -325,7 +325,7 @@
         {
             "name": "LineBuilder101",
             "id": "line_build_small",
-            "executable": "/opt/imx-gpu-sdk/GLES2/LineBuilder101/GLES2.LineBuilder101_Wayland --Window [0,0,480,360]",
+            "executable": "/opt/imx-gpu-sdk/GLES2/LineBuilder101/GLES2.LineBuilder101_Wayland_XDG --Window [0,0,480,360]",
             "source": "",
             "icon": "object-group-regular.svg",
             "screenshot": "linebuilder101.jpg",
@@ -335,7 +335,7 @@
         {
             "name": "Model Loader",
             "id": "model_loader",
-            "executable": "/opt/imx-gpu-sdk/GLES2/ModelLoaderBasics/GLES2.ModelLoaderBasics_Wayland --Window [0,0,1280,720]",
+            "executable": "/opt/imx-gpu-sdk/GLES2/ModelLoaderBasics/GLES2.ModelLoaderBasics_Wayland_XDG --Window [0,0,1280,720]",
             "source": "",
             "icon": "object-group-regular.svg",
             "screenshot": "modelloaderbasics.jpg",
@@ -345,7 +345,7 @@
         {
             "name": "Model Loader",
             "id": "model_loader_small",
-            "executable": "/opt/imx-gpu-sdk/GLES2/ModelLoaderBasics/GLES2.ModelLoaderBasics_Wayland --Window [0,0,480,360]",
+            "executable": "/opt/imx-gpu-sdk/GLES2/ModelLoaderBasics/GLES2.ModelLoaderBasics_Wayland_XDG --Window [0,0,480,360]",
             "source": "",
             "icon": "object-group-regular.svg",
             "screenshot": "modelloaderbasics.jpg",
@@ -355,7 +355,7 @@
         {
             "name": "S03_Transform",
             "id": "transform",
-            "executable": "/opt/imx-gpu-sdk/GLES2/S03_Transform/GLES2.S03_Transform_Wayland --Window [0,0,1280,720]",
+            "executable": "/opt/imx-gpu-sdk/GLES2/S03_Transform/GLES2.S03_Transform_Wayland_XDG --Window [0,0,1280,720]",
             "source": "",
             "icon": "cubes-solid.svg",
             "screenshot": "s03_transform.jpg",
@@ -365,7 +365,7 @@
         {
             "name": "S03_Transform",
             "id": "transform_small",
-            "executable": "/opt/imx-gpu-sdk/GLES2/S03_Transform/GLES2.S03_Transform_Wayland --Window [0,0,480,360]",
+            "executable": "/opt/imx-gpu-sdk/GLES2/S03_Transform/GLES2.S03_Transform_Wayland_XDG --Window [0,0,480,360]",
             "source": "",
             "icon": "cubes-solid.svg",
             "screenshot": "s03_transform.jpg",
@@ -375,7 +375,7 @@
         {
             "name": "S04_Projection",
             "id": "projection",
-            "executable": "/opt/imx-gpu-sdk/GLES2/S04_Projection/GLES2.S04_Projection_Wayland --Window [0,0,1280,720]",
+            "executable": "/opt/imx-gpu-sdk/GLES2/S04_Projection/GLES2.S04_Projection_Wayland_XDG --Window [0,0,1280,720]",
             "source": "",
             "icon": "cubes-solid.svg",
             "screenshot": "s04_projection.jpg",
@@ -385,7 +385,7 @@
         {
             "name": "S04_Projection",
             "id": "projection_small",
-            "executable": "/opt/imx-gpu-sdk/GLES2/S04_Projection/GLES2.S04_Projection_Wayland --Window [0,0,480,360]",
+            "executable": "/opt/imx-gpu-sdk/GLES2/S04_Projection/GLES2.S04_Projection_Wayland_XDG --Window [0,0,480,360]",
             "source": "",
             "icon": "cubes-solid.svg",
             "screenshot": "s04_projection.jpg",
@@ -395,7 +395,7 @@
         {
             "name": "S06_Texturing",
             "id": "texturing",
-            "executable": "/opt/imx-gpu-sdk/GLES2/S06_Texturing/GLES2.S06_Texturing_Wayland --Window [0,0,1280,720]",
+            "executable": "/opt/imx-gpu-sdk/GLES2/S06_Texturing/GLES2.S06_Texturing_Wayland_XDG --Window [0,0,1280,720]",
             "source": "",
             "icon": "cubes-solid.svg",
             "screenshot": "s06_texturing.jpg",
@@ -405,7 +405,7 @@
         {
             "name": "S06_Texturing",
             "id": "texturing_small",
-            "executable": "/opt/imx-gpu-sdk/GLES2/S06_Texturing/GLES2.S06_Texturing_Wayland --Window [0,0,480,360]",
+            "executable": "/opt/imx-gpu-sdk/GLES2/S06_Texturing/GLES2.S06_Texturing_Wayland_XDG --Window [0,0,480,360]",
             "source": "",
             "icon": "cubes-solid.svg",
             "screenshot": "s06_texturing.jpg",
@@ -415,7 +415,7 @@
         {
             "name": "Mapping",
             "id": "map",
-            "executable": "/opt/imx-gpu-sdk/GLES2/S07_EnvMapping/GLES2.S07_EnvMapping_Wayland --Window [0,0,1280,720]",
+            "executable": "/opt/imx-gpu-sdk/GLES2/S07_EnvMapping/GLES2.S07_EnvMapping_Wayland_XDG --Window [0,0,1280,720]",
             "source": "",
             "icon": "cubes-solid.svg",
             "screenshot": "s07_environmentmapping.jpg",
@@ -425,7 +425,7 @@
         {
             "name": "Mapping",
             "id": "map_small",
-            "executable": "/opt/imx-gpu-sdk/GLES2/S07_EnvMapping/GLES2.S07_EnvMapping_Wayland --Window [0,0,480,360]",
+            "executable": "/opt/imx-gpu-sdk/GLES2/S07_EnvMapping/GLES2.S07_EnvMapping_Wayland_XDG --Window [0,0,480,360]",
             "source": "",
             "icon": "cubes-solid.svg",
             "screenshot": "s07_environmentmapping.jpg",
@@ -435,7 +435,7 @@
         {
             "name": "Mapping Refraction",
             "id": "refract",
-            "executable": "/opt/imx-gpu-sdk/GLES2/S08_EnvMappingRefraction/GLES2.S08_EnvMappingRefraction_Wayland --Window [0,0,1280,720]",
+            "executable": "/opt/imx-gpu-sdk/GLES2/S08_EnvMappingRefraction/GLES2.S08_EnvMappingRefraction_Wayland_XDG --Window [0,0,1280,720]",
             "source": "",
             "icon": "cubes-solid.svg",
             "screenshot": "s08_environmentmappingrefraction.jpg",
@@ -445,7 +445,7 @@
         {
             "name": "Mapping Refraction",
             "id": "refract_small",
-            "executable": "/opt/imx-gpu-sdk/GLES2/S08_EnvMappingRefraction/GLES2.S08_EnvMappingRefraction_Wayland --Window [0,0,480,360]",
+            "executable": "/opt/imx-gpu-sdk/GLES2/S08_EnvMappingRefraction/GLES2.S08_EnvMappingRefraction_Wayland_XDG --Window [0,0,480,360]",
             "source": "",
             "icon": "cubes-solid.svg",
             "screenshot": "s08_environmentmappingrefraction.jpg",
