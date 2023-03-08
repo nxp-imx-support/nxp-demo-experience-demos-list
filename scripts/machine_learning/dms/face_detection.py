@@ -1,6 +1,6 @@
 # Copyright © 2021 Patrick Levin
 # Copyright 2022 NXP
-# SPDX-Identifier: MIT
+# SPDX-License-Identifier: MIT
 
 import numpy as np
 import cv2
