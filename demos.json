@@ -181,6 +181,19 @@
         }]
     }]
     },
+    {"TSN":[{
+        "TSN Qbv":[{
+            "name": "TSN 802.1Qbv",
+            "id": "qbv_demo",
+            "executable": "python3 /home/root/.nxp-demo-experience/scripts/TSN/qbv/start_demo.py",
+            "source": "",
+            "icon": "photo-video-solid.svg",
+            "screenshot": "TSN-802.1Qbv.png",
+            "compatible": "imx8mm, imx8mp",
+            "description": "Time-Aware Shaper - It separates communication on the Ethernet network into a fixed length, repeating time cycles, thereby contributing to the delivery of time-critical traffic."
+        }]
+    }]
+    },
     {"GPU":[{
         "OpenVG 2D":[{
             "name": "Tiger G2D",
