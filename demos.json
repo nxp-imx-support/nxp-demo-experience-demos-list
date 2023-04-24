@@ -190,7 +190,7 @@
             "icon": "photo-video-solid.svg",
             "screenshot": "TSN-802.1Qbv.png",
             "compatible": "imx8mm, imx8mp",
-            "description": "Time-Aware Shaper - It separates communication on the Ethernet network into a fixed length, repeating time cycles, thereby contributing to the delivery of time-critical traffic."
+            "description": "Enhancements to Traffic Scheduling: Time-Aware Shaper \nIt separates communication on the Ethernet network into configurable length, repeating time cycles, thereby contributing to the delivery of time-critical traffic.\nEach network node's egress ports have per-queue traffic windows which may be opened/closed at specified times.The talker-to-listener path across the network may be dedicated to this priority traffic alone, at real-time (T), causing the talker's traffic to be delivered reliably and deterministically across the network."
         }]
     }]
     },

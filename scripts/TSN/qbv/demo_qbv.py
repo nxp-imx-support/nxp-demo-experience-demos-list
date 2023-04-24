@@ -10,7 +10,7 @@ camera to be selected, ensuring the setup connectivity and starts the demo.
 import gi
 gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk, GdkPixbuf, Gio
-import os, sys
+import os, sys, subprocess
 list1 = ["Fail", "Fail"]
 
 class DialogWindow(Gtk.Window):
@@ -45,26 +45,28 @@ class DialogWindow(Gtk.Window):
                 "/dev/video4",
                 "/dev/video5",
                 ]
-        video_combo = Gtk.ComboBoxText()
-        video_combo.set_entry_text_column(0)
-        video_combo.connect("changed", self.on_video_combo_changed)
+        self.video_combo = Gtk.ComboBoxText()
+        self.video_combo.set_entry_text_column(0)
+        self.video_combo.connect("changed", self.on_video_combo_changed)
         for video in videos:
-            video_combo.append_text(video)
-
-        video_combo.set_active(0)
+            self.video_combo.append_text(video)
+        self.video_combo.set_active(0)
         vbox = Gtk.HBox()
         vbox.add(label3)
-        vbox.add(video_combo)
-        button1 = Gtk.Button(label="Check Connection")                                                                                        
-        button1.connect("clicked", self.on_connection_clicked)                                                                                       
-        button2 = Gtk.Button(label="Run Demo")
-        button2.connect("clicked", self.on_run_clicked) 
-        button3 = Gtk.Button(label="Stop Demo")
-        button3.connect("clicked",self.on_stop_clicked)
+        vbox.add(self.video_combo)
+        self.button1 = Gtk.Button(label="Check Connection")
+        self.button1.set_sensitive(False)
+        self.button1.connect("clicked", self.on_connection_clicked)
+        self.button2 = Gtk.Button(label="Run Demo")
+        self.button2.set_sensitive(False)
+        self.button2.connect("clicked", self.on_run_clicked) 
+        self.button3 = Gtk.Button(label="Stop Demo")
+        self.button3.set_sensitive(False)
+        self.button3.connect("clicked",self.on_stop_clicked)
         box.add(vbox)
-        box.add(button1)
-        box.add(button2)
-        box.add(button3)
+        box.add(self.button1)
+        box.add(self.button2)
+        box.add(self.button3)
 
     def on_video_combo_changed(self, combo):
         text = combo.get_active_text()
@@ -74,6 +76,11 @@ class DialogWindow(Gtk.Window):
         y.write(text)
         y.close()
         list1[0] = "Pass"
+        try:
+            self.button1.set_sensitive(True)
+        except:
+            pass
+
     def on_run_clicked(self, button):
         if (list1[0] == "Pass" and list1[1] == "Pass"):
               os.system("python3 /home/root/.nxp-demo-experience/scripts/TSN/qbv/tsnqbv.py start root 192.168.0.1 &")
@@ -87,10 +94,9 @@ class DialogWindow(Gtk.Window):
               dialog.format_secondary_text(                                                                                                   
                       "Demo is starting please wait"                                                                            
                       )                                                                                               
-              dialog.run()                                                                                                                    
+              dialog.run()
               dialog.destroy()
-              button.set_visible(False)
-              print("INFO dialog closed")
+              self.button2.set_visible(False)
         else:
               dialog = Gtk.MessageDialog(
                       transient_for=self,
@@ -103,24 +109,47 @@ class DialogWindow(Gtk.Window):
                       "Please check the connections or video source."
                       )
               dialog.run()
-              dialog.destroy() 
-    def on_check_clicked(self, button):
-        button.set_label("Checking Connection...")
-        print("Checking connection")
+              dialog.destroy()
+
     def on_stop_clicked(self, button):
-        print("Stopping demo")
         os.system("python3 /home/root/.nxp-demo-experience/scripts/TSN/qbv/tsnqbv.py stop root 192.168.0.1 &")
 
     def on_connection_clicked(self, widget):
         a = os.popen("cat /sys/class/net/eth0/operstate").read()
         b = os.popen("cat /sys/class/net/eth1/operstate").read()
+        output1 = subprocess.check_output("ifconfig eth1| grep 'inet ' | awk '{print $2}'", shell=True)
+        ip_address1 = output1.strip().decode()
+        output2 = subprocess.check_output("ifconfig eth0| grep 'inet ' | awk '{print $2}'", shell=True)
+        ip_address2 = output2.strip().decode()
 
         if ( a == "up\n" and b == "up\n"):
-            dialog = Gtk.MessageDialog(transient_for=self,flags=0,message_type=Gtk.MessageType.INFO,buttons=Gtk.ButtonsType.OK,text="Qbv Connection", )
-            dialog.format_secondary_text("Connection established successfully")
-            dialog.run()
-            dialog.destroy()
-            list1[1] = "Pass"
+            if (ip_address1 == "192.168.0.2" and ip_address2 == "172.15.0.5"):
+               dialog = Gtk.MessageDialog(transient_for=self,flags=0,message_type=Gtk.MessageType.INFO,buttons=Gtk.ButtonsType.OK,text="Qbv Connection", )
+               dialog.format_secondary_text("Connection established successfully")
+               dialog.run()
+               dialog.destroy()
+               list1[1] = "Pass"
+               self.button2.set_sensitive(True)
+               self.button3.set_sensitive(True)
+            elif (ip_address1 == "192.168.0.2" or ip_address2 == "172.15.0.5"):                                                                
+               os.system("sh /home/root/.nxp-demo-experience/scripts/TSN/qbv/IP_mini.sh &")                                                   
+               dialog = Gtk.MessageDialog(transient_for=self,flags=0,message_type=Gtk.MessageType.INFO,buttons=Gtk.ButtonsType.OK,text="Qbv Connection", )
+               dialog.format_secondary_text("Connections established successfully,\n Please run IP_plus.sh in i.MX8MPlus board\nbefore clicking 'Run Demo'")                                                            
+               dialog.run()                                                                                                                   
+               dialog.destroy()                                                                                                               
+               list1[1] = "Pass"
+               self.button2.set_sensitive(False)
+               self.button3.set_sensitive(False)
+            elif (len(ip_address1) == 0 or len(ip_address2) == 0):                                                               
+               os.system("sh /home/root/.nxp-demo-experience/scripts/TSN/qbv/IP_mini.sh &")                   
+               dialog = Gtk.MessageDialog(transient_for=self,flags=0,message_type=Gtk.MessageType.INFO,buttons=Gtk.ButtonsType.OK,text="Qbv Connection", )
+               dialog.format_secondary_text("Connections established successfully,\n Please run IP_plus.sh in i.MX8MPlus board\nbefore clicking 'Run Demo'")
+               dialog.run()                                                                                                                   
+               dialog.destroy()                                                                                                               
+               list1[1] = "Pass"
+               self.button2.set_sensitive(False)                                
+               self.button3.set_sensitive(False)                                                                                                              
+
         else:
             dialog = Gtk.MessageDialog(
                     transient_for=self,
@@ -134,7 +163,8 @@ class DialogWindow(Gtk.Window):
                     )
             dialog.run()
             dialog.destroy()
-
+            self.button2.set_sensitive(False)                                
+            self.button3.set_sensitive(False)
 win = DialogWindow()
 win.show_all()
 Gtk.main()

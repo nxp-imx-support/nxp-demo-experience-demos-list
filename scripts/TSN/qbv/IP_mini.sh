@@ -9,7 +9,7 @@
 #in the i.mx8mm board.
 ###
 
-ifconfig eth0 192.168.0.2 up
+ifconfig eth1 192.168.0.2 up
 sleep 0.2
-ifconfig eth1 172.15.0.5 up
+ifconfig eth0 172.15.0.5 up
 sleep 0.2

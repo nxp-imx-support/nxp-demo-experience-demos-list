@@ -38,7 +38,7 @@ if( len(sys.argv) == 4):
         ssh.exec_command("sh /home/root/.nxp-demo-experience/scripts/TSN/qbv/start_qbv_priority.sh &")
         time.sleep(3)
         os.system("iperf -s -i 1 -u >> /home/root/.nxp-demo-experience/scripts/TSN/qbv/iperf.txt &")
-        time.sleep(2)
+        time.sleep(3)
         ssh.exec_command("iperf -c 172.15.0.5 -i 1 -t 100000 -b 900M -u > /dev/null &")
         time.sleep(2)
         os.system("cat /home/root/.nxp-demo-experience/scripts/TSN/qbv/video.txt | tail -n 1 | awk '{print $0}'> /home/root/.nxp-demo-experience/scripts/TSN/qbv/video1.txt")
