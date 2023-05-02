@@ -178,6 +178,16 @@
             "screenshot": "",
             "compatible": "imx8mp, imx8mm",
             "description": "See NXP's Voice Technology in action! Use your voice to open and close various applications. This requires 8-MIC Array Board (8MIC-RPI-MX8) installed on the i.MX hardware (Visit NXP.com for help). Please note that this will override '/etc/asound.conf' file. It will be restored if this application is gracefully terminated."
+        },
+        {
+            "name": "i.MX Multimedia Player",
+            "id": "btplayer",
+            "executable": "/home/root/.nxp-demo-experience/scripts/multimedia/btplayerdemo/init.sh",
+            "source": "",
+            "icon": "bluetooth.svg",
+            "screenshot": "bluetooth.svg",
+            "compatible": "imx8mm, imx8mp",
+            "description": "This is an application for controlling an audio player using the Bluetooth communication protocol by the use of voice commands.\nWakeWord supported :\n    'HEY NXP'\nVoice commands supported :\n    PLAY MUSIC\n    PAUSE\n    PREVIOUS SONG\n    NEXT SONG\n    VOLUME UP\n    VOLUME DOWN\n    MUTE\n    STOP\n    STOP PLAYER\n\nThis application requires 8-MIC Array Board (8MIC-RPI-MX8) installed on the i.MX hardware (Visit NXP.com for help).\n\n\n\n\n\n\n\n\n"
         }]
     }]
     },
