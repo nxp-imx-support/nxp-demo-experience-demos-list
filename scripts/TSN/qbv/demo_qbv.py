@@ -1,8 +1,6 @@
 """
 Copyright 2023 NXP
-
 SPDX-License-Identifier: BSD-3-Clause
-
 This script provides the UI to the user, showcasing the setup diagram,
 camera to be selected, ensuring the setup connectivity and starts the demo.
 """
@@ -38,6 +36,7 @@ class DialogWindow(Gtk.Window):
         box.add(image)
         label3 = Gtk.Label("Video source:")
         videos= [
+                "--Select Video Port--",
                 "/dev/video0",
                 "/dev/video1",
                 "/dev/video2",
@@ -77,10 +76,14 @@ class DialogWindow(Gtk.Window):
         y.close()
         list1[0] = "Pass"
         try:
-            self.button1.set_sensitive(True)
+            if text == "--Select Video Port--":                         
+                self.button1.set_sensitive(False)
+                self.button2.set_sensitive(False)
+                self.button3.set_sensitive(False)
+            else:
+                self.button1.set_sensitive(True) 
         except:
             pass
-
     def on_run_clicked(self, button):
         if (list1[0] == "Pass" and list1[1] == "Pass"):
               os.system("python3 /home/root/.nxp-demo-experience/scripts/TSN/qbv/tsnqbv.py start root 192.168.0.1 &")
