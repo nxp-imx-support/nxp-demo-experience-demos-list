@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This repository holds demos supported by the [NXP Demo Experience](https://source.codeaurora.org/external/imxsupport/nxp-demo-experience).
+This repository holds demos supported by the [NXP Demo Experience](https://github.com/nxp-imx-support/nxp-demo-experience).
 
 ## List of Demos
 
