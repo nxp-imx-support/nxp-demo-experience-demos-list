@@ -186,7 +186,7 @@
             "source": "",
             "icon": "bluetooth.svg",
             "screenshot": "bluetooth.svg",
-            "compatible": "imx8mm, imx8mp",
+            "compatible": "imx8mm, imx8mp, imx93",
             "description": "This is an application for controlling an audio player using the Bluetooth communication protocol by the use of voice commands.\nWakeWord supported :\n    'HEY NXP'\nVoice commands supported :\n    PLAY MUSIC\n    PAUSE\n    PREVIOUS SONG\n    NEXT SONG\n    VOLUME UP\n    VOLUME DOWN\n    MUTE\n    STOP\n    STOP PLAYER\n\nThis application requires 8-MIC Array Board (8MIC-RPI-MX8) installed on the i.MX hardware (Visit NXP.com for help).\n\n\n\n\n\n\n\n\n"
         }]
     }]
