@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 
 """
-Copyright 2022 NXP
+Copyright 2022-2023 NXP
 
 SPDX-License-Identifier: Apache-2.0
 
-This application allows a ML-resource-constraint MCU/MPU systems (clients)
-to connect and run inferencing on a ML Gateway system (server) that has very
+This application allows ML-resource-constraint MPU systems (clients)
+to connect and run inferencing on an ML Gateway system (server) that has very
 high-performance ML capabilities.
 """
 
@@ -267,7 +267,7 @@ class ServerWindow(Gtk.Window):
         server_pipeline = "tensor_query_serversrc host={ip} ! video/x-raw,format=RGB"
         server_pipeline += ",framerate=0/1 ! tensor_converter ! "
         server_pipeline += "tensor_filter framework=tensorflow-lite model={model} custom={custom} "
-        server_pipeline += "! tensor_query_serversink host={ip}"
+        server_pipeline += "! tensor_query_serversink"
         server_pipeline = server_pipeline.format(ip=self.ip_address,
                                                  model=ML_MODEL, custom=self.custom)
 
@@ -437,13 +437,13 @@ class ClientWindow(Gtk.Window):
         client_pipeline += "queue max-size-buffers=2 leaky=2 ! imxvideoconvert_g2d ! "
         client_pipeline += "video/x-raw,width=300,height=300,format=RGBA ! "
         client_pipeline += "videoconvert ! video/x-raw,format=RGB ! tensor_query_client "
-        client_pipeline += "sink-host={ip} src-host={ip} ! tensor_decoder"
+        client_pipeline += "host={ip_client} dest-host={ip} ! tensor_decoder"
         client_pipeline += " mode=bounding_boxes option1=tf-ssd option2={label} "
         client_pipeline += "option3=0:1:2:3,50 option4=640:480 option5=300:300 !"
         client_pipeline += " mix. t. ! queue max-size-buffers=2 ! imxcompositor_g2d name=mix"
         client_pipeline += " sink_0::zorder=2 sink_1::zorder=1 ! waylandsink"
         client_pipeline = client_pipeline.format(
-            dev=src, ip=self.server_ip, label=ml_data_set)
+            dev=src, ip_client=get_my_ip(), ip=self.server_ip, label=ml_data_set)
         # creating the pipeline and launching it
         self.pipeline = Gst.parse_launch(client_pipeline)
         monitor_status = self.pipeline.set_state(Gst.State.PLAYING)
@@ -564,3 +564,4 @@ if __name__ == "__main__":
     initialize_thread = Thread(target=initialize)
     initialize_thread.start()
     Gtk.main()
+
