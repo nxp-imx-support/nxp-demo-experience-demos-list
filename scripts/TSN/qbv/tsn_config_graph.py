@@ -65,7 +65,7 @@ class ButtonWindow(Gtk.Window):
                     flags=0,
                     message_type=Gtk.MessageType.INFO,
                     buttons=Gtk.ButtonsType.OK,
-                    text="No-Qbv (No Prioritization)",
+                    text="Note: No-Qbv (No Prioritization)",
                     )
             dialog.format_secondary_text(
                     "Iperf and Camera traffic share the link bandwidth.The 1Gbps link bandwidth allows camera streaming to work even though this traffic can be delayed in a non-deterministic manner by iperf traffic sharing the link. Any such delays are not noticeable visually due to buffering and loss concealment of the video itransport stream."
@@ -79,7 +79,7 @@ class ButtonWindow(Gtk.Window):
                     flags=0,
                     message_type=Gtk.MessageType.INFO,
                     buttons=Gtk.ButtonsType.OK,
-                    text="Qbv1 (Video Prioritization)",
+                    text="Note: Qbv1 (Video Prioritization)",
                     )
             dialog.format_secondary_text(
                     "Iperf traffic is limited to half the bandwidth,\nthe other half is available for the camera stream."
@@ -93,7 +93,7 @@ class ButtonWindow(Gtk.Window):
                     flags=0,
                     message_type=Gtk.MessageType.INFO,
                     buttons=Gtk.ButtonsType.OK,
-                    text="Qbv2 (Iperf Prioritization)",
+                    text="Note: Qbv2 (Iperf Prioritization)",
                     )
             dialog.format_secondary_text(
                     "Iperf traffic is allocated nearly full bandwidth and\nfor the remainder, iperf contends with the camera stream."
