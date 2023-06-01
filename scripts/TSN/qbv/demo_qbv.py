@@ -15,7 +15,8 @@ class DialogWindow(Gtk.Window):
     def __init__(self):
         Gtk.Window.__init__(self)
         self.set_border_width(10)
-        self.set_resizable(False)
+        self.set_resizable(True)
+        self.set_size_request(1200,900)
         self.set_position(Gtk.WindowPosition.CENTER)  
         box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
         self.add(box)
@@ -29,11 +30,11 @@ class DialogWindow(Gtk.Window):
         self.set_titlebar(header)
         quit_button.add(quit_image)
         header.pack_end(quit_button)
-        label2 = Gtk.Label(label= "TSN 802.1 Qbv - Enhancements to Traffic Scheduling\nTime-Aware Shaper - It separates communication on the Ethernet network into a fixed length, repeating time cycles,\n thereby contributing to the delivery of time-critical traffic.")
-        box.add(label2)
-        pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(filename="/home/root/.nxp-demo-experience/scripts/TSN/qbv/TSN_Qbv_setup_diagram.png",width=850,height=200,preserve_aspect_ratio=False)
+        label1 = Gtk.Label(label= "TSN 802.1 Qbv - Enhancements to Traffic Scheduling\nTime-Aware Shaper - It separates communication on the Ethernet network into a fixed length, repeating time cycles,\n thereby contributing to the delivery of time-critical traffic.")
+        box.pack_start(label1,True,True,0)
+        pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(filename="/home/root/.nxp-demo-experience/scripts/TSN/qbv/TSN_Qbv_setup_diagram.png",width=900,height=520,preserve_aspect_ratio=False)
         image = Gtk.Image.new_from_pixbuf(pixbuf)
-        box.add(image)
+        box.pack_start(image,True,True,0)
         label3 = Gtk.Label("Video source:")
         videos= [
                 "--Select Video Port--",
@@ -62,10 +63,10 @@ class DialogWindow(Gtk.Window):
         self.button3 = Gtk.Button(label="Stop Demo")
         self.button3.set_sensitive(False)
         self.button3.connect("clicked",self.on_stop_clicked)
-        box.add(vbox)
-        box.add(self.button1)
-        box.add(self.button2)
-        box.add(self.button3)
+        box.pack_start(vbox,False,False,0)
+        box.pack_start(self.button1,False,False,0)
+        box.pack_start(self.button2,False,False,0)
+        box.pack_start(self.button3,False,False,0)
 
     def on_video_combo_changed(self, combo):
         text = combo.get_active_text()
