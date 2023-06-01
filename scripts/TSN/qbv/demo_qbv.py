@@ -126,6 +126,7 @@ class DialogWindow(Gtk.Window):
             pass
     def on_run_clicked(self, button):
         if (list1[0] == "Pass" and list1[1] == "Pass"):
+              os.system("python3 /home/root/.nxp-demo-experience/scripts/TSN/qbv/loading_window.py run_demo &")
               os.system("python3 /home/root/.nxp-demo-experience/scripts/TSN/qbv/tsnqbv.py start root 192.168.0.1 &")
               self.button1.set_visible(False)
               self.button2.set_sensitive(True)
