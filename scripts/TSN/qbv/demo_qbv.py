@@ -9,7 +9,18 @@ import gi
 gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk, GdkPixbuf, Gio
 import os, sys, subprocess,paramiko
+
+hostUserName = "root"
+hostIP =  "172.15.0.1"
+hostPwd = "null"
+eth0_operstate = os.popen("cat /sys/class/net/eth0/operstate").read()
+eth1_operstate = os.popen("cat /sys/class/net/eth1/operstate").read()
+output1 = subprocess.check_output("ifconfig eth1| grep 'inet ' | awk '{print $2}'", shell=True)
+ip_address1 = output1.strip().decode()
+output2 = subprocess.check_output("ifconfig eth0| grep 'inet ' | awk '{print $2}'", shell=True)
+ip_address2 = output2.strip().decode()
 list1 = ["Fail", "Fail"]
+
 class DialogWindow(Gtk.Window):
     def __init__(self):
         Gtk.Window.__init__(self)
@@ -35,16 +46,7 @@ class DialogWindow(Gtk.Window):
         image = Gtk.Image.new_from_pixbuf(pixbuf)
         box.pack_start(image,True,True,0)
         label3 = Gtk.Label("Video source:")
-        hostUserName = "root"                                              
-        hostIP =  "172.15.0.1" 
-        hostPwd = "null"  
-        a = os.popen("cat /sys/class/net/eth0/operstate").read()
-        b = os.popen("cat /sys/class/net/eth1/operstate").read()
-        output1 = subprocess.check_output("ifconfig eth1| grep 'inet ' | awk '{print $2}'", shell=True)
-        ip_address1 = output1.strip().decode()
-        output2 = subprocess.check_output("ifconfig eth0| grep 'inet ' | awk '{print $2}'", shell=True)
-        ip_address2 = output2.strip().decode()
-        if(a == "up\n" and b == "up\n" and ip_address1 == "192.168.0.2" and ip_address2 == "172.15.0.5"): 
+        if(eth0_operstate.strip() == "up" and eth1_operstate.strip() == "up" and ip_address1 == "192.168.0.2" and ip_address2 == "172.15.0.5"): 
             ssh = paramiko.SSHClient()                          
             ssh.load_system_host_keys() 
             ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
