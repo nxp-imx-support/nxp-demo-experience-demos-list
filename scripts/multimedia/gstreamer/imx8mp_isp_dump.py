@@ -1,5 +1,5 @@
 """
-Copyright 2021 NXP
+Copyright 2021-2022 NXP
 
 SPDX-License-Identifier: BSD-2-Clause
 
