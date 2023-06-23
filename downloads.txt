@@ -34,7 +34,6 @@ url:https://github.com/google-coral/test_data/raw/master/imagenet_labels.txt
 alt_url:https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.1.22_2.0.0/models/imagenet_labels.txt
 sha:
 
-
 name:posenet_resnet50_uint8_float32_quant.tflite
 path:
 url:https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.1.22_2.0.0/models/posenet_resnet50_uint8_float32_quant.tflite
@@ -125,14 +124,14 @@ url:https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.1.22_
 alt_url:
 sha:
 
-name:selfie_segmentation_quant.tflite
-path:
-url:https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.1.22_2.0.0/models/selfie_segmentation_quant.tflite
-alt_url:
-sha:
-
 name:bg_image.jpg
 path:
 url:https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.1.22_2.0.0/images/bg_image.jpg
+alt_url:
+sha:
+
+name:selfie_segmenter_int8.tflite
+path:
+url:
 alt_url:
 sha:

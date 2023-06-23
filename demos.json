@@ -40,6 +40,14 @@
              "screenshot": "",
              "icon": "photo-video-solid.svg",
              "description": "Application that allows a resource-constraint MCU/MPU systems (clients) to connect and run inferencing on a ML Gateway system (server) that has very high-performance ML capabilities"
+         },{
+             "name": "Selfie Segmenter",
+             "id": "selfie_nn",
+             "executable": "python3 /home/root/.nxp-demo-experience/scripts/machine_learning/MLDemoLauncher.py selfie_nn",
+             "compatible": "imx8mp",
+             "screenshot": "selfie_segmenter_ss.png",
+             "icon": "photo-video-solid.svg",
+             "description": "A machine learning based semantic segmentation demo. One example shows how to remove background from a video; other shows the segmentation mask. An internet connection is required."
          }],
          "pyeIQ":[{
             "name": "Object Classification",
@@ -90,14 +98,6 @@
             "screenshot": "",
             "icon": "photo-video-solid.svg",
             "description": "An example over how to implement a Driver Monitoring System (DMS)  using the NPU. An internet connection is required."
-        },{
-            "name": "Selfie Segmentation",
-            "id": "self_seg",
-            "executable": "python3 /home/root/.nxp-demo-experience/scripts/machine_learning/segmentation.py",
-            "compatible": "imx8mp",
-            "screenshot": "selfie.png",
-            "icon": "photo-video-solid.svg",
-            "description": "An OpenCV example of how to use machine learning to remove a background from a video. An internet connection is required."
         }]
      }]
      },
