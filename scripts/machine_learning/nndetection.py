@@ -84,7 +84,7 @@ class ObjectDetection:
 
         if not self.tflite_init():
             raise Exception
-        GObject.threads_init()
+
         Gst.init(None)
 
     def run(self):
@@ -110,7 +110,7 @@ class ObjectDetection:
             display = "waylandsink sync=false name=img_tensor "
 
         # main loop
-        self.loop = GObject.MainLoop()
+        self.loop = GLib.MainLoop()
         self.old_time = GLib.get_monotonic_time()
         self.update_time = GLib.get_monotonic_time()
         self.reload_time = -1
