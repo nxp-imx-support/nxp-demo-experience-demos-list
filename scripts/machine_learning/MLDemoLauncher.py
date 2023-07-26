@@ -50,6 +50,12 @@ class MLLaunch(Gtk.Window):
             backends_available.insert(1, "GPU")
         if os.path.exists("/usr/lib/libneuralnetworks.so") and self.demo != "brand":
             backends_available.insert(0, "NPU")
+        if (
+            os.path.exists("/usr/lib/libethosu_delegate.so")
+            and self.demo == "selfie_nn"
+        ):
+            backends_available.insert(0, "NPU")
+            backends_available.pop()
 
         displays_available = ["Weston"]
 
@@ -266,17 +272,31 @@ class MLLaunch(Gtk.Window):
             elif device == -1 or device == -2 or device == -3:
                 error = "brand_example.mov"
         if self.demo == "selfie_nn":
-            model = utils.download_file("selfie_segmenter_int8.tflite")
+            if self.platform == "imx93evk":
+                model = utils.download_file(
+                    "selfie_segmenter_landscape_int8_vela.tflite"
+                )
+            else:
+                model = utils.download_file("selfie_segmenter_int8.tflite")
             # Labels refer to background img
-            labels = utils.download_file("bg_image.jpg")
+            if self.platform == "imx93evk":
+                labels = utils.download_file("bg_image_landscape.jpg")
+            else:
+                labels = utils.download_file("bg_image.jpg")
             if self.device_combo.get_active_text() == "Example Video":
                 device = utils.download_file("selfie_example.mov")
             else:
                 device = self.device_combo.get_active_text()
             if model == -1 or model == -2 or model == -3:
-                error = "selfie_segmenter_int8.tflite"
+                if self.platform == "imx93evk":
+                    error = "selfie_segmenter_landscape_int8_vela.tflite"
+                else:
+                    error = "selfie_segmenter_int8.tflite"
             elif labels == -1 or labels == -2 or labels == -3:
-                error = "bg_image.jpg"
+                if self.platform == "imx93evk":
+                    error = "bg_image_landscape.jpg"
+                else:
+                    error = "bg_image.jpg"
             elif device == -1 or device == -2 or device == -3:
                 error = "selfie_example.mov"
             if self.mode_combo.get_active_text() == "Background Substitution":
@@ -437,16 +457,27 @@ class MLLaunch(Gtk.Window):
         if interval_time > 1:
             refresh_time = time.interval_time
             inference_time = time.tensor_filter.get_property("latency")
+
             if refresh_time != 0 and inference_time != 0:
-                self.time_label.set_text("{:12.2f}".format(refresh_time / 1000) + " ms")
-                self.fps_label.set_text(
-                    "{:12.2f}".format(1 / (refresh_time / 1000000)) + " FPS"
-                )
+                # Print pipeline information
+                if self.demo == "selfie_nn":
+                    self.time_label.set_text(
+                        "{:12.2f} ms".format(1.0 / time.current_framerate * 1000.0)
+                    )
+                    self.fps_label.set_text(
+                        "{:12.2f} FPS".format(time.current_framerate)
+                    )
+                else:
+                    self.time_label.set_text("{:12.2f} ms".format(refresh_time / 1000))
+                    self.fps_label.set_text(
+                        "{:12.2f} FPS".format(1 / (refresh_time / 1000000))
+                    )
+                # Print inference information
                 self.inference_label.set_text(
-                    "{:12.2f}".format(inference_time / 1000) + " ms"
+                    "{:12.2f} ms".format(inference_time / 1000)
                 )
                 self.ips_label.set_text(
-                    "{:12.2f}".format(1 / (inference_time / 1000000)) + " FPS"
+                    "{:12.2f} FPS".format(1 / (inference_time / 1000000))
                 )
             self.update_time = GLib.get_monotonic_time()
         return True

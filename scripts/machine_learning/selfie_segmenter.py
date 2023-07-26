@@ -15,11 +15,13 @@ Model Card: https://storage.googleapis.com/mediapipe-assets/Model%20Card%20Media
 This model was created by: Tingbo Hou, Google; Siargey Pisarchyk, Google; Karthik Raveendran, Google.
 
 This script shows human segmentation from video. Application could be aimed at video conference.
-MediaPipe's Selfie Segmenter model was quantized to be accelerated by the NPU on the i.MX8M Plus EVK.
+MediaPipe's Selfie Segmenter model was quantized to be accelerated by the NPU on the i.MX8M Plus and i.MX93 EVKs.
+i.MX8M Plus uses the general version of Selfie Segmenter; i.MX93 uses the landscape version.
 """
 
 import gi
 import os
+import re
 import sys
 import logging
 import cairo
@@ -78,17 +80,36 @@ class SelfieSegmenter:
         self.b = b
         self.g = g
 
-        self.condition_frame = np.full((256, 256, 3), fill_value=0, dtype=np.uint8)
-        self.frame = np.full((480, 480, 3), fill_value=0, dtype=np.uint8)
-        self.segmentation = np.full((480, 480, 3), fill_value=0, dtype=np.uint8)
+        if self.platform == "imx93evk":
+            self.VIDEO_WIDTH = 640
+            self.VIDEO_HEIGHT = 360
+            self.MODEL_WIDTH = 256
+            self.MODEL_HEIGHT = 144
+            self.aspect_ratio = "16/9"
+            self.nxp_converter = "imxvideoconvert_pxp"
+            self.nxp_compositor = "imxcompositor_pxp"
+        else:
+            self.VIDEO_WIDTH = 480
+            self.VIDEO_HEIGHT = 480
+            self.MODEL_WIDTH = 256
+            self.MODEL_HEIGHT = 256
+            self.aspect_ratio = "1/1"
+            self.nxp_converter = "imxvideoconvert_g2d"
+            self.nxp_compositor = "imxcompositor_g2d"
+
+        self.condition_frame = np.full(
+            (self.MODEL_HEIGHT, self.MODEL_WIDTH, 3), fill_value=0, dtype=np.uint8
+        )
+        self.frame = np.full(
+            (self.VIDEO_HEIGHT, self.VIDEO_WIDTH, 3), fill_value=0, dtype=np.uint8
+        )
+        self.segmentation = np.full(
+            (self.VIDEO_HEIGHT, self.VIDEO_WIDTH, 3), fill_value=0, dtype=np.uint8
+        )
         self.background_path = background
         self.background = Image.open(self.background_path)
         self.number_frames = 0
-
-        self.VIDEO_WIDTH = 480
-        self.VIDEO_HEIGHT = 480
-        self.MODEL_WIDTH = 256
-        self.MODEL_HEIGHT = 256
+        self.current_framerate = 1000
         self.THRESHOLD = 0.1
 
         if not self.tflite_init():
@@ -105,10 +126,6 @@ class SelfieSegmenter:
         """
 
         if self.running:
-            new_time = GLib.get_monotonic_time()
-            self.interval_time = new_time - self.old_time
-            self.old_time = new_time
-
             data = self.segmentation.tobytes()
             buf = Gst.Buffer.new_allocate(None, len(data), None)
             buf.fill(0, data)
@@ -135,7 +152,7 @@ class SelfieSegmenter:
             sample = sink.emit("pull-sample")
             sample_buf = sample.get_buffer()
             self.frame = np.ndarray(
-                (self.VIDEO_WIDTH, self.VIDEO_HEIGHT, 3),
+                (self.VIDEO_HEIGHT, self.VIDEO_WIDTH, 3),
                 buffer=sample_buf.extract_dup(0, sample_buf.get_size()),
                 dtype=np.uint8,
             )
@@ -153,7 +170,7 @@ class SelfieSegmenter:
             if ret:
                 decoded_mask = np.frombuffer(mask.data, dtype=np.float32)
                 decoded_mask = decoded_mask.reshape(
-                    (self.MODEL_WIDTH, self.MODEL_HEIGHT, 1)
+                    (self.MODEL_HEIGHT, self.MODEL_WIDTH, 1)
                 )
 
                 # Interpret segmentation
@@ -170,98 +187,71 @@ class SelfieSegmenter:
                     self.frame,
                     np.asarray(self.background, dtype=np.uint8),
                 )
-            mask_mem.unmap(mask)
+
+                mask_mem.unmap(mask)
 
     def draw_cb(self, overlay, context, timestamp, duration):
         """Callback to draw text overlay"""
 
-        if self.video_caps is None or not self.running:
-            return
-
-        if self.demo_mode == 1:
+        if self.video_caps is not None and self.running:
             new_time = GLib.get_monotonic_time()
             self.interval_time = new_time - self.old_time
             self.old_time = new_time
 
-        scale_height = self.VIDEO_HEIGHT / 1080
-        scale_width = self.VIDEO_WIDTH / 1920
-        scale_text = max(scale_height, scale_width)
+            scale_height = self.VIDEO_HEIGHT / 1080
+            scale_width = self.VIDEO_WIDTH / 1920
+            scale_text = max(scale_height, scale_width)
 
-        context.select_font_face(
-            "Sans", cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD
-        )
-        context.set_source_rgb(self.r, self.g, self.b)
-        context.set_font_size(int(30.0 * scale_text))
-        context.move_to(int(30 * scale_width), int(20))
-        context.show_text("i.MX NNStreamer - Selfie Segmenter Demo")
+            context.select_font_face(
+                "Sans", cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD
+            )
+            context.set_source_rgb(self.r, self.g, self.b)
+            context.set_font_size(int(30.0 * scale_text))
+            context.move_to(int(30 * scale_width), int(20))
+            context.show_text("i.MX NNStreamer - Selfie Segmenter Demo")
 
-        inference = self.tensor_filter.get_property("latency")
-        if inference == 0:
-            context.move_to(
-                int(30 * scale_width), int(self.VIDEO_HEIGHT - (50 * scale_height))
-            )
-            context.show_text("FPS: ")
-            context.move_to(
-                int(30 * scale_width), int(self.VIDEO_HEIGHT - (25 * scale_height))
-            )
-            context.show_text("IPS: ")
-        elif (
-            GLib.get_monotonic_time() - self.reload_time
-        ) < 100000 and self.refresh_time != -1:
-            context.move_to(
-                int(30 * scale_width), int(self.VIDEO_HEIGHT - (50 * scale_height))
-            )
-            if self.demo_mode == 0:
-                context.show_text(
-                    "FPS: "
-                    + "{:12.2f}".format(1 / (self.refresh_time / 1000000))
-                    + " ("
-                    + str(self.refresh_time / 1000)
-                    + " ms)"
+            inference = self.tensor_filter.get_property("latency")
+
+            # Get current framerate and avg. framerate
+            output_wayland = self.wayland_sink.get_property("last-message")
+            if output_wayland:
+                current_text = re.findall(r"current:\s[\d]+[.\d]*", output_wayland)[0]
+                self.current_framerate = float(
+                    re.findall(r"[\d]+[.\d]*", current_text)[0]
                 )
-            context.move_to(
-                int(30 * scale_width), int(self.VIDEO_HEIGHT - (25 * scale_height))
-            )
-            context.show_text(
-                "IPS: "
-                + "{:12.2f}".format(1 / (self.inference / 1000000))
-                + " ("
-                + str(self.inference / 1000)
-                + " ms)"
-            )
-        else:
-            self.reload_time = GLib.get_monotonic_time()
-            self.refresh_time = self.interval_time
-            self.inference = self.tensor_filter.get_property("latency")
+
             context.move_to(
                 int(30 * scale_width), int(self.VIDEO_HEIGHT - (50 * scale_height))
             )
-            if self.demo_mode == 0:
-                context.show_text(
-                    "FPS: "
-                    + "{:12.2f}".format(1 / (self.refresh_time / 1000000))
-                    + " ("
-                    + str(self.refresh_time / 1000)
-                    + " ms)"
+
+            if inference == 0:
+                context.show_text("FPS: ")
+                context.move_to(
+                    int(30 * scale_width), int(self.VIDEO_HEIGHT - (20 * scale_height))
                 )
-            context.move_to(
-                int(30 * scale_width), int(self.VIDEO_HEIGHT - (25 * scale_height))
-            )
-            context.show_text(
-                "IPS: "
-                + "{:12.2f}".format(1 / (self.inference / 1000000))
-                + " ("
-                + str(self.inference / 1000)
-                + " ms)"
-            )
+                context.show_text("IPS: ")
+            else:
+                context.show_text(
+                    "FPS: {:6.2f} ({:6.2f} ms)".format(
+                        self.current_framerate, 1.0 / self.current_framerate * 1000
+                    )
+                )
+                context.move_to(
+                    int(30 * scale_width), int(self.VIDEO_HEIGHT - (20 * scale_height))
+                )
+                context.show_text(
+                    "IPS: {:6.2f} ({:6.2f} ms)".format(
+                        1 / (inference / 1000000), inference / 1000
+                    )
+                )
 
-        if self.first_frame:
-            context.move_to(int(400 * scale_width), int(600 * scale_height))
-            context.set_font_size(int(200.0 * min(scale_width, scale_height)))
-            context.show_text("Loading...")
-            self.first_frame = False
+            if self.first_frame:
+                context.move_to(int(400 * scale_width), int(600 * scale_height))
+                context.set_font_size(int(200.0 * min(scale_width, scale_height)))
+                context.show_text("Loading...")
+                self.first_frame = False
 
-        context.fill()
+            context.fill()
 
     def prepare_overlay_cb(self, overlay, caps):
         """Store the information from the caps that we are interested in."""
@@ -302,10 +292,13 @@ class SelfieSegmenter:
         if self.backend == "CPU":
             backend = "true:CPU custom=NumThreads:4"
         else:
-            os.environ["USE_GPU_INFERENCE"] = "0"
-            backend = (
-                "true:npu custom=Delegate:External," "ExtDelegateLib:libvx_delegate.so"
-            )
+            if self.platform == "imx93evk":
+                backend = "true:npu custom=Delegate:External,ExtDelegateLib:libethosu_delegate.so"
+            else:
+                os.environ["USE_GPU_INFERENCE"] = "0"
+                backend = (
+                    "true:npu custom=Delegate:External,ExtDelegateLib:libvx_delegate.so"
+                )
 
         self.main_loop = GLib.MainLoop()
         self.old_time = GLib.get_monotonic_time()
@@ -315,60 +308,46 @@ class SelfieSegmenter:
 
         # Pipeline for background subtraction
         if self.demo_mode == 0:
-            # Define camera source pipeline
-            gst_launch_cmdline = "v4l2src device=" + self.device
-            gst_launch_cmdline += (
-                " ! video/x-raw,width=640,height=480,framerate=30/1 ! "
-            )
-            gst_launch_cmdline += "aspectratiocrop aspect-ratio=1/1 ! "
-            gst_launch_cmdline += "imxvideoconvert_g2d rotation=horizontal-flip ! "
-            gst_launch_cmdline += (
-                "imxvideoconvert_g2d ! video/x-raw,width="
+            gst_launch_cmdline = (
+                # Define camera source pipeline
+                "v4l2src device="
+                + self.device
+                + " ! video/x-raw,width=640,height=480,framerate=30/1 ! "
+                + "aspectratiocrop aspect-ratio="
+                + self.aspect_ratio
+                + " ! "
+                + self.nxp_converter
+                + " rotation=horizontal-flip ! video/x-raw,width="
                 + str(self.VIDEO_WIDTH)
                 + ",height="
                 + str(self.VIDEO_HEIGHT)
-            )
-
-            # ML processing using tensor_filter
-            gst_launch_cmdline += (
-                " ! tee name=t t. ! queue max-size-buffers=2 leaky=2 ! "
-            )
-            gst_launch_cmdline += (
-                "imxvideoconvert_g2d ! video/x-raw,width="
+                # ML processing using tensor_filter
+                + " ! tee name=t t. ! queue max-size-buffers=1 leaky=2 ! "
+                + self.nxp_converter
+                + " ! video/x-raw,width="
                 + str(self.MODEL_WIDTH)
                 + ",height="
                 + str(self.MODEL_HEIGHT)
-            )
-            gst_launch_cmdline += " ! videoconvert ! video/x-raw,format=RGB ! "
-            gst_launch_cmdline += "tensor_converter ! "
-            gst_launch_cmdline += (
-                "tensor_transform mode=arithmetic option=typecast:float32,div:255.0 ! "
-            )
-            gst_launch_cmdline += (
-                "tensor_filter framework=tensorflow-lite model=" + self.tflite_model
-            )
-            gst_launch_cmdline += " accelerator=" + backend
-            gst_launch_cmdline += " silent=FALSE name=tensor_filter latency=1 ! "
-            gst_launch_cmdline += "tensor_sink name=tensor_sink "
-
-            # Appsinik, sends the frame to be processed outside of pipeline
-            gst_launch_cmdline += "t. ! queue max-size-buffers=2 ! videoconvert ! video/x-raw,format=RGB ! "
-            gst_launch_cmdline += "appsink name=frame_sink emit-signals=True "
-
-            # Appsrc, gets the output with background substitution
-            gst_launch_cmdline += "appsrc name=result_src is-live=true block=true format=GST_FORMAT_TIME ! "
-            gst_launch_cmdline += (
-                "video/x-raw,format=RGB,framerate=30/1 ! videoconvert "
-            )
-            gst_launch_cmdline += (
-                "! video/x-raw,width="
+                + " ! videoconvert ! video/x-raw,format=RGB ! tensor_converter ! "
+                + "tensor_transform mode=arithmetic option=typecast:float32,div:255.0 ! "
+                + "tensor_filter framework=tensorflow-lite model="
+                + self.tflite_model
+                + " accelerator="
+                + backend
+                + " name=tensor_filter latency=1 ! tensor_sink name=tensor_sink "
+                # Appsink, sends the frame to be processed outside of pipeline
+                + "t. ! queue max-size-buffers=1 leaky=2 ! videoconvert ! video/x-raw,format=RGB ! "
+                + "appsink name=frame_sink emit-signals=True "
+                # Appsrc, gets the output with background substitution
+                + "appsrc name=result_src is-live=True format=GST_FORMAT_TIME ! "
+                + "video/x-raw,width="
                 + str(self.VIDEO_WIDTH)
                 + ",height="
                 + str(self.VIDEO_HEIGHT)
+                + ",format=RGB,framerate=30/1 ! videoconvert"
+                + " ! cairooverlay name=cairo_text ! queue max-size-buffers=1 leaky=2 ! "
+                + "fpsdisplaysink name=wayland_sink text-overlay=false video-sink=waylandsink sync=false"
             )
-            gst_launch_cmdline += " ! cairooverlay name=cairo_text ! "
-            gst_launch_cmdline += "queue max-size-buffers=2 ! "
-            gst_launch_cmdline += "waylandsink sync=false"
 
             self.pipeline = Gst.parse_launch(gst_launch_cmdline)
 
@@ -387,81 +366,97 @@ class SelfieSegmenter:
         # Pipeline for mask segmentation demo
         else:
             # Define compositor that shows input frame and mask segmentation side to side
-            gst_launch_cmdline = (
-                "imxcompositor_g2d latency=150000000 min-upstream-latency=150000000 "
-            )
-            gst_launch_cmdline += "name=comp sink_1::ypos=0 "
-            gst_launch_cmdline += "sink_0::ypos=0 sink_0::xpos=480 ! "
-            gst_launch_cmdline += "cairooverlay name=cairo_text ! "
-            gst_launch_cmdline += "waylandsink sync=false "
+            latency_compositor = "30000000"
+            framerate = "30"
+            if self.backend == "CPU":
+                latency_compositor = "60000000"
+                framerate = "15"
 
-            # Define camera source pipeline
-            gst_launch_cmdline += "v4l2src device=" + self.device
-            gst_launch_cmdline += (
-                " ! video/x-raw,width=640,height=480,framerate=30/1 ! "
+            gst_launch_cmdline = (
+                self.nxp_compositor
+                + " latency="
+                + latency_compositor
+                + " min-upstream-latency="
+                + latency_compositor
+                + " name=comp sink_1::ypos=0 "
             )
-            gst_launch_cmdline += "aspectratiocrop aspect-ratio=1/1 ! "
-            gst_launch_cmdline += "imxvideoconvert_g2d rotation=horizontal-flip ! "
+            if self.platform == "imx93evk":
+                gst_launch_cmdline += (
+                    "sink_0::ypos="
+                    + str(self.VIDEO_HEIGHT)
+                    + " sink_0::height=360 sink_0::width=640 sink_1::height=360 sink_0::xpos=0 ! "
+                )
+            else:
+                gst_launch_cmdline += (
+                    "sink_0::ypos=0 sink_0::xpos=" + str(self.VIDEO_WIDTH) + " ! "
+                )
             gst_launch_cmdline += (
-                "imxvideoconvert_g2d ! video/x-raw,width="
+                "cairooverlay name=cairo_text ! fpsdisplaysink name=wayland_sink "
+                + "text-overlay=false video-sink=waylandsink "
+                # Define camera source pipeline
+                + "v4l2src device="
+                + self.device
+                + " ! video/x-raw,width=640,height=480,framerate="
+                + framerate
+                + "/1 ! aspectratiocrop aspect-ratio="
+                + self.aspect_ratio
+                + " ! "
+                + self.nxp_converter
+                + " rotation=horizontal-flip ! video/x-raw,width="
                 + str(self.VIDEO_WIDTH)
                 + ",height="
                 + str(self.VIDEO_HEIGHT)
-            )
-            # ML processing using tensor_filter
-
-            gst_launch_cmdline += (
-                " ! tee name=t t. ! queue max-size-buffers=2 leaky=2 ! "
-            )
-            gst_launch_cmdline += (
-                "imxvideoconvert_g2d ! video/x-raw,width="
+                # ML processing using tensor_filter
+                + " ! tee name=t t. ! queue max-size-buffers=1 leaky=2 ! "
+                + self.nxp_converter
+                + " ! video/x-raw,width="
                 + str(self.MODEL_WIDTH)
                 + ",height="
                 + str(self.MODEL_HEIGHT)
+                + " ! videoconvert ! video/x-raw,format=RGB ! tensor_converter ! "
+                + "tensor_transform mode=arithmetic option=typecast:float32,div:255.0 ! "
+                + "tensor_filter framework=tensorflow-lite model="
+                + self.tflite_model
+                + " accelerator="
+                + backend
+                + " name=tensor_filter latency=1 ! tensor_decoder mode=image_segment option1=snpe-depth option2=0 ! "
             )
-            gst_launch_cmdline += " ! videoconvert ! video/x-raw,format=RGB ! "
-            gst_launch_cmdline += "tensor_converter ! "
+            if self.platform == "imx93evk":
+                gst_launch_cmdline += "videoconvert"  # pxp compositor does not support alpha from pxp converter
+            else:
+                gst_launch_cmdline += (
+                    self.nxp_converter
+                    + " ! video/x-raw,width="
+                    + str(self.VIDEO_WIDTH)
+                    + ",height="
+                    + str(self.VIDEO_HEIGHT)
+                    + ",format=RGBA"
+                )
             gst_launch_cmdline += (
-                "tensor_transform mode=arithmetic option=typecast:float32,div:255.0 ! "
+                " ! comp.sink_0 "
+                # Send input frame to compositor
+                + "t. ! queue max-size-buffers=1 leaky=2 ! "
+                + "comp.sink_1 "
             )
-            gst_launch_cmdline += (
-                "tensor_filter framework=tensorflow-lite model=" + self.tflite_model
-            )
-            gst_launch_cmdline += " accelerator=" + backend
-            gst_launch_cmdline += " name=tensor_filter latency=1 ! "
-            gst_launch_cmdline += (
-                "tensor_decoder mode=image_segment option1=snpe-depth option2=0 ! "
-            )
-            gst_launch_cmdline += (
-                "imxvideoconvert_g2d ! video/x-raw,width="
-                + str(self.VIDEO_WIDTH)
-                + ",height="
-                + str(self.VIDEO_HEIGHT)
-                + ",format=RGBA"
-            )
-            gst_launch_cmdline += " ! comp.sink_0 "
-
-            # Send input frame to compositor
-            gst_launch_cmdline += "t. ! queue max-size-buffers=2 leaky=2 ! "
-            gst_launch_cmdline += "comp.sink_1 "
 
             self.pipeline = Gst.parse_launch(gst_launch_cmdline)
 
         self.tensor_filter = self.pipeline.get_by_name("tensor_filter")
+        self.wayland_sink = self.pipeline.get_by_name("wayland_sink")
 
         # Draws text information to display
         cairo_draw = self.pipeline.get_by_name("cairo_text")
         cairo_draw.connect("draw", self.draw_cb)
         cairo_draw.connect("caps-changed", self.prepare_overlay_cb)
 
-        # Timer to update result
-        if self.callback is not None:
-            GLib.timeout_add(500, self.callback, self)
-
         # Bus and message callback
         bus = self.pipeline.get_bus()
         bus.add_signal_watch()
         bus.connect("message", self.on_bus_message)
+
+        # Timer to update result
+        if self.callback is not None:
+            GLib.timeout_add(500, self.callback, self)
 
         # Start pipeline
         self.running = True

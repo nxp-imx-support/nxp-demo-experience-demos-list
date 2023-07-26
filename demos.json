@@ -44,7 +44,7 @@
              "name": "Selfie Segmenter",
              "id": "selfie_nn",
              "executable": "python3 /home/root/.nxp-demo-experience/scripts/machine_learning/MLDemoLauncher.py selfie_nn",
-             "compatible": "imx8mp",
+             "compatible": "imx8mp, imx93",
              "screenshot": "selfie_segmenter_ss.png",
              "icon": "photo-video-solid.svg",
              "description": "A machine learning based semantic segmentation demo. One example shows how to remove background from a video; other shows the segmentation mask. An internet connection is required."
