@@ -68,7 +68,6 @@ class NNStreamerExample:
         if not self.tflite_init():
             raise Exception
 
-        GObject.threads_init()
         Gst.init(None)
 
     def run_example(self):
@@ -112,7 +111,7 @@ class NNStreamerExample:
             pipeline = 'filesrc location=' + self.device  + ' ! qtdemux'
             pipeline += ' ! ' + decoder + '! tee name=t_raw'
         # main loop
-        self.loop = GObject.MainLoop()
+        self.loop = GLib.MainLoop()
         pipeline += ' t_raw. ! imxvideoconvert_g2d ! '
         pipeline += 'video/x-raw,width=224,height=224,format=RGBA ! '
         pipeline += 'queue max-size-buffers=2 leaky=2 ! '

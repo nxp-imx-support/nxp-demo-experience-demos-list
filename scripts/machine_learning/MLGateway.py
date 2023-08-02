@@ -263,7 +263,7 @@ class ServerWindow(Gtk.Window):
         # initializes state in background
         Gst.init(None)
         # mainloop allows to parse events and run operations in background
-        self.main_loop = GObject.MainLoop()
+        self.main_loop = GLib.MainLoop()
         server_pipeline = "tensor_query_serversrc host={ip} ! video/x-raw,format=RGB"
         server_pipeline += ",framerate=0/1 ! tensor_converter ! "
         server_pipeline += "tensor_filter framework=tensorflow-lite model={model} custom={custom} "
@@ -426,7 +426,7 @@ class ClientWindow(Gtk.Window):
         self.button3.set_sensitive(False)
         # initialises state in background
         Gst.init(None)
-        self.main_loop = GObject.MainLoop()
+        self.main_loop = GLib.MainLoop()
         ml_data_set = utils.download_file(DATA_SET)
         if self.entry2.get_activates_default() is True:
             self.server_ip = self.entry2.get_text()

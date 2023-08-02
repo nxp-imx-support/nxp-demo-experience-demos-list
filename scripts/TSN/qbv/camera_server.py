@@ -14,7 +14,7 @@ first_argument = sys.argv[1]
 class ObjectDetection:
  def __init__(self):
     Gst.init()
-    self.loop_1 = GObject.MainLoop()
+    self.loop_1 = GLib.MainLoop()
  def cam_stream(self):
     server_command = "v4l2src device={} ! videoconvert ! video/x-raw, format=YUY2, width=640,height=480 ! jpegenc ! rtpjpegpay ! udpsink host=172.15.0.5 port=5000".format(first_argument)
     pipeline_1=Gst.parse_launch(server_command)

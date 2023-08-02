@@ -93,7 +93,6 @@ class NNStreamerExample:
         if not self.tflite_init():
             raise Exception
 
-        GObject.threads_init()
         Gst.init(None)
 
     def run_example(self):
@@ -119,7 +118,7 @@ class NNStreamerExample:
             display = "waylandsink sync=false name=img_tensor"
 
         # main loop
-        self.loop = GObject.MainLoop()
+        self.loop = GLib.MainLoop()
 
         self.update_time = GLib.get_monotonic_time()
         self.old_time = GLib.get_monotonic_time()
