@@ -49,31 +49,6 @@
              "icon": "photo-video-solid.svg",
              "description": "A machine learning based semantic segmentation demo. One example shows how to remove background from a video; other shows the segmentation mask. An internet connection is required."
          }],
-         "pyeIQ":[{
-            "name": "Object Classification",
-            "id": "obj_class_pyeiq",
-            "executable": "python3 /home/root/.nxp-demo-experience/scripts/machine_learning/pyeiq_launcher.py small_id",
-            "compatible": "imx8ulp",
-            "screenshot": "pyeiq_id.png",
-            "icon": "photo-video-solid.svg",
-            "description": "An example of how to use Python to classify objects in a photo. An internet connection may be required."
-        },{
-            "name": "Object Detection",
-            "id": "obj_detect_pyeiq",
-            "executable": "python3 /home/root/.nxp-demo-experience/scripts/machine_learning/pyeiq_launcher.py small_detect",
-            "compatible": "imx8ulp",
-            "screenshot": "pyeiq_detect.png",
-            "icon": "photo-video-solid.svg",
-            "description": "An example of how to use Python to detect objects in a photo. An internet connection may be required."
-        },{
-            "name": "Mask Detection",
-            "id": "mask_detect_pyeiq",
-            "executable": "python3 /home/root/.nxp-demo-experience/scripts/machine_learning/pyeiq_launcher.py small_mask",
-            "compatible": "imx8ulp",
-            "screenshot": "pyeiq_mask.png",
-            "icon": "photo-video-solid.svg",
-            "description": "An example of how to use Python to detect mask wearing in a photo. An internet connection may be required."
-        }],
         "TFLite":[{
             "name": "ML Benchmark",
             "executable": "python3 /home/root/.nxp-demo-experience/scripts/machine_learning/MLBenchmark.py",
