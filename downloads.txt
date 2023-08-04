@@ -76,24 +76,6 @@ url:https://www.gstatic.com/aihub/tfhub/labelmaps/popular_us_products_V1_labelma
 alt_url:https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.1.22_2.0.0/models/brand_labels.csv
 sha:8668498affbbe2ca7af3ac587a6eeb66625439bb
 
-name:small_keyboard.jpg
-path:
-url:https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.1.22_2.0.0/images/small_keyboard.jpg
-alt_url:
-sha:
-
-name:small_dog.jpg
-path:
-url:https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.1.22_2.0.0/images/small_dog.jpg
-alt_url:
-sha:
-
-name:small_mask.jpg
-path:
-url:https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.1.22_2.0.0/images/small_mask.jpg
-alt_url:
-sha:
-
 name:ssd_mobilenet_v2_face_quant_postprocess.tflite
 path:
 url:https://raw.githubusercontent.com/google-coral/test_data/master/ssd_mobilenet_v2_face_quant_postprocess.tflite
