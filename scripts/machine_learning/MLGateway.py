@@ -19,13 +19,14 @@ import tflite_runtime.interpreter as tflite
 import numpy as np
 import gi
 import subprocess
+import glob
 from gi.repository import Gtk, Gst, GObject, Gio, GLib
+
 sys.path.append("/home/root/.nxp-demo-experience/scripts/")
 import utils
-import glob
 
-gi.require_version('Gtk', '3.0')
-gi.require_version('Gst', '1.0')
+gi.require_version("Gtk", "3.0")
+gi.require_version("Gst", "1.0")
 
 
 def initialize():
@@ -43,19 +44,15 @@ def initialize():
         return
     """
     if FIRST_RUN:
-        GLib.idle_add(
-            dwnwin.status_label.set_text, "\n\nInstalling packages...")
-        res = subprocess.getstatusoutput(
-                "pip3 --retries 0 install ssdpy"
-            )[0]
+        GLib.idle_add(dwnwin.status_label.set_text, "\n\nInstalling packages...")
+        res = subprocess.getstatusoutput("pip3 --retries 0 install ssdpy")[0]
         if res != 0:
-            GLib.idle_add(
-                dwnwin.status_label.set_text, "\n\nPackage install failed!")
+            GLib.idle_add(dwnwin.status_label.set_text, "\n\nPackage install failed!")
             return
     win.connect("destroy", Gtk.main_quit)
     GLib.idle_add(win.show_all)
     GLib.idle_add(dwnwin.destroy)
-        
+
 
 FIRST_RUN = False
 BOARD = None
@@ -75,20 +72,26 @@ ML_MODEL = utils.download_file(MODEL)
 
 
 def access_ip():
-    """ Returns IP address if found in network.
-        SSDP is used to discover devices in local network
-        using multicast SSDP address. SSDP uses NOTIFY
-        to announce establishment information and M-Search
-        to discover devices in network.
+    """Returns IP address if found in network.
+    SSDP is used to discover devices in local network
+    using multicast SSDP address. SSDP uses NOTIFY
+    to announce establishment information and M-Search
+    to discover devices in network.
 
-        MX : Maximum wait time(in seconds)
-        ST : Search Target
+    MX : Maximum wait time(in seconds)
+    ST : Search Target
     """
-    ssdp_request = "M-SEARCH * HTTP/1.1\r\n" + "HOST: {host}:{port}\r\n" \
-        + "MAN: \"ssdp:discover\"\r\n" + \
-        "MX: {mx}\r\n" + "ST: {st}\r\n" + "\r\n"
-    ssdp_request = ssdp_request.format(host=SSDP_ADDRESS,
-                                       port=SSDP_PORT, st=SSDP_ST, mx=SSDP_MX)
+    ssdp_request = (
+        "M-SEARCH * HTTP/1.1\r\n"
+        + "HOST: {host}:{port}\r\n"
+        + 'MAN: "ssdp:discover"\r\n'
+        + "MX: {mx}\r\n"
+        + "ST: {st}\r\n"
+        + "\r\n"
+    )
+    ssdp_request = ssdp_request.format(
+        host=SSDP_ADDRESS, port=SSDP_PORT, st=SSDP_ST, mx=SSDP_MX
+    )
     # send an m-search request and collect responses
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     sock.sendto(ssdp_request.encode("utf-8"), (SSDP_ADDRESS, SSDP_PORT))
@@ -108,7 +111,7 @@ def access_ip():
 
 
 def get_my_ip():
-    """ Obtaining its own IP address """
+    """Obtaining its own IP address"""
     sock_obj = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     sock_obj.connect(("8.8.8.8", 80))
     self_ip = sock_obj.getsockname()[0]
@@ -121,9 +124,10 @@ def get_my_ip():
 
 
 def cast_ip():
-    """ Handle incoming m-search request and send a response """
+    """Handle incoming m-search request and send a response"""
     server = SSDPServer("imx-server", device_type=SSDP_ST)
     server.serve_forever()
+
 
 class DownloadGUI(Gtk.Window):
     """The main voice GUI application."""
@@ -149,16 +153,20 @@ class DownloadGUI(Gtk.Window):
         quit_button.connect("clicked", Gtk.main_quit)
 
         self.main_grid = Gtk.Grid(
-            row_homogeneous=False, column_homogeneous=True,
-            column_spacing=15, row_spacing=15)
+            row_homogeneous=False,
+            column_homogeneous=True,
+            column_spacing=15,
+            row_spacing=15,
+        )
         self.main_grid.set_margin_end(10)
         self.main_grid.set_margin_start(10)
         self.status_label = Gtk.Label.new("\n\nSetting up...")
         self.main_grid.attach(self.status_label, 0, 0, 1, 1)
         self.add(self.main_grid)
 
+
 class ServerWindow(Gtk.Window):
-    """ Server Window """
+    """Server Window"""
 
     def __init__(self):
         super().__init__()
@@ -166,8 +174,12 @@ class ServerWindow(Gtk.Window):
         self.set_resizable(False)
         self.set_border_width(15)
         self.set_position(Gtk.WindowPosition.CENTER)
-        self.grid = Gtk.Grid(row_homogeneous=True, column_homogeneous=True,
-                             row_spacing=10, column_spacing=10)
+        self.grid = Gtk.Grid(
+            row_homogeneous=True,
+            column_homogeneous=True,
+            row_spacing=10,
+            column_spacing=10,
+        )
         # obtain Server's IP address
         self.label1 = Gtk.Label()
         self.label1.set_markup(" Server's IP: ")
@@ -219,11 +231,12 @@ class ServerWindow(Gtk.Window):
             self.to_reduce_warmup()
 
     def to_reduce_warmup(self):
-        """ To reduce NPU warmup time"""
+        """To reduce NPU warmup time"""
         ext_delegate = tflite.load_delegate("/usr/lib/libvx_delegate.so")
         # Load the TFLite model and allocate tensors.
-        interpreter = tflite.Interpreter(model_path=ML_MODEL, num_threads=4,
-                                         experimental_delegates=[ext_delegate])
+        interpreter = tflite.Interpreter(
+            model_path=ML_MODEL, num_threads=4, experimental_delegates=[ext_delegate]
+        )
         interpreter.allocate_tensors()
 
         # Get input and output tensors.
@@ -231,15 +244,14 @@ class ServerWindow(Gtk.Window):
         output_details = interpreter.get_output_details()
 
         # Test the model on random input data.
-        input_shape = input_details[0]['shape']
-        input_data = np.array(np.random.random_sample(
-            input_shape), dtype=np.uint8)
-        interpreter.set_tensor(input_details[0]['index'], input_data)
+        input_shape = input_details[0]["shape"]
+        input_data = np.array(np.random.random_sample(input_shape), dtype=np.uint8)
+        interpreter.set_tensor(input_details[0]["index"], input_data)
         interpreter.invoke()
 
         # The function get_tensor() returns a copy of the tensor data.
         # Use tensor() in order to get a pointer to the tensor.
-        interpreter.get_tensor(output_details[0]['index'])
+        interpreter.get_tensor(output_details[0]["index"])
 
     def on_changed(self, widget):
         """Allows user to change processors"""
@@ -250,14 +262,13 @@ class ServerWindow(Gtk.Window):
             self.custom = "NumThreads:4"
 
     def start_server_thread(self, widget):
-        """ Server Thread """
-        server_thread = Thread(
-            target=ServerWindow.start_server, args=[server_window])
+        """Server Thread"""
+        server_thread = Thread(target=ServerWindow.start_server, args=[server_window])
         server_thread.daemon = True
         server_thread.start()
 
     def start_server(self):
-        """ Pipeline to start server """
+        """Pipeline to start server"""
         self.button1.set_sensitive(False)
         self.processor_select.set_sensitive(False)
         # initializes state in background
@@ -266,17 +277,20 @@ class ServerWindow(Gtk.Window):
         self.main_loop = GLib.MainLoop()
         server_pipeline = "tensor_query_serversrc host={ip} ! video/x-raw,format=RGB"
         server_pipeline += ",framerate=0/1 ! tensor_converter ! "
-        server_pipeline += "tensor_filter framework=tensorflow-lite model={model} custom={custom} "
+        server_pipeline += (
+            "tensor_filter framework=tensorflow-lite model={model} custom={custom} "
+        )
         server_pipeline += "! tensor_query_serversink"
-        server_pipeline = server_pipeline.format(ip=self.ip_address,
-                                                 model=ML_MODEL, custom=self.custom)
+        server_pipeline = server_pipeline.format(
+            ip=self.ip_address, model=ML_MODEL, custom=self.custom
+        )
 
         # creating the pipeline and launching it
         self.pipeline = Gst.parse_launch(server_pipeline)
         # message callback
         bus = self.pipeline.get_bus()
         bus.add_signal_watch()
-        bus.connect('message', self.on_message)
+        bus.connect("message", self.on_message)
         # by default pipelines are in NULL state, pipeline suppose to be set in running state
         monitor_status = self.pipeline.set_state(Gst.State.PLAYING)
         if monitor_status == Gst.StateChangeReturn.FAILURE:
@@ -315,12 +329,16 @@ class ServerWindow(Gtk.Window):
         elif mtype == Gst.MessageType.QOS:
             data_format, processed, dropped = message.parse_qos_stats()
             format_str = Gst.Format.get_name(data_format)
-            logging.debug("[qos] format[%s] processed[%d] dropped[%d]",
-                          format_str, processed, dropped)
+            logging.debug(
+                "[qos] format[%s] processed[%d] dropped[%d]",
+                format_str,
+                processed,
+                dropped,
+            )
 
 
 class ClientWindow(Gtk.Window):
-    """ Client Window """
+    """Client Window"""
 
     def __init__(self):
         super().__init__()
@@ -328,8 +346,12 @@ class ClientWindow(Gtk.Window):
         self.set_resizable(False)
         self.set_border_width(10)
         self.set_position(Gtk.WindowPosition.CENTER)
-        self.grid = Gtk.Grid(row_homogeneous=True, column_homogeneous=True,
-                             row_spacing=15, column_spacing=30)
+        self.grid = Gtk.Grid(
+            row_homogeneous=True,
+            column_homogeneous=True,
+            row_spacing=15,
+            column_spacing=30,
+        )
         self.label1 = Gtk.Label()
         self.label1.set_markup("Enter or Select Server IP: ")
         self.entry2 = Gtk.Entry.new()
@@ -341,12 +363,10 @@ class ClientWindow(Gtk.Window):
         addresses = []
         attempt = 0
         self.devices = []
-        for device in glob.glob('/dev/video*'):
+        for device in glob.glob("/dev/video*"):
             self.devices.append(device)
 
-        source_label = Gtk.Label(
-            label="Source"
-        )
+        source_label = Gtk.Label(label="Source")
         self.source_select = Gtk.ComboBoxText()
         for option in self.devices:
             self.source_select.append_text(option)
@@ -359,7 +379,7 @@ class ClientWindow(Gtk.Window):
                     addresses.append(ssdp_address[0])
                 maximum_search -= 1
             attempt = attempt + 1
-        if len(addresses) !=  0:
+        if len(addresses) != 0:
             self.server_ip = addresses[0]
         else:
             self.server_ip = "Not found!"
@@ -382,7 +402,7 @@ class ClientWindow(Gtk.Window):
         else:
             self.radio_savedip.set_active(True)
             self.radio_ip.set_sensitive(False)
-        
+
         self.header = Gtk.HeaderBar()
         self.header.set_show_close_button(False)
         self.header.props.title = "ML Client Setup"
@@ -414,15 +434,16 @@ class ClientWindow(Gtk.Window):
                 self.entry2.set_sensitive(False)
 
     def connect_to_server_thread(self, widget):
-        """ Thread to connect to server"""
+        """Thread to connect to server"""
 
         client_thread = Thread(
-            target=ClientWindow.connect_to_server, args=[client_window])
+            target=ClientWindow.connect_to_server, args=[client_window]
+        )
         client_thread.daemon = True
         client_thread.start()
 
     def connect_to_server(self):
-        """ To start the connection to server"""
+        """To start the connection to server"""
         self.button3.set_sensitive(False)
         # initialises state in background
         Gst.init(None)
@@ -433,30 +454,37 @@ class ClientWindow(Gtk.Window):
         src = self.source_select.get_active_text()
 
         client_pipeline = "v4l2src device={dev} ! "
-        client_pipeline += "video/x-raw,width=640,height=480,framerate=30/1 ! tee name=t t. ! "
+        client_pipeline += (
+            "video/x-raw,width=640,height=480,framerate=30/1 ! tee name=t t. ! "
+        )
         client_pipeline += "queue max-size-buffers=2 leaky=2 ! imxvideoconvert_g2d ! "
         client_pipeline += "video/x-raw,width=300,height=300,format=RGBA ! "
-        client_pipeline += "videoconvert ! video/x-raw,format=RGB ! tensor_query_client "
+        client_pipeline += (
+            "videoconvert ! video/x-raw,format=RGB ! tensor_query_client "
+        )
         client_pipeline += "host={ip_client} dest-host={ip} ! tensor_decoder"
         client_pipeline += " mode=bounding_boxes option1=tf-ssd option2={label} "
         client_pipeline += "option3=0:1:2:3,50 option4=640:480 option5=300:300 !"
-        client_pipeline += " mix. t. ! queue max-size-buffers=2 ! imxcompositor_g2d name=mix"
+        client_pipeline += (
+            " mix. t. ! queue max-size-buffers=2 ! imxcompositor_g2d name=mix"
+        )
         client_pipeline += " sink_0::zorder=2 sink_1::zorder=1 ! waylandsink"
         client_pipeline = client_pipeline.format(
-            dev=src, ip_client=get_my_ip(), ip=self.server_ip, label=ml_data_set)
+            dev=src, ip_client=get_my_ip(), ip=self.server_ip, label=ml_data_set
+        )
         # creating the pipeline and launching it
         self.pipeline = Gst.parse_launch(client_pipeline)
         monitor_status = self.pipeline.set_state(Gst.State.PLAYING)
         bus = self.pipeline.get_bus()
         bus.add_signal_watch()
-        bus.connect('message', self.on_message)
+        bus.connect("message", self.on_message)
         if monitor_status == Gst.StateChangeReturn.FAILURE:
             print("ERROR: Unable to set the pipeline to the playing state")
             sys.exit(1)
         self.button3.set_label("Connected to server")
         button3_label = self.button3.get_child()
         button3_label.set_markup("<b> Connected to server </b>")
-        rtn = self.main_loop.run()
+        self.main_loop.run()
 
         # disconnecting the pipeline
         self.pipeline.set_state(Gst.State.NULL)
@@ -490,12 +518,16 @@ class ClientWindow(Gtk.Window):
         elif mtype == Gst.MessageType.QOS:
             data_format, processed, dropped = message.parse_qos_stats()
             format_str = Gst.Format.get_name(data_format)
-            logging.debug("[qos] format[%s] processed[%d] dropped[%d]",
-                          format_str, processed, dropped)
+            logging.debug(
+                "[qos] format[%s] processed[%d] dropped[%d]",
+                format_str,
+                processed,
+                dropped,
+            )
 
 
 class DisplayWindow(Gtk.Window):
-    """ Main Window display"""
+    """Main Window display"""
 
     def __init__(self):
         # Main window
@@ -505,8 +537,12 @@ class DisplayWindow(Gtk.Window):
         self.set_border_width(20)
         self.set_position(Gtk.WindowPosition.CENTER)
         # Create widgets for server and client
-        self.grid_display = Gtk.Grid(row_homogeneous=True, column_homogeneous=True,
-                                     row_spacing=10, column_spacing=10)
+        self.grid_display = Gtk.Grid(
+            row_homogeneous=True,
+            column_homogeneous=True,
+            row_spacing=10,
+            column_spacing=10,
+        )
         self.grid_display.set_margin_end(10)
         self.grid_display.set_margin_start(10)
         header = Gtk.HeaderBar()
@@ -535,7 +571,7 @@ class DisplayWindow(Gtk.Window):
         self.add(self.grid_display)
 
     def server_initiate(self, widget):
-        """ Initiate the server """
+        """Initiate the server"""
         global server_window
         server_window = ServerWindow()
         server_window.connect("destroy", Gtk.main_quit)
@@ -543,7 +579,7 @@ class DisplayWindow(Gtk.Window):
         win.hide()
 
     def client_initiate(self, widget):
-        """ Initiate the client"""
+        """Initiate the client"""
         capture_ip_thread = Thread(target=access_ip)
         capture_ip_thread.start()
         global client_window
@@ -554,14 +590,12 @@ class DisplayWindow(Gtk.Window):
 
 
 if __name__ == "__main__":
-    os.environ["VIV_VX_CACHE_BINARY_GRAPH_DIR"] = ("/home/root/.cache"
-            "/demoexperience")
+    os.environ["VIV_VX_CACHE_BINARY_GRAPH_DIR"] = "/home/root/.cache" "/demoexperience"
     os.environ["VIV_VX_ENABLE_CACHE_GRAPH_BINARY"] = "1"
-    BOARD = subprocess.check_output(
-            ['cat', '/sys/devices/soc0/soc_id']
-            ).decode('utf-8')[:-1]
+    BOARD = subprocess.check_output(["cat", "/sys/devices/soc0/soc_id"]).decode(
+        "utf-8"
+    )[:-1]
     win = DisplayWindow()
     initialize_thread = Thread(target=initialize)
     initialize_thread.start()
     Gtk.main()
-

@@ -1,7 +1,7 @@
 """
 ISP Demo for the i.MX 8M Plus.
 
-Copyright 2021-2022 NXP
+Copyright 2021-2023 NXP
 SPDX-License-Identifier: BSD-3-Clause
 
 Python example on how to control the ISP on the i.Mx 8M Plus. This demo shows
@@ -18,6 +18,7 @@ import os
 from subprocess import Popen
 import time
 import gi
+
 gi.require_version("Gtk", "3.0")
 gi.require_version("Gst", "1.0")
 from gi.repository import Gtk, Gst, Gio
@@ -60,8 +61,7 @@ class ISPDemo(Gtk.Window):
         debug_button.connect("clicked", self.on_debug)
 
         # Create main layout
-        main_grid = Gtk.Box(
-            orientation=Gtk.Orientation.VERTICAL, spacing=6)
+        main_grid = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
         self.add(main_grid)
         self.content_stack = Gtk.Stack()
         options = [
@@ -70,14 +70,14 @@ class ISPDemo(Gtk.Window):
             "Auto White Balance",
             "Color Processing",
             "Demosaicing and Gamma Control",
-            "Filtering"
+            "Filtering",
         ]
         options_combo = Gtk.ComboBoxText()
         options_combo.set_entry_text_column(0)
         for option in options:
             options_combo.append_text(option)
         options_combo.set_active(0)
-        options_combo.connect('changed', self.on_options_change)
+        options_combo.connect("changed", self.on_options_change)
 
         self.debug_buffer = Gtk.TextBuffer.new(None)
         self.debug_output = Gtk.TextView.new_with_buffer(self.debug_buffer)
@@ -95,9 +95,7 @@ class ISPDemo(Gtk.Window):
         main_grid.pack_start(self.debug_window, True, True, 0)
 
         # BLS Layout
-        bls_grid = Gtk.Grid(row_homogeneous=True,
-                            column_spacing=15,
-                            row_spacing=15)
+        bls_grid = Gtk.Grid(row_homogeneous=True, column_spacing=15, row_spacing=15)
         bls_grid.set_margin_end(10)
         bls_grid.set_margin_start(10)
 
@@ -113,28 +111,24 @@ class ISPDemo(Gtk.Window):
         b_label = Gtk.Label.new("Blue")
         b_label.set_halign(1)
 
-        self.r_scale = Gtk.Scale.new_with_range(
-            Gtk.Orientation.HORIZONTAL, 0, 255, 1)
+        self.r_scale = Gtk.Scale.new_with_range(Gtk.Orientation.HORIZONTAL, 0, 255, 1)
         self.r_scale.set_value(168)
-        self.r_scale.connect('value-changed', self.on_change_bls)
+        self.r_scale.connect("value-changed", self.on_change_bls)
         self.r_scale.set_hexpand(True)
 
-        self.gr_scale = Gtk.Scale.new_with_range(
-            Gtk.Orientation.HORIZONTAL, 0, 255, 1)
+        self.gr_scale = Gtk.Scale.new_with_range(Gtk.Orientation.HORIZONTAL, 0, 255, 1)
         self.gr_scale.set_value(168)
-        self.gr_scale.connect('value-changed', self.on_change_bls)
+        self.gr_scale.connect("value-changed", self.on_change_bls)
         self.gr_scale.set_hexpand(True)
 
-        self.gb_scale = Gtk.Scale.new_with_range(
-            Gtk.Orientation.HORIZONTAL, 0, 255, 1)
+        self.gb_scale = Gtk.Scale.new_with_range(Gtk.Orientation.HORIZONTAL, 0, 255, 1)
         self.gb_scale.set_value(168)
-        self.gb_scale.connect('value-changed', self.on_change_bls)
+        self.gb_scale.connect("value-changed", self.on_change_bls)
         self.gb_scale.set_hexpand(True)
 
-        self.b_scale = Gtk.Scale.new_with_range(
-            Gtk.Orientation.HORIZONTAL, 0, 255, 1)
+        self.b_scale = Gtk.Scale.new_with_range(Gtk.Orientation.HORIZONTAL, 0, 255, 1)
         self.b_scale.set_value(168)
-        self.b_scale.connect('value-changed', self.on_change_bls)
+        self.b_scale.connect("value-changed", self.on_change_bls)
         self.b_scale.set_hexpand(True)
 
         bls_grid.attach(r_label, 0, 1, 1, 1)
@@ -149,8 +143,7 @@ class ISPDemo(Gtk.Window):
         self.content_stack.add_named(bls_grid, "Black Level Subtraction")
 
         # Dewarp Layout
-        dewarp_grid = Gtk.Grid(
-            row_homogeneous=True, column_spacing=15, row_spacing=15)
+        dewarp_grid = Gtk.Grid(row_homogeneous=True, column_spacing=15, row_spacing=15)
         dewarp_grid.set_margin_end(10)
         dewarp_grid.set_margin_start(10)
 
@@ -167,22 +160,18 @@ class ISPDemo(Gtk.Window):
         dwe_mode_label = Gtk.Label.new("Dewarp Mode")
         dwe_mode_label.set_halign(1)
 
-        self.dwe_options = [{
-                        "name": "Lens Distortion",
-                        "id": 1},
-                       {"name": "Fisheye Expand",
-                        "id": 2},
-                       {"name": "Split Screen",
-                        "id": 4},
-                       {"name": "Fisheye Dewarp",
-                        "id": 8}]
+        self.dwe_options = [
+            {"name": "Lens Distortion", "id": 1},
+            {"name": "Fisheye Expand", "id": 2},
+            {"name": "Split Screen", "id": 4},
+            {"name": "Fisheye Dewarp", "id": 8},
+        ]
         self.dwe_dropdown.set_entry_text_column(0)
         for option in self.dwe_options:
             self.dwe_dropdown.append_text(option["name"])
         self.dwe_dropdown.set_active(0)
-        self.dwe_dropdown.connect('changed', self.on_change_dwe_mode)
+        self.dwe_dropdown.connect("changed", self.on_change_dwe_mode)
         self.dwe_dropdown.set_hexpand(True)
-
 
         vflip_label = Gtk.Label.new("Vertical Flip")
         vflip_label.set_halign(1)
@@ -205,10 +194,9 @@ class ISPDemo(Gtk.Window):
         fps_label = Gtk.Label.new("FPS Max")
         fps_label.set_halign(1)
 
-        self.fps_scale = Gtk.Scale.new_with_range(
-            Gtk.Orientation.HORIZONTAL, 1, 60, 1)
+        self.fps_scale = Gtk.Scale.new_with_range(Gtk.Orientation.HORIZONTAL, 1, 60, 1)
         self.fps_scale.set_value(168)
-        self.fps_scale.connect('value-changed', self.on_change_fps)
+        self.fps_scale.connect("value-changed", self.on_change_fps)
         self.fps_scale.set_hexpand(True)
 
         dewarp_grid.attach(dwe_label, 0, 1, 1, 1)
@@ -224,10 +212,7 @@ class ISPDemo(Gtk.Window):
         self.content_stack.add_named(dewarp_grid, "Dewarp and FPS")
 
         # AWB Layout
-        awb_grid = Gtk.Grid(
-            row_homogeneous=True,
-            column_spacing=15,
-            row_spacing=15)
+        awb_grid = Gtk.Grid(row_homogeneous=True, column_spacing=15, row_spacing=15)
         awb_grid.set_margin_end(10)
         awb_grid.set_margin_start(10)
 
@@ -253,30 +238,34 @@ class ISPDemo(Gtk.Window):
         self.awb_switch.set_valign(3)
 
         self.awb_r_scale = Gtk.Scale.new_with_range(
-            Gtk.Orientation.HORIZONTAL, 0.2, 3.9, 0.1)
+            Gtk.Orientation.HORIZONTAL, 0.2, 3.9, 0.1
+        )
         self.awb_r_scale.set_value(1.0)
-        self.awb_r_scale.connect('value-changed', self.on_change_awb_set)
+        self.awb_r_scale.connect("value-changed", self.on_change_awb_set)
         self.awb_r_scale.set_hexpand(True)
         self.awb_r_scale.set_sensitive(False)
 
         self.awb_gr_scale = Gtk.Scale.new_with_range(
-            Gtk.Orientation.HORIZONTAL, 0.2, 3.9, 0.1)
+            Gtk.Orientation.HORIZONTAL, 0.2, 3.9, 0.1
+        )
         self.awb_gr_scale.set_value(1.0)
-        self.awb_gr_scale.connect('value-changed', self.on_change_awb_set)
+        self.awb_gr_scale.connect("value-changed", self.on_change_awb_set)
         self.awb_gr_scale.set_hexpand(True)
         self.awb_gr_scale.set_sensitive(False)
 
         self.awb_gb_scale = Gtk.Scale.new_with_range(
-            Gtk.Orientation.HORIZONTAL, 0.2, 3.9, 0.1)
+            Gtk.Orientation.HORIZONTAL, 0.2, 3.9, 0.1
+        )
         self.awb_gb_scale.set_value(1.0)
-        self.awb_gb_scale.connect('value-changed', self.on_change_awb_set)
+        self.awb_gb_scale.connect("value-changed", self.on_change_awb_set)
         self.awb_gb_scale.set_hexpand(True)
         self.awb_gb_scale.set_sensitive(False)
 
         self.awb_b_scale = Gtk.Scale.new_with_range(
-            Gtk.Orientation.HORIZONTAL, 0.2, 3.9, 0.1)
+            Gtk.Orientation.HORIZONTAL, 0.2, 3.9, 0.1
+        )
         self.awb_b_scale.set_value(1.0)
-        self.awb_b_scale.connect('value-changed', self.on_change_awb_set)
+        self.awb_b_scale.connect("value-changed", self.on_change_awb_set)
         self.awb_b_scale.set_hexpand(True)
         self.awb_b_scale.set_sensitive(False)
 
@@ -294,10 +283,7 @@ class ISPDemo(Gtk.Window):
         self.content_stack.add_named(awb_grid, "Auto White Balance")
 
         # CPROC Layout
-        cproc_grid = Gtk.Grid(
-            row_homogeneous=True,
-            column_spacing=15,
-            row_spacing=15)
+        cproc_grid = Gtk.Grid(row_homogeneous=True, column_spacing=15, row_spacing=15)
         cproc_grid.set_margin_end(10)
         cproc_grid.set_margin_start(10)
 
@@ -323,29 +309,31 @@ class ISPDemo(Gtk.Window):
         self.cproc_switch.set_valign(3)
 
         self.brightness_scale = Gtk.Scale.new_with_range(
-            Gtk.Orientation.HORIZONTAL, -127, 127, 1)
+            Gtk.Orientation.HORIZONTAL, -127, 127, 1
+        )
         self.brightness_scale.set_value(0)
-        self.brightness_scale.connect(
-            'value-changed', self.on_change_cproc_set)
+        self.brightness_scale.connect("value-changed", self.on_change_cproc_set)
         self.brightness_scale.set_hexpand(True)
 
         self.contrast_scale = Gtk.Scale.new_with_range(
-            Gtk.Orientation.HORIZONTAL, 0.00, 1.99, 0.01)
+            Gtk.Orientation.HORIZONTAL, 0.00, 1.99, 0.01
+        )
         self.contrast_scale.set_value(1.00)
-        self.contrast_scale.connect('value-changed', self.on_change_cproc_set)
+        self.contrast_scale.connect("value-changed", self.on_change_cproc_set)
         self.contrast_scale.set_hexpand(True)
 
         self.saturation_scale = Gtk.Scale.new_with_range(
-            Gtk.Orientation.HORIZONTAL, 0, 1.99, 0.01)
+            Gtk.Orientation.HORIZONTAL, 0, 1.99, 0.01
+        )
         self.saturation_scale.set_value(1.00)
-        self.saturation_scale.connect(
-            'value-changed', self.on_change_cproc_set)
+        self.saturation_scale.connect("value-changed", self.on_change_cproc_set)
         self.saturation_scale.set_hexpand(True)
 
         self.hue_scale = Gtk.Scale.new_with_range(
-            Gtk.Orientation.HORIZONTAL, -127, 127, 1)
+            Gtk.Orientation.HORIZONTAL, -127, 127, 1
+        )
         self.hue_scale.set_value(0)
-        self.hue_scale.connect('value-changed', self.on_change_cproc_set)
+        self.hue_scale.connect("value-changed", self.on_change_cproc_set)
         self.hue_scale.set_hexpand(True)
 
         cproc_grid.attach(cproc_enable, 0, 1, 1, 1)
@@ -362,10 +350,7 @@ class ISPDemo(Gtk.Window):
         self.content_stack.add_named(cproc_grid, "Color Processing")
 
         # Demosaicing Layout
-        demo_grid = Gtk.Grid(
-            row_homogeneous=True,
-            column_spacing=15,
-            row_spacing=15)
+        demo_grid = Gtk.Grid(row_homogeneous=True, column_spacing=15, row_spacing=15)
         demo_grid.set_margin_end(10)
         demo_grid.set_margin_start(10)
 
@@ -388,9 +373,10 @@ class ISPDemo(Gtk.Window):
         self.demo_switch.set_valign(3)
 
         self.demo_scale = Gtk.Scale.new_with_range(
-            Gtk.Orientation.HORIZONTAL, 0, 255, 1)
+            Gtk.Orientation.HORIZONTAL, 0, 255, 1
+        )
         self.demo_scale.set_value(64)
-        self.demo_scale.connect('value-changed', self.on_change_demo)
+        self.demo_scale.connect("value-changed", self.on_change_demo)
         self.demo_scale.set_hexpand(True)
 
         self.gamma_switch = Gtk.Switch()
@@ -405,7 +391,7 @@ class ISPDemo(Gtk.Window):
         for option in gamma_options:
             self.gamma_dropdown.append_text(option)
         self.gamma_dropdown.set_active(0)
-        self.gamma_dropdown.connect('changed', self.on_change_gamma_set)
+        self.gamma_dropdown.connect("changed", self.on_change_gamma_set)
         self.gamma_dropdown.set_hexpand(True)
 
         demo_grid.attach(demo_enable, 0, 1, 1, 1)
@@ -417,14 +403,10 @@ class ISPDemo(Gtk.Window):
         demo_grid.attach(self.gamma_switch, 1, 3, 1, 1)
         demo_grid.attach(self.gamma_dropdown, 1, 4, 1, 1)
 
-        self.content_stack.add_named(
-            demo_grid, "Demosaicing and Gamma Control")
+        self.content_stack.add_named(demo_grid, "Demosaicing and Gamma Control")
 
         # Filter Layout
-        filter_grid = Gtk.Grid(
-            row_homogeneous=True,
-            column_spacing=15,
-            row_spacing=15)
+        filter_grid = Gtk.Grid(row_homogeneous=True, column_spacing=15, row_spacing=15)
         filter_grid.set_margin_end(10)
         filter_grid.set_margin_start(10)
 
@@ -444,15 +426,17 @@ class ISPDemo(Gtk.Window):
         self.filter_switch.set_valign(3)
 
         self.denoise_scale = Gtk.Scale.new_with_range(
-            Gtk.Orientation.HORIZONTAL, 1, 10, 1)
+            Gtk.Orientation.HORIZONTAL, 1, 10, 1
+        )
         self.denoise_scale.set_value(1)
-        self.denoise_scale.connect('value-changed', self.on_change_filter_set)
+        self.denoise_scale.connect("value-changed", self.on_change_filter_set)
         self.denoise_scale.set_hexpand(True)
 
         self.sharpen_scale = Gtk.Scale.new_with_range(
-            Gtk.Orientation.HORIZONTAL, 1, 10, 1)
+            Gtk.Orientation.HORIZONTAL, 1, 10, 1
+        )
         self.sharpen_scale.set_value(3)
-        self.sharpen_scale.connect('value-changed', self.on_change_filter_set)
+        self.sharpen_scale.connect("value-changed", self.on_change_filter_set)
         self.sharpen_scale.set_hexpand(True)
 
         filter_grid.attach(filter_enable, 0, 1, 1, 1)
@@ -472,9 +456,15 @@ class ISPDemo(Gtk.Window):
         green_b = self.gb_scale.get_value()
         blue = self.b_scale.get_value()
         self.change_isp(
-            "<id>:<bls.s.cfg>;<blue>:" + str(int(blue)) + ";<green.b>:" +
-            str(int(green_b)) + ";<green.r>:" + str(int(green_r)) +
-            ";<red>:" + str(int(red)))
+            "<id>:<bls.s.cfg>;<blue>:"
+            + str(int(blue))
+            + ";<green.b>:"
+            + str(int(green_b))
+            + ";<green.r>:"
+            + str(int(green_r))
+            + ";<red>:"
+            + str(int(red))
+        )
 
     def on_change_dwe(self, widget, unused):
         """Flip the camera output vertically."""
@@ -484,7 +474,7 @@ class ISPDemo(Gtk.Window):
         else:
             self.dwe_dropdown.set_sensitive(False)
             self.change_isp("<id>:<dwe.s.bypass>; <dwe>:{<bypass>:true}")
-    
+
     def on_change_dwe_mode(self, widget):
         """Set the mode for dwe control."""
         mode = self.dwe_dropdown.get_active()
@@ -552,9 +542,15 @@ class ISPDemo(Gtk.Window):
         green_b = self.awb_gb_scale.get_value()
         blue = self.awb_b_scale.get_value()
         self.change_isp(
-            "<id>:<awb.s.gain>;<red>:" + str(red) + ";<green.r>:" +
-            str(green_r) + ";<green.b>:" + str(green_b) + ";<blue>:" +
-            str(blue))
+            "<id>:<awb.s.gain>;<red>:"
+            + str(red)
+            + ";<green.r>:"
+            + str(green_r)
+            + ";<green.b>:"
+            + str(green_b)
+            + ";<blue>:"
+            + str(blue)
+        )
 
     def on_change_cproc_set(self, unused):
         """Set the values for CPROC."""
@@ -563,10 +559,16 @@ class ISPDemo(Gtk.Window):
         sat = self.saturation_scale.get_value()
         hue = self.hue_scale.get_value()
         self.change_isp(
-            "<id>:<cproc.s.cfg>;<brightness>:" + str(int(bright)) +
-            ";<contrast>:" + str(cont) + ";<saturation>:" + str(sat) +
-            ";<hue>:" + str(int(hue)) +
-            ";<luma.in>:1;<luma.out>:1;<chroma.out>:1")
+            "<id>:<cproc.s.cfg>;<brightness>:"
+            + str(int(bright))
+            + ";<contrast>:"
+            + str(cont)
+            + ";<saturation>:"
+            + str(sat)
+            + ";<hue>:"
+            + str(int(hue))
+            + ";<luma.in>:1;<luma.out>:1;<chroma.out>:1"
+        )
 
     def on_change_demo(self, unused, unused_2=None):
         """Enable or disable and set threshold for demosaicing."""
@@ -575,8 +577,11 @@ class ISPDemo(Gtk.Window):
         else:
             demo_en = "0"
         self.change_isp(
-            "<id>:<dmsc.s.cfg>;<mode>:" + demo_en + ";<threshold>:" +
-            str(int(self.demo_scale.get_value())))
+            "<id>:<dmsc.s.cfg>;<mode>:"
+            + demo_en
+            + ";<threshold>:"
+            + str(int(self.demo_scale.get_value()))
+        )
 
     def on_change_gamma(self, widget, unused):
         """Enable or disable gamma control."""
@@ -614,16 +619,19 @@ class ISPDemo(Gtk.Window):
         den = self.denoise_scale.get_value()
         sharp = self.sharpen_scale.get_value()
         self.change_isp(
-            "<id>:<filter.s.cfg>;<auto>:false;<denoise>:" + str(int(den)) +
-            ";<sharpen>:" + str(int(sharp)))
+            "<id>:<filter.s.cfg>;<auto>:false;<denoise>:"
+            + str(int(den))
+            + ";<sharpen>:"
+            + str(int(sharp))
+        )
 
     def change_isp(self, command):
         """Send a command to the ISP."""
-        os.system(
-            "v4l2-ctl -d " + CAM + " -c viv_ext_ctrl='{" + command + "}'")
+        os.system("v4l2-ctl -d " + CAM + " -c viv_ext_ctrl='{" + command + "}'")
         self.debug_buffer.insert_at_cursor("\n" + command)
         self.debug_output.scroll_to_mark(
-            self.debug_buffer.get_insert(), 0.0, True, 0.5, 0.5)
+            self.debug_buffer.get_insert(), 0.0, True, 0.5, 0.5
+        )
 
     def on_options_change(self, widght):
         """Change the currently visable options."""
@@ -657,21 +665,18 @@ if __name__ == "__main__":
                 caps_struct = dev_caps.get_structure(i)
                 if caps_struct.get_name() != "video/x-raw":
                     continue
-                FRAMERATE = (
-                    "{}/{}".format(*caps_struct.get_fraction("framerate")[1:]))
+                FRAMERATE = "{}/{}".format(*caps_struct.get_fraction("framerate")[1:])
                 if FRAMERATE != "0/0":
                     CAM = dev.get_properties().get_string("device.path")
                     break
         if CAM is not None:
-            Popen([
-                "gst-launch-1.0", "v4l2src", "device=" + CAM, "!",
-                "waylandsink"])
+            Popen(["gst-launch-1.0", "v4l2src", "device=" + CAM, "!", "waylandsink"])
             break
     time.sleep(2)
     window = ISPDemo()
     window.connect("destroy", on_close)
     window.show_all()
-    if hasattr(window, 'debug_window'):
+    if hasattr(window, "debug_window"):
         window.debug_window.set_visible(False)
     window.set_size_request(440, 280)
     Gtk.main()

@@ -1,14 +1,11 @@
 #!/bin/bash
 
-###
-#Copyright 2023 NXP
+# Copyright 2023 NXP
+# SPDX-License-Identifier: BSD-3-Clause
 #
-#SPDX-License-Identifier: BSD-3-Clause
-#
-#This scripts stops the running processes in the client, 
-#removes the IP to the interfaces and removes the log files 
-#created while demo execution.
-###
+# This scripts stops the running processes in the client, 
+# removes the IP to the interfaces and removes the log files 
+# created while demo execution.
 
 killall python3
 sleep 0.1

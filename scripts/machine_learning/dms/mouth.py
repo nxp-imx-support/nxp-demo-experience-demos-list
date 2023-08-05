@@ -1,8 +1,8 @@
-# Copyright 2022 NXP
+# Copyright 2022-2023 NXP
 # SPDX-License-Identifier: BSD-3-Clause
 
 import math
-import numpy as np
+
 
 class Mouth(object):
     """
@@ -12,7 +12,7 @@ class Mouth(object):
     MOUTH_POINTS = [78, 13, 308, 14]
     FACE_POINTS = [132, 361]
 
-    def __init__(self, landmarks = None):
+    def __init__(self, landmarks=None):
         self.landmark_points = landmarks
 
     def yawning_ratio(self, landmarks):
@@ -32,8 +32,12 @@ class Mouth(object):
             point = landmarks[i]
             points.append(point)
 
-        mouth_width = math.hypot((points[2][0] - points[0][0]), (points[2][1] - points[0][1]))
-        mouth_height = math.hypot((points[1][0] - points[3][0]), (points[1][1] - points[3][1]))
+        mouth_width = math.hypot(
+            (points[2][0] - points[0][0]), (points[2][1] - points[0][1])
+        )
+        mouth_height = math.hypot(
+            (points[1][0] - points[3][0]), (points[1][1] - points[3][1])
+        )
 
         try:
             ratio = mouth_height / mouth_width
@@ -59,8 +63,12 @@ class Mouth(object):
         left_face = landmarks[self.FACE_POINTS[0]]
         right_face = landmarks[self.FACE_POINTS[1]]
 
-        mouth_to_left = math.hypot((mouth_middle[0] - left_face[0]), (mouth_middle[1] - left_face[1]))
-        mouth_to_right = math.hypot((right_face[0] - mouth_middle[0]), (right_face[1] - mouth_middle[1]))
+        mouth_to_left = math.hypot(
+            (mouth_middle[0] - left_face[0]), (mouth_middle[1] - left_face[1])
+        )
+        mouth_to_right = math.hypot(
+            (right_face[0] - mouth_middle[0]), (right_face[1] - mouth_middle[1])
+        )
 
         try:
             ratio = mouth_to_left / mouth_to_right

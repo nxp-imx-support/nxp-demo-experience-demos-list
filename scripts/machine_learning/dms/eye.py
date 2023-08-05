@@ -1,11 +1,11 @@
-# Copyright 2022 NXP
+# Copyright 2022-2023 NXP
 # SPDX-License-Identifier: BSD-3-Clause
 
 import numpy as np
 import cv2
-#import tensorflow.lite as tflite
 import tflite_runtime.interpreter as tflite
 import math
+
 
 class Eye(object):
     """
@@ -21,19 +21,31 @@ class Eye(object):
     ROI_SCALE = 2
 
     EYE_LANDMARK_CONNECTIONS = [
-        (0, 1), (1, 2), (2, 3), (3, 4), (4, 5),
-        (5, 6), (6, 7), (7, 8), (9, 10), (10, 11),
-        (11, 12), (12, 13), (13, 14), (0, 9), (8, 14)
+        (0, 1),
+        (1, 2),
+        (2, 3),
+        (3, 4),
+        (4, 5),
+        (5, 6),
+        (6, 7),
+        (7, 8),
+        (9, 10),
+        (10, 11),
+        (11, 12),
+        (12, 13),
+        (13, 14),
+        (0, 9),
+        (8, 14),
     ]
 
     def __init__(self, model_path):
         self.interpreter = tflite.Interpreter(model_path=model_path)
         self.interpreter.allocate_tensors()
 
-        self.input_index = self.interpreter.get_input_details()[0]['index']
-        self.input_shape = self.interpreter.get_input_details()[0]['shape']
-        self.eye_index = self.interpreter.get_output_details()[0]['index']
-        self.iris_index = self.interpreter.get_output_details()[1]['index']
+        self.input_index = self.interpreter.get_input_details()[0]["index"]
+        self.input_shape = self.interpreter.get_input_details()[0]["shape"]
+        self.eye_index = self.interpreter.get_output_details()[0]["index"]
+        self.iris_index = self.interpreter.get_output_details()[1]["index"]
 
     def get_eye_roi(self, face_landmarks, side):
         if side == 0:
@@ -55,8 +67,7 @@ class Eye(object):
     def _pre_processing(self, input_data):
         input_data = cv2.cvtColor(input_data, cv2.COLOR_BGR2RGB)
         input_data = cv2.resize(input_data, self.input_shape[1:3]).astype(np.float32)
-        input_data = input_data[np.newaxis,:,:,:] / 255.0
-        #input_data = (input_data[np.newaxis,:,:,:] - 128).astype(np.int8)
+        input_data = input_data[np.newaxis, :, :, :] / 255.0
         return input_data
 
     def get_landmark(self, frame, roi, side):
@@ -100,9 +111,14 @@ class Eye(object):
     def draw_eye_contour(self, frame, eye_landmarks):
         for connection in self.EYE_LANDMARK_CONNECTIONS:
             idx1, idx2 = connection
-            cv2.line(frame, tuple(eye_landmarks[idx1]), tuple(eye_landmarks[idx2]), (255,0,0), thickness=2)
+            cv2.line(
+                frame,
+                tuple(eye_landmarks[idx1]),
+                tuple(eye_landmarks[idx2]),
+                (255, 0, 0),
+                thickness=2,
+            )
         return frame
-
 
     def blinking_ratio(self, landmarks, side):
         """Calculates a ratio that can indicate whether an eye is closed or not.
@@ -126,8 +142,12 @@ class Eye(object):
         point_top = landmarks[12]
         point_bottom = landmarks[4]
 
-        eye_width = math.hypot((point_right[0] - point_left[0]), (point_right[1] - point_left[1]))
-        eye_height = math.hypot((point_bottom[0] - point_top[0]), (point_bottom[1] - point_top[1]))
+        eye_width = math.hypot(
+            (point_right[0] - point_left[0]), (point_right[1] - point_left[1])
+        )
+        eye_height = math.hypot(
+            (point_bottom[0] - point_top[0]), (point_bottom[1] - point_top[1])
+        )
 
         try:
             ratio = eye_height / eye_width

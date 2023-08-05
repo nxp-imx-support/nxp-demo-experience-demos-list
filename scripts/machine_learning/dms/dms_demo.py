@@ -1,5 +1,5 @@
 """
-Copyright 2022 NXP
+Copyright 2022-2023 NXP
 
 SPDX-License-Identifier: Apache-2.0
 
@@ -13,7 +13,6 @@ import gi
 import time
 import numpy as np
 import os
-import tflite_runtime.interpreter as tflite
 import math
 import glob
 import sys
@@ -37,44 +36,44 @@ LANDMARK_MODEL = ""
 IRIS_MODEL = ""
 
 VIDEO = "/dev/video0"
-''' Camera to use '''
+""" Camera to use """
 
 MONO = 0
-''' Camera is monochrome '''
+""" Camera is monochrome """
 
 FRAME_WIDTH = 1280
-''' Width of incoming video '''
+""" Width of incoming video """
 
 if MONO == 1:
     FRAME_HEIGHT = 800
 else:
     FRAME_HEIGHT = 720
-''' Height of incoming video '''
+""" Height of incoming video """
 
 BAD_FACE_PENALTY = 0.01
-''' % to remove for far away face '''
+""" % to remove for far away face """
 
 NO_FACE_PENALTY = 0.01
-''' % to remove for no faces in frame '''
+""" % to remove for no faces in frame """
 
 YAWN_PENALTY = 0.02
-''' % to remove for yawning '''
+""" % to remove for yawning """
 
 DISTRACT_PENALTY = 0.02
-''' % to remove for looking away '''
+""" % to remove for looking away """
 
 SLEEP_PENALTY = 0.03
-''' % to remove for sleeping '''
+""" % to remove for sleeping """
 
 RESTORE_CREDIT = -0.01
-''' % to restore for doing everything right '''
+""" % to restore for doing everything right """
 
 FACE_THRESHOLD = 0.7
-''' The threshold value for face detection '''
+""" The threshold value for face detection """
 
 LEFT_EYE_THRESHOLD = 0.3
-''' if the left_eye ratio is greater then this value, then left eye will be
-    considered as open, otherwise be considered as closed. '''
+""" if the left_eye ratio is greater then this value, then left eye will be
+    considered as open, otherwise be considered as closed. """
 
 RIGHT_EYE_THRESHOLD = 0.3
 """ if the right_eye ratio is greater then this value, then right eye will be
@@ -105,6 +104,7 @@ LEFT_EYE_STATUS = np.zeros(LEFT_W)
 RIGHT_EYE_STATUS = np.zeros(RIGHT_W)
 """ to filter status glitch, 0 means closed, 1 means open """
 
+
 class MLVideoDemo(Gtk.Window):
     """A class that contains the UI and camera elements."""
 
@@ -122,18 +122,18 @@ class MLVideoDemo(Gtk.Window):
 
         # Window Set-up
         self.setup_inference()
-        self.set_default_size(300+FRAME_WIDTH, FRAME_HEIGHT)
+        self.set_default_size(300 + FRAME_WIDTH, FRAME_HEIGHT)
         self.set_resizable(False)
 
         self.overall_status = Gtk.Label.new("")
         self.overall_status.set_markup(
-            "<span size=\"x-large\" foreground=\"darkgreen\">Driver is OK" +
-            "</span>")
+            '<span size="x-large" foreground="darkgreen">Driver is OK' + "</span>"
+        )
 
         self.attention_bar = Gtk.LevelBar.new()
         self.attention_bar.set_value(0.0)
         self.attention_bar.set_size_request(300, 30)
-        css = b'''
+        css = b"""
                 levelbar block.low {
                     background-color: #00FF00;
                 }
@@ -145,39 +145,40 @@ class MLVideoDemo(Gtk.Window):
                 levelbar block.full {
                     background-color: #FF0000;
                 }
-        '''
+        """
         css_provider = Gtk.CssProvider()
         css_provider.load_from_data(css)
         context = Gtk.StyleContext()
         screen = Gdk.Screen.get_default()
         context.add_provider_for_screen(
-            screen, css_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
+            screen, css_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
+        )
 
         div = Gtk.Separator.new(Gtk.Orientation(0))
 
         attention_label = Gtk.Label.new("Attention: ")
-        attention_label.set_markup("<span size=\"large\">Attention: </span>")
+        attention_label.set_markup('<span size="large">Attention: </span>')
         self.attention_status = Gtk.Label.new("OK")
         self.attention_status.set_markup(
-            "<span size=\"large\" foreground=\"darkgreen\">OK</span>")
+            '<span size="large" foreground="darkgreen">OK</span>'
+        )
 
         sleep_label = Gtk.Label.new("Drowsy: ")
-        sleep_label.set_markup("<span size=\"large\">Drowsy: </span>")
+        sleep_label.set_markup('<span size="large">Drowsy: </span>')
         self.sleep_status = Gtk.Label.new("OK")
         self.sleep_status.set_markup(
-            "<span size=\"large\" foreground=\"darkgreen\">OK</span>")
+            '<span size="large" foreground="darkgreen">OK</span>'
+        )
 
         yawn_label = Gtk.Label.new("Yawn: ")
-        yawn_label.set_markup("<span size=\"large\">Yawn: </span>")
+        yawn_label.set_markup('<span size="large">Yawn: </span>')
         self.yawn_status = Gtk.Label.new("OK")
         self.yawn_status.set_markup(
-            "<span size=\"large\" foreground=\"darkgreen\">OK</span>")
+            '<span size="large" foreground="darkgreen">OK</span>'
+        )
 
         sep = Gtk.Label.new(" ")
         sep.set_size_request(300, 350)
-
-        #self.fps_label = Gtk.Label.new("N/A IPS for Face Detection")
-        #self.ips_label = Gtk.Label.new("N/A IPS for Mask Detection")
 
         # Create a custom header
         header = Gtk.HeaderBar()
@@ -196,8 +197,7 @@ class MLVideoDemo(Gtk.Window):
         # Settings button
         settings_button = Gtk.Button()
         settings_icon = Gio.ThemedIcon(name="applications-system-symbolic")
-        settings_image = Gtk.Image.new_from_gicon(
-            settings_icon, Gtk.IconSize.BUTTON)
+        settings_image = Gtk.Image.new_from_gicon(settings_icon, Gtk.IconSize.BUTTON)
         settings_button.add(settings_image)
         header.pack_start(settings_button)
         self.settings = SettingsWindow()
@@ -218,11 +218,9 @@ class MLVideoDemo(Gtk.Window):
         side_grid.set_margin_end(30)
         side_grid.set_margin_top(30)
         side_grid.set_margin_bottom(30)
-        attention_grid = Gtk.Box(
-            orientation=Gtk.Orientation.HORIZONTAL, spacing=0)
+        attention_grid = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=0)
         sleep_grid = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=0)
         yawn_grid = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=0)
-
 
         side_grid.pack_start(self.overall_status, False, True, 0)
         side_grid.pack_start(self.attention_bar, False, True, 0)
@@ -243,8 +241,6 @@ class MLVideoDemo(Gtk.Window):
         side_grid.pack_start(sleep_label, False, True, 0)
         side_grid.pack_start(yawn_label, False, True, 0)
         side_grid.pack_start(sep, True, True, 0)
-        #side_grid.pack_start(self.ips_label, False, True, 0)
-        #side_grid.pack_start(self.fps_label, False, True, 0)
 
         main_grid.pack_start(side_grid, True, True, 0)
         main_grid.pack_start(self.draw_area, True, True, 0)
@@ -255,33 +251,44 @@ class MLVideoDemo(Gtk.Window):
         # the most straight forward
         if MONO == 1:
             cam_pipeline = (
-                "v4l2src device=" + VIDEO +
-                " ! video/x-raw,format=GRAY16_LE,width=" + str(int(FRAME_WIDTH)) +
-                ",height=" + str(int(FRAME_HEIGHT)) + "! " +
-                "tee name=t t. ! queue max-size-buffers=2 leaky=2 ! " +
-                "appsink emit-signals=true name=sink t. ! queue " +
-                "max-size-buffers=2 leaky=2 ! appsink " +
-                "emit-signals=true name=sink2")
+                "v4l2src device="
+                + VIDEO
+                + " ! video/x-raw,format=GRAY16_LE,width="
+                + str(int(FRAME_WIDTH))
+                + ",height="
+                + str(int(FRAME_HEIGHT))
+                + "! "
+                + "tee name=t t. ! queue max-size-buffers=2 leaky=2 ! "
+                + "appsink emit-signals=true name=sink t. ! queue "
+                + "max-size-buffers=2 leaky=2 ! appsink "
+                + "emit-signals=true name=sink2"
+            )
         else:
             cam_pipeline = (
-                "v4l2src device=" + VIDEO + " ! imxvideoconvert_pxp " +
-                " ! video/x-raw,format=RGB16,width=" + str(int(FRAME_WIDTH)) +
-                ",height=" + str(int(FRAME_HEIGHT)) + "! " +
-                "tee name=t t. ! queue max-size-buffers=2 leaky=2 ! " +
-                "appsink emit-signals=true name=sink t. ! queue " +
-                "max-size-buffers=2 leaky=2 ! videoconvert ! " +
-                "video/x-raw,format=RGB ! appsink " +
-                "emit-signals=true name=sink2")
+                "v4l2src device="
+                + VIDEO
+                + " ! imxvideoconvert_pxp "
+                + " ! video/x-raw,format=RGB16,width="
+                + str(int(FRAME_WIDTH))
+                + ",height="
+                + str(int(FRAME_HEIGHT))
+                + "! "
+                + "tee name=t t. ! queue max-size-buffers=2 leaky=2 ! "
+                + "appsink emit-signals=true name=sink t. ! queue "
+                + "max-size-buffers=2 leaky=2 ! videoconvert ! "
+                + "video/x-raw,format=RGB ! appsink "
+                + "emit-signals=true name=sink2"
+            )
         self.refresh_clock = time.perf_counter()
 
         # Parse the above pipeline
         self.pipeline = Gst.parse_launch(cam_pipeline)
 
         # Set a callback function to get the frame
-        tensor_sink = self.pipeline.get_by_name('sink')
-        tensor_sink2 = self.pipeline.get_by_name('sink2')
-        tensor_sink.connect('new-sample', self.on_new_data)
-        tensor_sink2.connect('new-sample', self.on_new_data2)
+        tensor_sink = self.pipeline.get_by_name("sink")
+        tensor_sink2 = self.pipeline.get_by_name("sink2")
+        tensor_sink.connect("new-sample", self.on_new_data)
+        tensor_sink2.connect("new-sample", self.on_new_data2)
 
         # Run the pipeline
         self.frame_count = 0
@@ -291,7 +298,6 @@ class MLVideoDemo(Gtk.Window):
     def setup_inference(self):
         """Sets up inference"""
         self.tflite_labels = []
-        os.system("echo 4 > /proc/sys/kernel/printk")
         self.detector = MediapipeFace(FACE_MODEL, FACE_THRESHOLD)
         self.eye = Eye(IRIS_MODEL)
         self.mouth = Mouth()
@@ -300,15 +306,14 @@ class MLVideoDemo(Gtk.Window):
     def on_new_data(self, element):
         """Get the new frame and signal a redraw."""
         # Get the new frame and save it
-        self.sample = element.emit('pull-sample')
+        self.sample = element.emit("pull-sample")
         # Notify the draw area to redraw itself
         self.draw_area.queue_draw()
         return 0
 
     def on_new_data2(self, element):
         """Get the new frame and Run inference."""
-        vision_time = time.monotonic()
-        self.sample2 = element.emit('pull-sample')
+        self.sample2 = element.emit("pull-sample")
         if self.sample2 is None:
             return
         # Get frame details
@@ -319,21 +324,23 @@ class MLVideoDemo(Gtk.Window):
         width = caps.get_structure(0).get_value("width")
         if MONO == 1:
             frame_org = np.ndarray(
-                shape=(height,width), dtype=np.uint16, buffer=mem_buf.data)
+                shape=(height, width), dtype=np.uint16, buffer=mem_buf.data
+            )
             frame_org = (frame_org / 16).astype(np.uint8)
             frame_org = self.increase_brightness(frame_org)
             frame_org = np.expand_dims(frame_org, 2).repeat(3, axis=2)
         else:
             frame_org = np.ndarray(
-                shape=(height,width,3), dtype=np.uint8, buffer=mem_buf.data)
-        frame = frame_org[...,::-1].copy()
+                shape=(height, width, 3), dtype=np.uint8, buffer=mem_buf.data
+            )
+        frame = frame_org[..., ::-1].copy()
         boxes = self.detector.detect(frame)
         self.face_cords = []
-        if np.size(boxes,0) > 0:
+        if np.size(boxes, 0) > 0:
             mark_group = []
-            for i in range(np.size(boxes,0)):
-                boxes[i][[0,2]] *= FRAME_WIDTH
-                boxes[i][[1,3]] *= FRAME_HEIGHT
+            for i in range(np.size(boxes, 0)):
+                boxes[i][[0, 2]] *= FRAME_WIDTH
+                boxes[i][[1, 3]] *= FRAME_HEIGHT
 
             # Transform the boxes into squares.
             if MONO == 1:
@@ -348,17 +355,15 @@ class MLVideoDemo(Gtk.Window):
             # only do landmark for one face closest to the center
             face_in_center = 0
             distance_to_center = math.hypot(FRAME_WIDTH / 2, FRAME_HEIGHT / 2)
-            for i in range(np.size(boxes,0)):
+            for i in range(np.size(boxes, 0)):
                 x1, y1, x2, y2 = boxes[i]
-                #print(x1, y1, x2, y2)
                 mid_to_center = math.hypot(
-                    (x2 + x1 - FRAME_WIDTH) / 2, (y2 + y1 - FRAME_HEIGHT) / 2)
-                #print(i, mid_to_center)
+                    (x2 + x1 - FRAME_WIDTH) / 2, (y2 + y1 - FRAME_HEIGHT) / 2
+                )
                 if mid_to_center < distance_to_center:
                     face_in_center = i
                     distance_to_center = mid_to_center
 
-            #print(face_in_center)
             x1, y1, x2, y2 = boxes[face_in_center]
             self.face_cords.append([x1, y1, x2, y2])
 
@@ -371,13 +376,17 @@ class MLVideoDemo(Gtk.Window):
             # process landmarks for left eye
             x1, y1, x2, y2 = self.eye.get_eye_roi(face_marks, 0)
             left_eye_image = frame[y1:y2, x1:x2]
-            left_eye_marks, left_iris_marks = self.eye.get_landmark(left_eye_image, (x1,y1,x2,y2), 0)
+            left_eye_marks, left_iris_marks = self.eye.get_landmark(
+                left_eye_image, (x1, y1, x2, y2), 0
+            )
             mark_group.append(np.array(left_iris_marks))
 
             # process landmarks for right eye
             x1, y1, x2, y2 = self.eye.get_eye_roi(face_marks, 1)
             right_eye_image = frame[y1:y2, x1:x2]
-            right_eye_marks, right_iris_marks = self.eye.get_landmark(right_eye_image, (x1,y1,x2,y2), 1)
+            right_eye_marks, right_iris_marks = self.eye.get_landmark(
+                right_eye_image, (x1, y1, x2, y2), 1
+            )
             mark_group.append(np.array(right_iris_marks))
 
             self.marks = mark_group
@@ -385,11 +394,10 @@ class MLVideoDemo(Gtk.Window):
             # process landmarks for eyes
             left_eye_ratio = self.eye.blinking_ratio(left_eye_marks, 0)
             right_eye_ratio = self.eye.blinking_ratio(right_eye_marks, 1)
-            #print(left_eye_ratio, right_eye_ratio)
 
             # average the left eye status in a window of LEFT_W frames
             for i in range(LEFT_W - 1):
-                LEFT_EYE_STATUS[i] = LEFT_EYE_STATUS[i+1]
+                LEFT_EYE_STATUS[i] = LEFT_EYE_STATUS[i + 1]
 
             if left_eye_ratio > LEFT_EYE_THRESHOLD:
                 LEFT_EYE_STATUS[LEFT_W - 1] = 1
@@ -398,47 +406,45 @@ class MLVideoDemo(Gtk.Window):
 
             # average the right eye status in a window of RIGHT_W frames
             for i in range(RIGHT_W - 1):
-                RIGHT_EYE_STATUS[i] = RIGHT_EYE_STATUS[i+1]
+                RIGHT_EYE_STATUS[i] = RIGHT_EYE_STATUS[i + 1]
 
             if right_eye_ratio > RIGHT_EYE_THRESHOLD:
                 RIGHT_EYE_STATUS[RIGHT_W - 1] = 1
             else:
                 RIGHT_EYE_STATUS[RIGHT_W - 1] = 0
-            
-            if (np.mean(LEFT_EYE_STATUS) < 0.5 and
-                np.mean(RIGHT_EYE_STATUS) < 0.5):
+
+            if np.mean(LEFT_EYE_STATUS) < 0.5 and np.mean(RIGHT_EYE_STATUS) < 0.5:
                 self.sleep = False
             else:
                 self.sleep = True
-            
+
             mouth_ratio = self.mouth.yawning_ratio(face_marks)
-            #print(mouth_ratio)
+
             if mouth_ratio > MOUTH_THRESHOLD:
                 self.yawn = False
             else:
                 self.yawn = True
-            
+
             mouth_face_ratio = self.mouth.mouth_face_ratio(face_marks)
-            if (mouth_face_ratio < FACING_LEFT_THRESHOLD or
-                mouth_face_ratio > FACING_RIGHT_THRESHOLD):
+            if (
+                mouth_face_ratio < FACING_LEFT_THRESHOLD
+                or mouth_face_ratio > FACING_RIGHT_THRESHOLD
+            ):
                 self.attention = False
             else:
                 self.attention = True
         else:
             self.face_cords = []
         buffer.unmap(mem_buf)
-        #GLib.idle_add(
-        # self.fps_label.set_text, "Vision FPS: " +
-        # str(round((time.monotonic() - vision_time)*1000,2)))
         return 0
 
     def draw_cb(self, widget, context):
         """Draw the frame in the GUI."""
         # Protect against empty frames at the beginning
         # Draw a black background if there is nothing
-        #video_time = time.monotonic()
+        # video_time = time.monotonic()
         if self.sample is None:
-            context.set_source_rgb(0,0,0)
+            context.set_source_rgb(0, 0, 0)
             context.paint()
             return
         # Get frame details
@@ -452,8 +458,7 @@ class MLVideoDemo(Gtk.Window):
         # flags are set above. Cairo requires the buffer to be writable so the
         # two cannot interface with each other. The workaround is to use Numpy
         # to create a writable copy of the buffer.
-        frame = np.ndarray(
-            shape=(height,width), dtype=np.uint16, buffer=mem_buf.data)
+        frame = np.ndarray(shape=(height, width), dtype=np.uint16, buffer=mem_buf.data)
         frame = frame.copy()
         if MONO == 1:
             frame = (frame / 16).astype(np.uint8)
@@ -461,103 +466,109 @@ class MLVideoDemo(Gtk.Window):
             # expand GRAY to RGB, the upper 8 bits will not be used
             frame = np.expand_dims(frame, 2).repeat(4, axis=2).view("uint32")
             surface = cairo.ImageSurface.create_for_data(
-                frame, cairo.Format.RGB24, width, height)
+                frame, cairo.Format.RGB24, width, height
+            )
         else:
             surface = cairo.ImageSurface.create_for_data(
-                frame, cairo.Format.RGB16_565, width, height)
+                frame, cairo.Format.RGB16_565, width, height
+            )
         context.set_source_surface(surface)
         context.paint()
         context.set_source_rgb(255, 0, 0)
-        ok = True
-        if(len(self.face_cords) != 0):
+        if len(self.face_cords) != 0:
             for face in self.face_cords:
-                if((face[2]-face[0]) < 250):
+                if (face[2] - face[0]) < 250:
                     context.set_source_rgb(255, 0, 0)
                     GLib.idle_add(self.change_meter, BAD_FACE_PENALTY)
-                    ok = False
                 else:
                     context.set_source_rgb(0, 255, 0)
                 context.rectangle(
-                    face[0], face[1], (face[2]-face[0]), (face[3]-face[1]))
+                    face[0], face[1], (face[2] - face[0]), (face[3] - face[1])
+                )
                 context.stroke()
             for m in self.marks:
                 for mark in m:
-                    point = (tuple(mark.astype(int)))
-                    context.arc(point[0],point[1],1,0,1)
+                    point = tuple(mark.astype(int))
+                    context.arc(point[0], point[1], 1, 0, 1)
                     context.stroke()
             GLib.idle_add(self.update_status, True)
         else:
             GLib.idle_add(self.update_status, False)
         # Clean up
         buffer.unmap(mem_buf)
-        #GLib.idle_add(self.fps_label.set_text, "Video FPS: " +
-        # str(round(1/(time.monotonic() - video_time),2)))
 
     def update_status(self, face_here):
         """Update the current status"""
-        if(face_here):
+        if face_here:
             ok = True
-            if(self.attention):
+            if self.attention:
                 self.attention_status.set_markup(
-                    "<span size=\"large\" foreground=\"darkgreen\">OK</span>")
+                    '<span size="large" foreground="darkgreen">OK</span>'
+                )
             else:
                 self.attention_status.set_markup(
-                    "<span size=\"large\" foreground=\"#340808\">"
-                    "Distracted!</span>")
+                    '<span size="large" foreground="#340808">' "Distracted!</span>"
+                )
                 self.change_meter(DISTRACT_PENALTY)
                 ok = False
 
-            if(self.sleep):
+            if self.sleep:
                 self.sleep_status.set_markup(
-                    "<span size=\"large\" foreground=\"darkgreen\">OK</span>")
+                    '<span size="large" foreground="darkgreen">OK</span>'
+                )
             else:
                 self.sleep_status.set_markup(
-                    "<span size=\"large\" foreground=\"#340808\">"
-                    "Detected!</span>")
+                    '<span size="large" foreground="#340808">' "Detected!</span>"
+                )
                 self.change_meter(SLEEP_PENALTY)
                 ok = False
 
-            if(self.yawn):
+            if self.yawn:
                 self.yawn_status.set_markup(
-                    "<span size=\"large\" foreground=\"darkgreen\">OK</span>")
+                    '<span size="large" foreground="darkgreen">OK</span>'
+                )
             else:
                 self.yawn_status.set_markup(
-                    "<span size=\"large\" foreground=\"#340808\">"
-                    "Detected!</span>")
+                    '<span size="large" foreground="#340808">' "Detected!</span>"
+                )
                 self.change_meter(YAWN_PENALTY)
                 ok = False
-            if(ok):
+            if ok:
                 self.change_meter(RESTORE_CREDIT)
         else:
             self.attention_status.set_markup(
-                "<span size=\"large\" foreground=\"black\">Unknown</span>")
+                '<span size="large" foreground="black">Unknown</span>'
+            )
             self.sleep_status.set_markup(
-                "<span size=\"large\" foreground=\"black\">Unknown</span>")
+                '<span size="large" foreground="black">Unknown</span>'
+            )
             self.yawn_status.set_markup(
-                "<span size=\"large\" foreground=\"black\">Unknown</span>")
+                '<span size="large" foreground="black">Unknown</span>'
+            )
             self.change_meter(NO_FACE_PENALTY)
-        
+
     def change_meter(self, change):
         """Change the meter"""
         cur_val = self.attention_bar.get_value()
         new_val = cur_val + change
-        if(new_val > 1.0):
+        if new_val > 1.0:
             new_val = 1.0
-        if (new_val < 0.0):
+        if new_val < 0.0:
             new_val = 0.0
         self.attention_bar.set_value(new_val)
         if new_val < 0.25:
             self.overall_status.set_markup(
-                "<span size=\"x-large\" foreground=\"darkgreen\">"
-                "Driver is OK</span>")
+                '<span size="x-large" foreground="darkgreen">' "Driver is OK</span>"
+            )
         if new_val >= 0.25 and new_val <= 0.75:
             self.overall_status.set_markup(
-                "<span size=\"x-large\" foreground=\"#7f802d\">"
-                "Warning!</span>")
+                '<span size="x-large" foreground="#7f802d">' "Warning!</span>"
+            )
         if new_val > 0.75:
             self.overall_status.set_markup(
-                "<span size=\"x-large\" foreground=\"#340808\">Danger!</span>")
-    
+                '<span size="x-large" foreground="#340808">Danger!</span>'
+            )
+
     def transform_to_square(self, boxes, scale=1.0, offset=(0, 0)):
         """Get the square bounding boxes.
 
@@ -583,8 +594,15 @@ class MLVideoDemo(Gtk.Window):
 
         # Make them squares.
         margin = np.floor_divide(np.maximum(height, width) * scale, 2)
-        boxes = np.concatenate((center_x-margin, center_y-margin,
-                                center_x+margin, center_y+margin), axis=1)
+        boxes = np.concatenate(
+            (
+                center_x - margin,
+                center_y - margin,
+                center_x + margin,
+                center_y + margin,
+            ),
+            axis=1,
+        )
 
         return boxes
 
@@ -603,8 +621,12 @@ class MLVideoDemo(Gtk.Window):
         """
         left, top, right, bottom = margins
 
-        clip_mark = (boxes[:, 1] < top, boxes[:, 0] < left,
-                    boxes[:, 3] > bottom, boxes[:, 2] > right)
+        clip_mark = (
+            boxes[:, 1] < top,
+            boxes[:, 0] < left,
+            boxes[:, 3] > bottom,
+            boxes[:, 2] > right,
+        )
 
         boxes[:, 1] = np.maximum(boxes[:, 1], top)
         boxes[:, 0] = np.maximum(boxes[:, 0], left)
@@ -614,15 +636,14 @@ class MLVideoDemo(Gtk.Window):
         return boxes, clip_mark
 
     def increase_brightness(self, image):
-        #print("max {0}, min {1}, mean {2}".format(np.max(image), np.min(image), np.mean(image)))
         image = image.astype(np.uint16) * 4
         image[image > 255] = 255
-        #print("max {0}, min {1}, mean {2}".format(np.max(image), np.min(image), np.mean(image)))
         image = image.astype(np.uint8)
         return image
 
     def open_settings(self, unused):
-         GLib.idle_add(self.settings.show_all)
+        GLib.idle_add(self.settings.show_all)
+
 
 class SettingsWindow(Gtk.Window):
     """A class that contains the UI and camera elements."""
@@ -702,9 +723,10 @@ class SettingsWindow(Gtk.Window):
         SLEEP_PENALTY = self.sleepy_spin.get_value()
         RESTORE_CREDIT = -1.0 * self.restore_spin.get_value()
         self.close_window(None)
-    
+
     def close_window(self, unused):
         self.hide()
+
 
 class StartWindow(Gtk.Window):
     """A window that lets a user select the camera."""
@@ -733,7 +755,7 @@ class StartWindow(Gtk.Window):
         self.status_label = Gtk.Label.new("")
 
         devices = []
-        for device in glob.glob('/dev/video*'):
+        for device in glob.glob("/dev/video*"):
             devices.append(device)
         self.source_select = Gtk.ComboBoxText()
         self.source_select.set_entry_text_column(0)
@@ -779,30 +801,29 @@ class StartWindow(Gtk.Window):
         self.button.set_sensitive(False)
         self.width_spin.set_sensitive(False)
         self.height_spin.set_sensitive(False)
-        GLib.idle_add(
-                self.status_label.set_text, "Downloading landmark model...")
+        GLib.idle_add(self.status_label.set_text, "Downloading landmark model...")
         LANDMARK_MODEL = utils.download_file("face_landmark_ptq_vela.tflite")
-        if (LANDMARK_MODEL == -1 or LANDMARK_MODEL == -2 or
-            LANDMARK_MODEL == -3):
+        if LANDMARK_MODEL == -1 or LANDMARK_MODEL == -2 or LANDMARK_MODEL == -3:
             GLib.idle_add(
-                self.status_label.set_text, "Download landmark model failed! " +
-                "Restart demo and try again!")
+                self.status_label.set_text,
+                "Download landmark model failed! " + "Restart demo and try again!",
+            )
         else:
-            GLib.idle_add(
-                self.status_label.set_text, "Downloading face model...")
+            GLib.idle_add(self.status_label.set_text, "Downloading face model...")
             FACE_MODEL = utils.download_file("face_detection_ptq_vela.tflite")
             if FACE_MODEL == -1 or FACE_MODEL == -2 or FACE_MODEL == -3:
                 GLib.idle_add(
-                    self.status_label.set_text, "Download face model failed! " +
-                    "Restart demo and try again!")
+                    self.status_label.set_text,
+                    "Download face model failed! " + "Restart demo and try again!",
+                )
             else:
-                GLib.idle_add(
-                    self.status_label.set_text, "Downloading iris model...")
+                GLib.idle_add(self.status_label.set_text, "Downloading iris model...")
                 IRIS_MODEL = utils.download_file("iris_landmark_ptq_vela.tflite")
                 if IRIS_MODEL == -1 or IRIS_MODEL == -2 or IRIS_MODEL == -3:
                     GLib.idle_add(
-                        self.status_label.set_text, "Download iris model failed! " +
-                        "Restart demo and try again!")
+                        self.status_label.set_text,
+                        "Download iris model failed! " + "Restart demo and try again!",
+                    )
                 else:
                     GLib.idle_add(self.launch)
 
@@ -811,7 +832,6 @@ class StartWindow(Gtk.Window):
         window = MLVideoDemo()
         window.show_all()
         self.close()
-
 
 
 if __name__ == "__main__":

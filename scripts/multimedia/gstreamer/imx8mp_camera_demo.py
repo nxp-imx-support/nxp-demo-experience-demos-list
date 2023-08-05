@@ -1,32 +1,33 @@
-# Copyright 2021-2022 NXP
+# Copyright 2021-2023 NXP
 # SPDX-License-Identifier: BSD-3-Clause
 
 from argparse import ArgumentParser
-import os
-from subprocess import PIPE, Popen
+from subprocess import Popen
 import sys
-import time
-
-import gi
-gi.require_version('Gst', '1.0')
-gi.require_version('Gtk', '3.0')
-from gi.repository import Gst, Gtk
-
 import cv2
+import gi
+
+gi.require_version("Gst", "1.0")
+gi.require_version("Gtk", "3.0")
+from gi.repository import Gst, Gtk
 
 
 CAM_PIPELINE = "gst-launch-1.0 v4l2src device={} ! waylandsink"
 
-ENC_PIPELINE = "gst-launch-1.0 v4l2src device={} ! imxvideoconvert_g2d !"\
-               " queue ! vpuenc_hevc ! multiqueue ! vpudec ! waylandsink"
+ENC_PIPELINE = (
+    "gst-launch-1.0 v4l2src device={} ! imxvideoconvert_g2d !"
+    " queue ! vpuenc_hevc ! multiqueue ! vpudec ! waylandsink"
+)
 
-MULTI_CAM_PIPELINE = "gst-launch-1.0  imxcompositor_g2d name=c "\
-                     "sink_0::xpos=0 sink_0::ypos=0 sink_0::width=1920 "\
-                     "sink_0::height=1080 sink_0::keep-ratio=true "\
-                     "sink_1::xpos=0 sink_1::ypos=0 sink_1::width=640 "\
-                     "sink_1::height=480 sink_1::keep-ratio=true ! waylandsink sync=false "\
-                     "v4l2src device={} ! c.sink_0 "\
-                     "v4l2src device={} ! c.sink_1"
+MULTI_CAM_PIPELINE = (
+    "gst-launch-1.0  imxcompositor_g2d name=c "
+    "sink_0::xpos=0 sink_0::ypos=0 sink_0::width=1920 "
+    "sink_0::height=1080 sink_0::keep-ratio=true "
+    "sink_1::xpos=0 sink_1::ypos=0 sink_1::width=640 "
+    "sink_1::height=480 sink_1::keep-ratio=true ! waylandsink sync=false "
+    "v4l2src device={} ! c.sink_0 "
+    "v4l2src device={} ! c.sink_1"
+)
 
 
 class MessageWindow(Gtk.Window):
@@ -98,7 +99,7 @@ class VideoDevice:
             device = props.get_string("device.path")
             caps = self.get_device_caps(dev.get_caps().normalize())
 
-            if not '0/0' in caps:
+            if "0/0" not in caps:
                 self.devices_list.append(device)
 
         dev_monitor.stop()
@@ -111,12 +112,10 @@ class VideoDevice:
             if caps_struct.get_name() != "video/x-raw":
                 continue
 
-            framerate = ("{}/{}".format(*caps_struct.get_fraction(
-                                        "framerate")[1:]))
+            framerate = "{}/{}".format(*caps_struct.get_fraction("framerate")[1:])
             caps_list.append(framerate)
 
         return caps_list
-
 
     def get_video(self):
         video = None
@@ -128,11 +127,11 @@ class VideoDevice:
 
 
 def open_camera(dev):
-    Popen(CAM_PIPELINE.format(dev), shell=True, executable='/bin/bash').wait()
+    Popen(CAM_PIPELINE.format(dev), shell=True, executable="/bin/bash").wait()
 
 
 def vpu_enc_dec(dev):
-    Popen(ENC_PIPELINE.format(dev), shell=True, executable='/bin/bash').wait()
+    Popen(ENC_PIPELINE.format(dev), shell=True, executable="/bin/bash").wait()
 
 
 def multi_cam():
@@ -141,9 +140,13 @@ def multi_cam():
     if len(video_dev.devices_list) < 2:
         message_window("You need a Basler Camera and an OV5640 to run this demo.")
     else:
-        Popen(MULTI_CAM_PIPELINE.format(video_dev.devices_list[1],
-                                        video_dev.devices_list[0]),
-              shell=True, executable='/bin/bash').wait()
+        Popen(
+            MULTI_CAM_PIPELINE.format(
+                video_dev.devices_list[1], video_dev.devices_list[0]
+            ),
+            shell=True,
+            executable="/bin/bash",
+        ).wait()
 
 
 def message_window(message):
@@ -162,9 +165,9 @@ def select_cam(func):
 
 if __name__ == "__main__":
     parser = ArgumentParser()
-    parser.add_argument('--open_camera', type=bool, default=False)
-    parser.add_argument('--vpu_enc', type=bool, default=False)
-    parser.add_argument('--multi_cam', type=bool, default=False)
+    parser.add_argument("--open_camera", type=bool, default=False)
+    parser.add_argument("--vpu_enc", type=bool, default=False)
+    parser.add_argument("--multi_cam", type=bool, default=False)
     args = parser.parse_args()
 
     if args.open_camera:

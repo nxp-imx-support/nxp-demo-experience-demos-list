@@ -1,10 +1,9 @@
 # Copyright © 2021 Patrick Levin
-# Copyright 2022 NXP
+# Copyright 2022-2023 NXP
 # SPDX-License-Identifier: MIT
 
 import numpy as np
 import cv2
-#import tensorflow.lite as tflite
 import tflite_runtime.interpreter as tflite
 
 # score limit is 100 in mediapipe and leads to overflows with IEEE 754 floats
@@ -20,24 +19,24 @@ def sigmoid(x):
 
 
 class MediapipeFace(object):
-    def __init__(self, model_path, threshold = 0.75):
+    def __init__(self, model_path, threshold=0.75):
         self.interpreter = tflite.Interpreter(model_path=model_path)
         self.interpreter.allocate_tensors()
 
-        self.input_index = self.interpreter.get_input_details()[0]['index']
-        self.input_shape = self.interpreter.get_input_details()[0]['shape']
-        self.bbox_index = self.interpreter.get_output_details()[1]['index']
-        self.score_index = self.interpreter.get_output_details()[0]['index']
+        self.input_index = self.interpreter.get_input_details()[0]["index"]
+        self.input_shape = self.interpreter.get_input_details()[0]["shape"]
+        self.bbox_index = self.interpreter.get_output_details()[1]["index"]
+        self.score_index = self.interpreter.get_output_details()[0]["index"]
 
         # (reference: modules/face_detection/face_detection_short_range_common.pbtxt)
         self.ssd_opts = {
-            'num_layers': 4,
-            'input_size_height': 128,
-            'input_size_width': 128,
-            'anchor_offset_x': 0.5,
-            'anchor_offset_y': 0.5,
-            'strides': [8, 16, 16, 16],
-            'interpolated_scale_aspect_ratio': 1.0
+            "num_layers": 4,
+            "input_size_height": 128,
+            "input_size_width": 128,
+            "anchor_offset_x": 0.5,
+            "anchor_offset_y": 0.5,
+            "strides": [8, 16, 16, 16],
+            "interpolated_scale_aspect_ratio": 1.0,
         }
 
         self.anchors = self._ssd_generate_anchors(self.ssd_opts)
@@ -46,10 +45,8 @@ class MediapipeFace(object):
     def _pre_processing(self, input_data):
         input_data = cv2.cvtColor(input_data, cv2.COLOR_BGR2RGB)
         input_data = cv2.resize(input_data, self.input_shape[1:3]).astype(np.float32)
-        input_data = (input_data[np.newaxis,:,:,:] - 128) / 128.0
-        #input_data = (input_data[np.newaxis,:,:,:] - 128).astype(np.int8)
+        input_data = (input_data[np.newaxis, :, :, :] - 128) / 128.0
         return input_data
-
 
     def detect(self, img):
         input_data = self._pre_processing(img)
@@ -58,23 +55,18 @@ class MediapipeFace(object):
         raw_boxes = self.interpreter.get_tensor(self.bbox_index)
         raw_scores = self.interpreter.get_tensor(self.score_index)
 
-        #raw_boxes = (raw_boxes + 60) * 2.0457184314727783
-        #print(np.shape(raw_boxes))
-        #raw_scores = (raw_scores - 125) * 2.295069694519043
-        #print(np.shape(raw_scores))
-
         boxes = self._decode_boxes(raw_boxes)
         scores = self._get_sigmoid_scores(raw_scores)
-        #print(np.shape(boxes))
 
         score_above_threshold = scores > self.threshold
         filtered_boxes = boxes[np.argwhere(score_above_threshold)[:, 1], :]
         filtered_scores = scores[score_above_threshold]
 
-        output_boxes = np.array(self._non_maximum_suppression(filtered_boxes, filtered_scores, MIN_SUPPRESSION_THRESHOLD))
-
-        #print(output_boxes)
-
+        output_boxes = np.array(
+            self._non_maximum_suppression(
+                filtered_boxes, filtered_scores, MIN_SUPPRESSION_THRESHOLD
+            )
+        )
         return output_boxes
 
     def _overlap_similarity(self, box1, box2):
@@ -90,15 +82,13 @@ class MediapipeFace(object):
         y3_max = min(y1_max, y2_max)
         intersect_area = (x3_max - x3_min) * (y3_max - y3_min)
         denominator = box1_area + box2_area - intersect_area
-        return intersect_area / denominator if denominator > 0. else 0.
+        return intersect_area / denominator if denominator > 0.0 else 0.0
 
     def _non_maximum_suppression(self, boxes, scores, min_suppression_threshold):
         candidates_list = []
-        for i in range(np.size(boxes,0)):
+        for i in range(np.size(boxes, 0)):
             candidates_list.append((boxes[i], scores[i]))
-        #print(candidates_list)
         candidates_list = sorted(candidates_list, key=lambda x: x[1], reverse=True)
-        #print(candidates_list)
         kept_list = []
         for sorted_boxes, sorted_scores in candidates_list:
             suppressed = False
@@ -110,7 +100,6 @@ class MediapipeFace(object):
             if not suppressed:
                 kept_list.append(sorted_boxes)
         return kept_list
-
 
     def _decode_boxes(self, raw_boxes: np.ndarray) -> np.ndarray:
         """Simplified version of
@@ -131,10 +120,9 @@ class MediapipeFace(object):
         boxes[:, 0] = center - half_size
         boxes[:, 1] = center + half_size
 
-        #only need boxes xmin, ymin, xmax, ymax
+        # only need boxes xmin, ymin, xmax, ymax
         boxes = boxes[:, 0:2, :].reshape(-1, 4)
         return boxes
-
 
     def _get_sigmoid_scores(self, raw_scores: np.ndarray) -> np.ndarray:
         """Extracted loop from ProcessCPU (line 327) in
@@ -148,28 +136,28 @@ class MediapipeFace(object):
         # 2) apply sigmoid function on clipped confidence scores
         return sigmoid(raw_scores)
 
-
-
     def _ssd_generate_anchors(self, opts: dict) -> np.ndarray:
         """This is a trimmed down version of the C++ code; all irrelevant parts
         have been removed.
         (reference: mediapipe/calculators/tflite/ssd_anchors_calculator.cc)
         """
         layer_id = 0
-        num_layers = opts['num_layers']
-        strides = opts['strides']
+        num_layers = opts["num_layers"]
+        strides = opts["strides"]
         assert len(strides) == num_layers
-        input_height = opts['input_size_height']
-        input_width = opts['input_size_width']
-        anchor_offset_x = opts['anchor_offset_x']
-        anchor_offset_y = opts['anchor_offset_y']
-        interpolated_scale_aspect_ratio = opts['interpolated_scale_aspect_ratio']
+        input_height = opts["input_size_height"]
+        input_width = opts["input_size_width"]
+        anchor_offset_x = opts["anchor_offset_x"]
+        anchor_offset_y = opts["anchor_offset_y"]
+        interpolated_scale_aspect_ratio = opts["interpolated_scale_aspect_ratio"]
         anchors = []
         while layer_id < num_layers:
             last_same_stride_layer = layer_id
             repeats = 0
-            while (last_same_stride_layer < num_layers and
-                   strides[last_same_stride_layer] == strides[layer_id]):
+            while (
+                last_same_stride_layer < num_layers
+                and strides[last_same_stride_layer] == strides[layer_id]
+            ):
                 last_same_stride_layer += 1
                 # aspect_ratios are added twice per iteration
                 repeats += 2 if interpolated_scale_aspect_ratio == 1.0 else 1
@@ -184,4 +172,3 @@ class MediapipeFace(object):
                         anchors.append((x_center, y_center))
             layer_id = last_same_stride_layer
         return np.array(anchors, dtype=np.float32)
-

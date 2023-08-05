@@ -3,7 +3,7 @@
 """
 Copyright Soonbeen Kim <ksb940925@gmail.com>
 Copyright Jongha Jang <jangjongha.sw@gmail.com>
-Copyright 2021-2022 NXP
+Copyright 2021-2023 NXP
 
 SPDX-License-Identifier: LGPL-2.1-only
 Original Source: https://github.com/nnstreamer/nnstreamer-example
@@ -20,19 +20,31 @@ import gi
 import logging
 import math
 import numpy as np
-import ctypes
 import cairo
 
-gi.require_version('Gst', '1.0')
-gi.require_foreign('cairo')
+gi.require_version("Gst", "1.0")
+gi.require_foreign("cairo")
 from gi.repository import Gst, GObject, GLib
 
 DEBUG = False
 
+
 class NNStreamerExample:
     def __init__(
-        self, platform, device, backend, model, labels, display="Weston",
-        callback=None, width=1920, height=1080, r=1, g=0, b=0):
+        self,
+        platform,
+        device,
+        backend,
+        model,
+        labels,
+        display="Weston",
+        callback=None,
+        width=1920,
+        height=1080,
+        r=1,
+        g=0,
+        b=0,
+    ):
         """Creates an instance of the demo
 
         Arguments:
@@ -102,12 +114,14 @@ class NNStreamerExample:
             backend = "true:cpu custom=NumThreads:4"
         elif self.backend == "GPU":
             os.environ["USE_GPU_INFERENCE"] = "1"
-            backend = ("true:gpu custom=Delegate:External,"
-                       "ExtDelegateLib:libvx_delegate.so")
+            backend = (
+                "true:gpu custom=Delegate:External," "ExtDelegateLib:libvx_delegate.so"
+            )
         else:
             os.environ["USE_GPU_INFERENCE"] = "0"
-            backend = ("true:npu custom=Delegate:External,"
-                       "ExtDelegateLib:libvx_delegate.so")
+            backend = (
+                "true:npu custom=Delegate:External," "ExtDelegateLib:libvx_delegate.so"
+            )
 
         if self.display == "X11":
             display = "ximagesink name=img_tensor"
@@ -129,28 +143,28 @@ class NNStreamerExample:
             decoder = "vpudec "
 
         if "/dev/video" in self.device:
-            gst_launch_cmdline = 'v4l2src name=cam_src device=' + self.device
-            gst_launch_cmdline += ' ! imxvideoconvert_g2d ! video/x-raw,width='
-            gst_launch_cmdline += str(int(self.VIDEO_WIDTH)) +',height='
+            gst_launch_cmdline = "v4l2src name=cam_src device=" + self.device
+            gst_launch_cmdline += " ! imxvideoconvert_g2d ! video/x-raw,width="
+            gst_launch_cmdline += str(int(self.VIDEO_WIDTH)) + ",height="
             gst_launch_cmdline += str(int(self.VIDEO_HEIGHT))
-            gst_launch_cmdline += ',format=BGRx ! tee name=t'
+            gst_launch_cmdline += ",format=BGRx ! tee name=t"
         else:
-            gst_launch_cmdline = 'filesrc location=' + self.device
-            gst_launch_cmdline += ' ! qtdemux ! ' + decoder + '! tee name=t'
+            gst_launch_cmdline = "filesrc location=" + self.device
+            gst_launch_cmdline += " ! qtdemux ! " + decoder + "! tee name=t"
 
-        gst_launch_cmdline += ' t. ! imxvideoconvert_g2d ! video/x-raw,'
-        gst_launch_cmdline += 'width={:d},'.format(self.MODEL_INPUT_WIDTH)
-        gst_launch_cmdline += 'height={:d},'.format(self.MODEL_INPUT_HEIGHT)
-        gst_launch_cmdline += 'format=ARGB ! ' 
-        gst_launch_cmdline += 'queue max-size-buffers=2 leaky=2 ! videoconvert'
-        gst_launch_cmdline += ' ! video/x-raw,format=RGB ! tensor_converter ! '
-        gst_launch_cmdline += ' tensor_filter framework=tensorflow-lite model='
-        gst_launch_cmdline += self.tflite_model + ' accelerator=' + backend
-        gst_launch_cmdline += ' silent=FALSE name=tensor_filter latency=1 !'
-        gst_launch_cmdline += ' tensor_sink name=tensor_sink t.'
-        gst_launch_cmdline += ' ! imxvideoconvert_g2d ! '
-        gst_launch_cmdline += 'cairooverlay name=tensor_res ! '
-        gst_launch_cmdline += 'queue max-size-buffers=2 leaky=2 ! '
+        gst_launch_cmdline += " t. ! imxvideoconvert_g2d ! video/x-raw,"
+        gst_launch_cmdline += "width={:d},".format(self.MODEL_INPUT_WIDTH)
+        gst_launch_cmdline += "height={:d},".format(self.MODEL_INPUT_HEIGHT)
+        gst_launch_cmdline += "format=ARGB ! "
+        gst_launch_cmdline += "queue max-size-buffers=2 leaky=2 ! videoconvert"
+        gst_launch_cmdline += " ! video/x-raw,format=RGB ! tensor_converter ! "
+        gst_launch_cmdline += " tensor_filter framework=tensorflow-lite model="
+        gst_launch_cmdline += self.tflite_model + " accelerator=" + backend
+        gst_launch_cmdline += " silent=FALSE name=tensor_filter latency=1 !"
+        gst_launch_cmdline += " tensor_sink name=tensor_sink t."
+        gst_launch_cmdline += " ! imxvideoconvert_g2d ! "
+        gst_launch_cmdline += "cairooverlay name=tensor_res ! "
+        gst_launch_cmdline += "queue max-size-buffers=2 leaky=2 ! "
         gst_launch_cmdline += display
 
         # init pipeline
@@ -159,17 +173,17 @@ class NNStreamerExample:
         # bus and message callback
         bus = self.pipeline.get_bus()
         bus.add_signal_watch()
-        bus.connect('message', self.on_bus_message)
+        bus.connect("message", self.on_bus_message)
 
-        self.tensor_filter = self.pipeline.get_by_name('tensor_filter')
+        self.tensor_filter = self.pipeline.get_by_name("tensor_filter")
 
         # tensor sink signal : new data callback
-        tensor_sink = self.pipeline.get_by_name('tensor_sink')
-        tensor_sink.connect('new-data', self.new_data_cb)
+        tensor_sink = self.pipeline.get_by_name("tensor_sink")
+        tensor_sink.connect("new-data", self.new_data_cb)
 
-        tensor_res = self.pipeline.get_by_name('tensor_res')
-        tensor_res.connect('draw', self.draw_overlay_cb)
-        tensor_res.connect('caps-changed', self.prepare_overlay_cb)
+        tensor_res = self.pipeline.get_by_name("tensor_res")
+        tensor_res.connect("draw", self.draw_overlay_cb)
+        tensor_res.connect("caps-changed", self.prepare_overlay_cb)
         if self.callback is not None:
             GObject.timeout_add(500, self.callback, self)
 
@@ -177,7 +191,7 @@ class NNStreamerExample:
         self.pipeline.set_state(Gst.State.PLAYING)
         self.running = True
 
-        self.set_window_title('img_tensor', 'Single Person Pose Estimation')
+        self.set_window_title("img_tensor", "Single Person Pose Estimation")
 
         # run main loop
         self.loop.run()
@@ -195,19 +209,18 @@ class NNStreamerExample:
         """
 
         if not os.path.exists(self.tflite_model):
-            logging.error('cannot find tflite model [%s]', self.tflite_model)
+            logging.error("cannot find tflite model [%s]", self.tflite_model)
             return False
 
         try:
-            with open(self.label_path, 'r') as label_file:
+            with open(self.label_path, "r") as label_file:
                 for line in label_file.readlines():
                     self.tflite_labels.append(line)
         except FileNotFoundError:
-            logging.error('cannot find tflite label [%s]', self.label_path)
+            logging.error("cannot find tflite label [%s]", self.label_path)
             return False
 
-        logging.info(
-            'finished to load labels, total [%d]', len(self.tflite_labels))
+        logging.info("finished to load labels, total [%d]", len(self.tflite_labels))
         return True
 
     def new_data_cb(self, sink, buffer):
@@ -237,22 +250,22 @@ class NNStreamerExample:
             result1, info_heatmap = mem_heatmap.map(Gst.MapFlags.READ)
             if result1:
                 assert info_heatmap.size == (
-                    self.KEYPOINT_SIZE * self.GRID_XSIZE *
-                    self.GRID_YSIZE * 1 * 4)
+                    self.KEYPOINT_SIZE * self.GRID_XSIZE * self.GRID_YSIZE * 1 * 4
+                )
                 # decode bytestrings to float list
-                decoded_heatmap = list(np.frombuffer(
-                    info_heatmap.data, dtype=np.float32))
+                decoded_heatmap = list(
+                    np.frombuffer(info_heatmap.data, dtype=np.float32)
+                )
 
             # offset
             mem_offset = buffer.peek_memory(1)
             result2, info_offset = mem_offset.map(Gst.MapFlags.READ)
             if result2:
-                assert info_offset.size ==  (
-                    self.KEYPOINT_SIZE * 2 * self.GRID_XSIZE *
-                    self.GRID_YSIZE * 1 * 4)
+                assert info_offset.size == (
+                    self.KEYPOINT_SIZE * 2 * self.GRID_XSIZE * self.GRID_YSIZE * 1 * 4
+                )
                 # decode bytestrings to float list
-                decoded_offset = list(
-                    np.frombuffer(info_offset.data, dtype=np.float32))
+                decoded_offset = list(np.frombuffer(info_offset.data, dtype=np.float32))
 
             self.kps.clear()
             for keyPointIdx in range(0, self.KEYPOINT_SIZE):
@@ -265,33 +278,37 @@ class NNStreamerExample:
                 for yIdx in range(0, self.GRID_YSIZE):
                     for xIdx in range(0, self.GRID_XSIZE):
                         current = decoded_heatmap[
-                            (yIdx * self.GRID_YSIZE + xIdx) *
-                            self.KEYPOINT_SIZE + keyPointIdx]
+                            (yIdx * self.GRID_YSIZE + xIdx) * self.KEYPOINT_SIZE
+                            + keyPointIdx
+                        ]
                         currentScore = 1.0 / (1.0 + math.exp(-current))
-                        if(currentScore > highestScore):
+                        if currentScore > highestScore:
                             yPosIdx = yIdx
                             xPosIdx = xIdx
                             highestScore = currentScore
 
                 yOffset = decoded_offset[
-                    (yPosIdx * self.GRID_YSIZE + xPosIdx) *
-                    self.KEYPOINT_SIZE * 2 + keyPointIdx]
+                    (yPosIdx * self.GRID_YSIZE + xPosIdx) * self.KEYPOINT_SIZE * 2
+                    + keyPointIdx
+                ]
                 xOffset = decoded_offset[
-                    (yPosIdx * self.GRID_YSIZE + xPosIdx) *
-                    self.KEYPOINT_SIZE * 2 + self.KEYPOINT_SIZE + keyPointIdx]
+                    (yPosIdx * self.GRID_YSIZE + xPosIdx) * self.KEYPOINT_SIZE * 2
+                    + self.KEYPOINT_SIZE
+                    + keyPointIdx
+                ]
 
                 yPosition = (
-                    (yPosIdx / (self.GRID_YSIZE - 1)) *
-                    self.MODEL_INPUT_HEIGHT + yOffset)
+                    yPosIdx / (self.GRID_YSIZE - 1)
+                ) * self.MODEL_INPUT_HEIGHT + yOffset
                 xPosition = (
-                    (xPosIdx / (self.GRID_XSIZE - 1)) *
-                    self.MODEL_INPUT_WIDTH + xOffset)
+                    xPosIdx / (self.GRID_XSIZE - 1)
+                ) * self.MODEL_INPUT_WIDTH + xOffset
 
                 obj = {
-                    'y': yPosition,
-                    'x': xPosition,
-                    'label': keyPointIdx,
-                    'score': highestScore
+                    "y": yPosition,
+                    "x": xPosition,
+                    "label": keyPointIdx,
+                    "score": highestScore,
                 }
 
                 self.kps.append(obj)
@@ -303,9 +320,12 @@ class NNStreamerExample:
                 if (GLib.get_monotonic_time() - self.print_time) > 1000000:
                     inference = self.tensor_filter.get_property("latency")
                     print(
-                        "Inference time: " +
-                        str(inference/1000) + " ms (" +
-                        "{:5.2f}".format(1/(inference/1000000)) + " IPS)")
+                        "Inference time: "
+                        + str(inference / 1000)
+                        + " ms ("
+                        + "{:5.2f}".format(1 / (inference / 1000000))
+                        + " IPS)"
+                    )
                     self.print_time = GLib.get_monotonic_time()
 
     def prepare_overlay_cb(self, overlay, caps):
@@ -314,20 +334,20 @@ class NNStreamerExample:
 
     def draw_overlay_cb(self, overlay, context, timestamp, duration):
         """Callback to draw the overlay."""
-        scale_height = self.VIDEO_HEIGHT/1080
-        scale_width = self.VIDEO_WIDTH/1920
-        scale_text = max(scale_height, scale_width)
+        scale_height = self.VIDEO_HEIGHT / 1080
+        scale_width = self.VIDEO_WIDTH / 1920
         if self.first_frame:
             context.select_font_face(
-                'Sans', cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
+                "Sans", cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD
+            )
             context.set_source_rgb(self.r, self.g, self.b)
             context.move_to(int(400 * scale_width), int(600 * scale_height))
-            context.set_font_size(int(200.0 * min(scale_width,scale_height)))
+            context.set_font_size(int(200.0 * min(scale_width, scale_height)))
             context.show_text("Loading...")
             self.first_frame = False
             return
 
-        if self.video_caps == None or not self.running:
+        if self.video_caps is None or not self.running:
             return
 
         # mutex_lock alternative required
@@ -335,7 +355,8 @@ class NNStreamerExample:
         # mutex_unlock alternative needed
 
         context.select_font_face(
-            'Sans', cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
+            "Sans", cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD
+        )
         context.set_font_size(35.0)
 
         # draw body lines
@@ -360,18 +381,21 @@ class NNStreamerExample:
     def draw_line(self, overlay, context, kpts, from_key, to_key):
         """Connects pose points"""
         kpts_len = len(kpts)
-        if from_key > kpts_len-1 or to_key > kpts_len-1:
+        if from_key > kpts_len - 1 or to_key > kpts_len - 1:
             return
-        if kpts[from_key]['score'] < self.SCORE_THRESHOLD or (
-            kpts[to_key]['score'] < self.SCORE_THRESHOLD):
+        if kpts[from_key]["score"] < self.SCORE_THRESHOLD or (
+            kpts[to_key]["score"] < self.SCORE_THRESHOLD
+        ):
             return
 
         context.move_to(
-            kpts[from_key]['x'] * self.IMAGE_WIDTH / self.MODEL_INPUT_WIDTH,
-            kpts[from_key]['y'] * self.IMAGE_HEIGHT / self.MODEL_INPUT_HEIGHT)
+            kpts[from_key]["x"] * self.IMAGE_WIDTH / self.MODEL_INPUT_WIDTH,
+            kpts[from_key]["y"] * self.IMAGE_HEIGHT / self.MODEL_INPUT_HEIGHT,
+        )
         context.line_to(
-            kpts[to_key]['x'] * self.IMAGE_WIDTH / self.MODEL_INPUT_WIDTH,
-            kpts[to_key]['y'] * self.IMAGE_HEIGHT / self.MODEL_INPUT_HEIGHT)
+            kpts[to_key]["x"] * self.IMAGE_WIDTH / self.MODEL_INPUT_WIDTH,
+            kpts[to_key]["y"] * self.IMAGE_HEIGHT / self.MODEL_INPUT_HEIGHT,
+        )
 
     def on_bus_message(self, bus, message):
         """Callback for message.
@@ -380,23 +404,26 @@ class NNStreamerExample:
         :return: None
         """
         if message.type == Gst.MessageType.EOS:
-            logging.info('received eos message')
+            logging.info("received eos message")
             self.loop.quit()
         elif message.type == Gst.MessageType.ERROR:
             error, debug = message.parse_error()
-            logging.warning('[error] %s : %s', error.message, debug)
+            logging.warning("[error] %s : %s", error.message, debug)
             self.loop.quit()
         elif message.type == Gst.MessageType.WARNING:
             error, debug = message.parse_warning()
-            logging.warning('[warning] %s : %s', error.message, debug)
+            logging.warning("[warning] %s : %s", error.message, debug)
         elif message.type == Gst.MessageType.STREAM_START:
-            logging.info('received start message')
+            logging.info("received start message")
         elif message.type == Gst.MessageType.QOS:
             data_format, processed, dropped = message.parse_qos_stats()
             format_str = Gst.Format.get_name(data_format)
             logging.debug(
-                '[qos] format[%s] processed[%d] dropped[%d]',
-                format_str, processed, dropped)
+                "[qos] format[%s] processed[%d] dropped[%d]",
+                format_str,
+                processed,
+                dropped,
+            )
 
     def set_window_title(self, name, title):
         """Set window title.
@@ -406,27 +433,38 @@ class NNStreamerExample:
         """
         element = self.pipeline.get_by_name(name)
         if element is not None:
-            pad = element.get_static_pad('sink')
+            pad = element.get_static_pad("sink")
             if pad is not None:
                 tags = Gst.TagList.new_empty()
-                tags.add_value(Gst.TagMergeMode.APPEND, 'title', title)
+                tags.add_value(Gst.TagMergeMode.APPEND, "title", title)
                 pad.send_event(Gst.Event.new_tag(tags))
 
-if __name__ == '__main__':
-    if(len(sys.argv) != 7 and len(sys.argv) != 5 and len(sys.argv) != 6):
-        print("Usage: python3 nnpose.py <dev/video*/video file> <NPU/CPU>"+
-                " <model file> <label file>")
+
+if __name__ == "__main__":
+    if len(sys.argv) != 7 and len(sys.argv) != 5 and len(sys.argv) != 6:
+        print(
+            "Usage: python3 nnpose.py <dev/video*/video file> <NPU/CPU>"
+            + " <model file> <label file>"
+        )
         exit()
     # Get platform
     platform = os.uname().nodename
-    if(len(sys.argv) == 7):
-        example = NNStreamerExample(platform, sys.argv[1],sys.argv[2],sys.argv[3],
-            sys.argv[4],sys.argv[5],sys.argv[6])
-    if(len(sys.argv) == 5):
-        example = NNStreamerExample(platform, sys.argv[1],sys.argv[2],sys.argv[3],
-            sys.argv[4])
-    if(len(sys.argv) == 6):
-        example = NNStreamerExample(platform, sys.argv[1],sys.argv[2],sys.argv[3],
-            sys.argv[4], sys.argv[5])
+    if len(sys.argv) == 7:
+        example = NNStreamerExample(
+            platform,
+            sys.argv[1],
+            sys.argv[2],
+            sys.argv[3],
+            sys.argv[4],
+            sys.argv[5],
+            sys.argv[6],
+        )
+    if len(sys.argv) == 5:
+        example = NNStreamerExample(
+            platform, sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4]
+        )
+    if len(sys.argv) == 6:
+        example = NNStreamerExample(
+            platform, sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5]
+        )
     example.run_example()
-

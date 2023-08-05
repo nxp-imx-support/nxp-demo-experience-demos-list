@@ -1,12 +1,9 @@
 #!/bin/bash
 
-###
-#Copyright 2023 NXP
+# Copyright 2023 NXP
+# SPDX-License-Identifier: BSD-3-Clause
 #
-#SPDX-License-Identifier: BSD-3-Clause
-#
-#This scripts stops the running processes in the server.
-###
+# This scripts stops the running processes in the server.
 
 killall iperf
 sleep 0.1

@@ -2,7 +2,7 @@
 
 """
 Copyright SSAFY Team 1 <jangjongha.sw@gmail.com>
-Copyright 2021-2022 NXP
+Copyright 2021-2023 NXP
 
 SPDX-License-Identifier: LGPL-2.1-only
 Original Source: https://github.com/nnstreamer/nnstreamer-example
@@ -17,22 +17,34 @@ import os
 import sys
 import gi
 import logging
-import math
 import numpy as np
 import cairo
 
-gi.require_version('Gst', '1.0')
-gi.require_foreign('cairo')
+gi.require_version("Gst", "1.0")
+gi.require_foreign("cairo")
 from gi.repository import Gst, GObject, GLib
 
 DEBUG = False
 
+
 class ObjectDetection:
     """The class that manages the demo"""
+
     def __init__(
-        self, platform, device, backend, model, labels,
-        display="Weston", callback=None, width=1920,
-        height=1080, r=1, g=0, b=0):
+        self,
+        platform,
+        device,
+        backend,
+        model,
+        labels,
+        display="Weston",
+        callback=None,
+        width=1920,
+        height=1080,
+        r=1,
+        g=0,
+        b=0,
+    ):
         """Creates an instance of the demo
 
         Arguments:
@@ -94,12 +106,14 @@ class ObjectDetection:
             backend = "true:CPU custom=NumThreads:4"
         elif self.backend == "GPU":
             os.environ["USE_GPU_INFERENCE"] = "1"
-            backend = ("true:gpu custom=Delegate:External,"
-                       "ExtDelegateLib:libvx_delegate.so")
+            backend = (
+                "true:gpu custom=Delegate:External," "ExtDelegateLib:libvx_delegate.so"
+            )
         else:
             os.environ["USE_GPU_INFERENCE"] = "0"
-            backend = ("true:npu custom=Delegate:External,"
-                       "ExtDelegateLib:libvx_delegate.so")
+            backend = (
+                "true:npu custom=Delegate:External," "ExtDelegateLib:libvx_delegate.so"
+            )
 
         if self.display == "X11":
             display = "ximagesink name=img_tensor "
@@ -122,29 +136,29 @@ class ObjectDetection:
             decoder = "vpudec "
 
         if "/dev/video" in self.device:
-            gst_launch_cmdline = 'v4l2src name=cam_src device=' + self.device
-            gst_launch_cmdline += ' ! imxvideoconvert_g2d ! video/x-raw,width='
-            gst_launch_cmdline += str(int(self.VIDEO_WIDTH)) +',height='
+            gst_launch_cmdline = "v4l2src name=cam_src device=" + self.device
+            gst_launch_cmdline += " ! imxvideoconvert_g2d ! video/x-raw,width="
+            gst_launch_cmdline += str(int(self.VIDEO_WIDTH)) + ",height="
             gst_launch_cmdline += str(int(self.VIDEO_HEIGHT))
-            gst_launch_cmdline += ',format=BGRx ! tee name=t'
+            gst_launch_cmdline += ",format=BGRx ! tee name=t"
         else:
-            gst_launch_cmdline = 'filesrc location=' + self.device
-            gst_launch_cmdline += ' ! qtdemux ! ' + decoder + '! tee name=t'
+            gst_launch_cmdline = "filesrc location=" + self.device
+            gst_launch_cmdline += " ! qtdemux ! " + decoder + "! tee name=t"
 
-        gst_launch_cmdline += ' t. ! imxvideoconvert_g2d !  video/x-raw,'
-        gst_launch_cmdline += 'width={:d},'.format(self.MODEL_WIDTH)
-        gst_launch_cmdline += 'height={:d},'.format(self.MODEL_HEIGHT)
-        gst_launch_cmdline += 'format=ARGB ! imxvideoconvert_g2d ! '
-        gst_launch_cmdline += 'queue max-size-buffers=2 leaky=2 ! '
-        gst_launch_cmdline += 'videoconvert ! video/x-raw,format=RGB !'
-        gst_launch_cmdline += ' tensor_converter ! tensor_filter'
-        gst_launch_cmdline += ' framework=tensorflow2-lite model='
-        gst_launch_cmdline += self.tflite_model +' accelerator=' + backend
-        gst_launch_cmdline += ' silent=FALSE name=tensor_filter latency=1 ! '
-        gst_launch_cmdline += 'tensor_sink name=tensor_sink t. ! '
-        gst_launch_cmdline += ' imxvideoconvert_g2d !'
-        gst_launch_cmdline += ' cairooverlay name=tensor_res ! '
-        gst_launch_cmdline += 'queue max-size-buffers=2 leaky=2 ! '
+        gst_launch_cmdline += " t. ! imxvideoconvert_g2d !  video/x-raw,"
+        gst_launch_cmdline += "width={:d},".format(self.MODEL_WIDTH)
+        gst_launch_cmdline += "height={:d},".format(self.MODEL_HEIGHT)
+        gst_launch_cmdline += "format=ARGB ! imxvideoconvert_g2d ! "
+        gst_launch_cmdline += "queue max-size-buffers=2 leaky=2 ! "
+        gst_launch_cmdline += "videoconvert ! video/x-raw,format=RGB !"
+        gst_launch_cmdline += " tensor_converter ! tensor_filter"
+        gst_launch_cmdline += " framework=tensorflow2-lite model="
+        gst_launch_cmdline += self.tflite_model + " accelerator=" + backend
+        gst_launch_cmdline += " silent=FALSE name=tensor_filter latency=1 ! "
+        gst_launch_cmdline += "tensor_sink name=tensor_sink t. ! "
+        gst_launch_cmdline += " imxvideoconvert_g2d !"
+        gst_launch_cmdline += " cairooverlay name=tensor_res ! "
+        gst_launch_cmdline += "queue max-size-buffers=2 leaky=2 ! "
         gst_launch_cmdline += display
 
         self.pipeline = Gst.parse_launch(gst_launch_cmdline)
@@ -152,20 +166,17 @@ class ObjectDetection:
         # bus and message callback
         bus = self.pipeline.get_bus()
         bus.add_signal_watch()
-        bus.connect('message', self.on_bus_message)
+        bus.connect("message", self.on_bus_message)
 
-        self.tensor_filter = self.pipeline.get_by_name('tensor_filter')
+        self.tensor_filter = self.pipeline.get_by_name("tensor_filter")
 
         # tensor sink signal : new data callback
+        tensor_sink = self.pipeline.get_by_name("tensor_sink")
+        tensor_sink.connect("new-data", self.new_data_cb)
 
-        tensor_filter = self.pipeline.get_by_name('tensor_filter')
-
-        tensor_sink = self.pipeline.get_by_name('tensor_sink')
-        tensor_sink.connect('new-data', self.new_data_cb)
-
-        tensor_res = self.pipeline.get_by_name('tensor_res')
-        tensor_res.connect('draw', self.draw_overlay_cb)
-        tensor_res.connect('caps-changed', self.prepare_overlay_cb)
+        tensor_res = self.pipeline.get_by_name("tensor_res")
+        tensor_res.connect("draw", self.draw_overlay_cb)
+        tensor_res.connect("caps-changed", self.prepare_overlay_cb)
         if self.callback is not None:
             GObject.timeout_add(500, self.callback, self)
 
@@ -173,8 +184,7 @@ class ObjectDetection:
         self.pipeline.set_state(Gst.State.PLAYING)
         self.running = True
 
-        self.set_window_title(
-            'img_tensor', 'NNStreamer Object Detection Example')
+        self.set_window_title("img_tensor", "NNStreamer Object Detection Example")
 
         # run main loop
         self.loop.run()
@@ -191,26 +201,24 @@ class ObjectDetection:
         """
 
         if not os.path.exists(self.tflite_model):
-            logging.error(
-                'cannot find tflite model [%s]', self.tflite_model)
+            logging.error("cannot find tflite model [%s]", self.tflite_model)
             return False
 
         label_path = self.label_path
         try:
-            with open(label_path, 'r') as label_file:
+            with open(label_path, "r") as label_file:
                 for line in label_file.readlines():
                     if line[0].isdigit():
                         while str(len(self.tflite_labels)) not in line:
                             self.tflite_labels.append("Invalid")
-                        self.tflite_labels.append(line[line.find(' ')+1:])
+                        self.tflite_labels.append(line[line.find(" ") + 1 :])
                     else:
                         self.tflite_labels.append(line)
         except FileNotFoundError:
-            logging.error('cannot find tflite label [%s]', label_path)
+            logging.error("cannot find tflite label [%s]", label_path)
             return False
 
-        logging.info(
-            'finished to load labels, total [%d]', len(self.tflite_labels))
+        logging.info("finished to load labels, total [%d]", len(self.tflite_labels))
         return True
 
     # @brief Callback for tensor sink signal.
@@ -247,44 +255,46 @@ class ObjectDetection:
             ret, info_boxes = mem_boxes.map(Gst.MapFlags.READ)
             if ret:
                 assert info_boxes.size == (
-                    self.BOX_SIZE * self.DETECTION_MAX
-                    * 4),"Invalid info_box size"
+                    self.BOX_SIZE * self.DETECTION_MAX * 4
+                ), "Invalid info_box size"
                 decoded_boxes = list(
-                    np.frombuffer(info_boxes.data,
-                    dtype=np.float32))  # decode bytestrings to float list
+                    np.frombuffer(info_boxes.data, dtype=np.float32)
+                )  # decode bytestrings to float list
 
             # detections
             mem_detections = buffer.peek_memory(1)
             ret, info_detections = mem_detections.map(Gst.MapFlags.READ)
             if ret:
                 assert info_detections.size == (
-                    self.DETECTION_MAX * 4), "Invalid info_detection size"
-                decoded_detections = list(np.frombuffer(
-                    info_detections.data,
-                    dtype=np.float32)) # decode bytestrings to float list
+                    self.DETECTION_MAX * 4
+                ), "Invalid info_detection size"
+                decoded_detections = list(
+                    np.frombuffer(info_detections.data, dtype=np.float32)
+                )  # decode bytestrings to float list
 
             # scores
             mem_scores = buffer.peek_memory(2)
             ret, info_scores = mem_scores.map(Gst.MapFlags.READ)
             if ret:
                 assert info_scores.size == (
-                    self.DETECTION_MAX * 4), "Invalid info_score size"
-                decoded_scores = list(np.frombuffer(
-                    info_scores.data,
-                    dtype=np.float32)) # decode bytestrings to float list
+                    self.DETECTION_MAX * 4
+                ), "Invalid info_score size"
+                decoded_scores = list(
+                    np.frombuffer(info_scores.data, dtype=np.float32)
+                )  # decode bytestrings to float list
 
             # num detection
             mem_num = buffer.peek_memory(3)
             ret, info_num = mem_num.map(Gst.MapFlags.READ)
             if ret:
                 assert info_num.size == 4, "Invalid info_num size"
-                decoded_num = list(np.frombuffer(
-                    info_num.data,
-                    dtype=np.float32)) # decode bytestrings to float list
+                decoded_num = list(
+                    np.frombuffer(info_num.data, dtype=np.float32)
+                )  # decode bytestrings to float list
 
             self.get_detected_objects(
-                decoded_boxes, decoded_detections, decoded_scores,
-                int(decoded_num[0]))
+                decoded_boxes, decoded_detections, decoded_scores, int(decoded_num[0])
+            )
 
             mem_boxes.unmap(info_boxes)
             mem_detections.unmap(info_detections)
@@ -294,9 +304,14 @@ class ObjectDetection:
             if self.display == "None":
                 if (GLib.get_monotonic_time() - self.print_time) > 1000000:
                     inference = self.tensor_filter.get_property("latency")
-                    print("Inference time: " + str(inference/1000) + " ms (" + "{:5.2f}".format(1/(inference/1000000)) + " IPS)")
+                    print(
+                        "Inference time: "
+                        + str(inference / 1000)
+                        + " ms ("
+                        + "{:5.2f}".format(1 / (inference / 1000000))
+                        + " IPS)"
+                    )
                     self.print_time = GLib.get_monotonic_time()
-
 
     def get_detected_objects(self, boxes, detections, scores, num):
         """Pairs boxes with dectected objects"""
@@ -322,12 +337,12 @@ class ObjectDetection:
             height = (ymax - ymin) * self.MODEL_HEIGHT
 
             obj = {
-                'class_id': int(c),
-                'x': x,
-                'y': y,
-                'width': width,
-                'height': height,
-                'prob': score
+                "class_id": int(c),
+                "x": x,
+                "y": y,
+                "width": width,
+                "height": height,
+                "prob": score,
             }
 
             detected.append(obj)
@@ -339,8 +354,7 @@ class ObjectDetection:
             self.detected_objects.append(d)
             if DEBUG:
                 print("==============================")
-                print("LABEL           : {}".format(
-                    self.tflite_labels[d["class_id"]]))
+                print("LABEL           : {}".format(self.tflite_labels[d["class_id"]]))
                 print("x               : {}".format(d["x"]))
                 print("y               : {}".format(d["y"]))
                 print("width           : {}".format(d["width"]))
@@ -353,10 +367,10 @@ class ObjectDetection:
 
     def draw_overlay_cb(self, overlay, context, timestamp, duration):
         """Callback to draw the overlay."""
-        if self.video_caps == None or not self.running:
+        if self.video_caps is None or not self.running:
             return
-        scale_height = self.VIDEO_HEIGHT/1080
-        scale_width = self.VIDEO_WIDTH/1920
+        scale_height = self.VIDEO_HEIGHT / 1080
+        scale_width = self.VIDEO_WIDTH / 1920
         scale_text = max(scale_height, scale_width)
 
         # mutex_lock alternative required
@@ -365,16 +379,17 @@ class ObjectDetection:
 
         drawed = 0
         context.select_font_face(
-            'Sans', cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
+            "Sans", cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD
+        )
         context.set_font_size(int(50.0 * scale_text))
         context.set_source_rgb(self.r, self.g, self.b)
 
         for obj in detected:
-            label = self.tflite_labels[obj['class_id']][:-1]
-            x = obj['x'] * self.VIDEO_WIDTH // self.MODEL_WIDTH
-            y = obj['y'] * self.VIDEO_HEIGHT // self.MODEL_HEIGHT
-            width = obj['width'] * self.VIDEO_WIDTH // self.MODEL_WIDTH
-            height = obj['height'] * self.VIDEO_HEIGHT // self.MODEL_HEIGHT
+            label = self.tflite_labels[obj["class_id"]][:-1]
+            x = obj["x"] * self.VIDEO_WIDTH // self.MODEL_WIDTH
+            y = obj["y"] * self.VIDEO_HEIGHT // self.MODEL_HEIGHT
+            width = obj["width"] * self.VIDEO_WIDTH // self.MODEL_WIDTH
+            height = obj["height"] * self.VIDEO_HEIGHT // self.MODEL_HEIGHT
 
             # draw rectangle
             context.rectangle(x, y, width, height)
@@ -392,56 +407,71 @@ class ObjectDetection:
         inference = self.tensor_filter.get_property("latency")
         context.set_font_size(int(25.0 * scale_text))
         context.move_to(
-            int(50 * scale_width),
-            int(self.VIDEO_HEIGHT-(100*scale_height)))
+            int(50 * scale_width), int(self.VIDEO_HEIGHT - (100 * scale_height))
+        )
         context.show_text("i.MX NNStreamer Detection Demo")
         if inference == 0:
             context.move_to(
-                int(50 * scale_width),
-                int(self.VIDEO_HEIGHT-(75*scale_height)))
+                int(50 * scale_width), int(self.VIDEO_HEIGHT - (75 * scale_height))
+            )
             context.show_text("FPS: ")
             context.move_to(
-                int(50 * scale_width),
-                int(self.VIDEO_HEIGHT-(50*scale_height)))
+                int(50 * scale_width), int(self.VIDEO_HEIGHT - (50 * scale_height))
+            )
             context.show_text("IPS: ")
         elif (
-            (GLib.get_monotonic_time() - self.reload_time) < 100000
-            and self.refresh_time != -1):
+            GLib.get_monotonic_time() - self.reload_time
+        ) < 100000 and self.refresh_time != -1:
             context.move_to(
-                int(50 * scale_width),
-                int(self.VIDEO_HEIGHT-(75*scale_height)))
+                int(50 * scale_width), int(self.VIDEO_HEIGHT - (75 * scale_height))
+            )
             context.show_text(
-                "FPS: " + "{:12.2f}".format(1/(self.refresh_time/1000000)) +
-                " (" + str(self.refresh_time/1000) + " ms)")
+                "FPS: "
+                + "{:12.2f}".format(1 / (self.refresh_time / 1000000))
+                + " ("
+                + str(self.refresh_time / 1000)
+                + " ms)"
+            )
             context.move_to(
-                int(50 * scale_width),
-                int(self.VIDEO_HEIGHT-(50*scale_height)))
+                int(50 * scale_width), int(self.VIDEO_HEIGHT - (50 * scale_height))
+            )
             context.show_text(
-                "IPS: " + "{:12.2f}".format(1/(self.inference/1000000)) +
-                " (" + str(self.inference/1000) + " ms)")
+                "IPS: "
+                + "{:12.2f}".format(1 / (self.inference / 1000000))
+                + " ("
+                + str(self.inference / 1000)
+                + " ms)"
+            )
         else:
             self.reload_time = GLib.get_monotonic_time()
             self.refresh_time = self.interval_time
             self.inference = self.tensor_filter.get_property("latency")
             context.move_to(
-                int(50 * scale_width),
-                int(self.VIDEO_HEIGHT-(75*scale_height)))
+                int(50 * scale_width), int(self.VIDEO_HEIGHT - (75 * scale_height))
+            )
             context.show_text(
-                "FPS: " + "{:12.2f}".format(1/(self.refresh_time/1000000)) +
-                " (" + str(self.refresh_time/1000) + " ms)")
+                "FPS: "
+                + "{:12.2f}".format(1 / (self.refresh_time / 1000000))
+                + " ("
+                + str(self.refresh_time / 1000)
+                + " ms)"
+            )
             context.move_to(
-                int(50 * scale_width),
-                int(self.VIDEO_HEIGHT-(50*scale_height)))
+                int(50 * scale_width), int(self.VIDEO_HEIGHT - (50 * scale_height))
+            )
             context.show_text(
-                "IPS: " + "{:12.2f}".format(1/(self.inference/1000000)) +
-                " (" + str(self.inference/1000) + " ms)")
-        if(self.first_frame):
+                "IPS: "
+                + "{:12.2f}".format(1 / (self.inference / 1000000))
+                + " ("
+                + str(self.inference / 1000)
+                + " ms)"
+            )
+        if self.first_frame:
             context.move_to(int(400 * scale_width), int(600 * scale_height))
-            context.set_font_size(int(200.0 * min(scale_width,scale_height)))
+            context.set_font_size(int(200.0 * min(scale_width, scale_height)))
             context.show_text("Loading...")
             self.first_frame = False
         context.fill()
-
 
     def on_bus_message(self, bus, message):
         """Callback for message.
@@ -451,24 +481,26 @@ class ObjectDetection:
         :return: None
         """
         if message.type == Gst.MessageType.EOS:
-            logging.info('received eos message')
+            logging.info("received eos message")
             self.loop.quit()
         elif message.type == Gst.MessageType.ERROR:
             error, debug = message.parse_error()
-            logging.warning('[error] %s : %s', error.message, debug)
+            logging.warning("[error] %s : %s", error.message, debug)
             self.loop.quit()
         elif message.type == Gst.MessageType.WARNING:
             error, debug = message.parse_warning()
-            logging.warning('[warning] %s : %s', error.message, debug)
+            logging.warning("[warning] %s : %s", error.message, debug)
         elif message.type == Gst.MessageType.STREAM_START:
-            logging.info('received start message')
+            logging.info("received start message")
         elif message.type == Gst.MessageType.QOS:
             data_format, processed, dropped = message.parse_qos_stats()
             format_str = Gst.Format.get_name(data_format)
             logging.debug(
-                '[qos] format[%s] processed[%d] dropped[%d]',
-                format_str, processed, dropped)
-
+                "[qos] format[%s] processed[%d] dropped[%d]",
+                format_str,
+                processed,
+                dropped,
+            )
 
     def set_window_title(self, name, title):
         """Set window title for X11.
@@ -479,37 +511,71 @@ class ObjectDetection:
         """
         element = self.pipeline.get_by_name(name)
         if element is not None:
-            pad = element.get_static_pad('sink')
+            pad = element.get_static_pad("sink")
             if pad is not None:
                 tags = Gst.TagList.new_empty()
-                tags.add_value(Gst.TagMergeMode.APPEND, 'title', title)
+                tags.add_value(Gst.TagMergeMode.APPEND, "title", title)
                 pad.send_event(Gst.Event.new_tag(tags))
 
-if __name__ == '__main__':
-    if(
-        len(sys.argv) != 7 and len(sys.argv) != 5
-        and len(sys.argv) != 9 and len(sys.argv) != 12 and len(sys.argv) != 6):
+
+if __name__ == "__main__":
+    if (
+        len(sys.argv) != 7
+        and len(sys.argv) != 5
+        and len(sys.argv) != 9
+        and len(sys.argv) != 12
+        and len(sys.argv) != 6
+    ):
         print(
-            "Usage: python3 nndetection.py <dev/video*/video file>" +
-            " <NPU/CPU> <model file> <label file>")
+            "Usage: python3 nndetection.py <dev/video*/video file>"
+            + " <NPU/CPU> <model file> <label file>"
+        )
         exit()
     # Get platform
     platform = os.uname().nodename
-    if(len(sys.argv) == 7):
-        example = ObjectDetection(platform, sys.argv[1],sys.argv[2],sys.argv[3],
-            sys.argv[4],sys.argv[5],sys.argv[6])
-    if(len(sys.argv) == 5):
-        example = ObjectDetection(platform, sys.argv[1],sys.argv[2],sys.argv[3],
-            sys.argv[4])
-    if(len(sys.argv) == 6):
-        example = ObjectDetection(platform, sys.argv[1],sys.argv[2],sys.argv[3],
-            sys.argv[4], sys.argv[5])
-    if(len(sys.argv) == 9):
-        example = ObjectDetection(platform, sys.argv[1],sys.argv[2],sys.argv[3],
-            sys.argv[4],sys.argv[5],sys.argv[6],sys.argv[7],sys.argv[8])
-    if(len(sys.argv) == 12):
-        example = ObjectDetection(platform, sys.argv[1],sys.argv[2],sys.argv[3],
-            sys.argv[4],sys.argv[5],sys.argv[6],sys.argv[7],sys.argv[8],
-            sys.argv[9],sys.argv[10],sys.argv[11])
+    if len(sys.argv) == 7:
+        example = ObjectDetection(
+            platform,
+            sys.argv[1],
+            sys.argv[2],
+            sys.argv[3],
+            sys.argv[4],
+            sys.argv[5],
+            sys.argv[6],
+        )
+    if len(sys.argv) == 5:
+        example = ObjectDetection(
+            platform, sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4]
+        )
+    if len(sys.argv) == 6:
+        example = ObjectDetection(
+            platform, sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5]
+        )
+    if len(sys.argv) == 9:
+        example = ObjectDetection(
+            platform,
+            sys.argv[1],
+            sys.argv[2],
+            sys.argv[3],
+            sys.argv[4],
+            sys.argv[5],
+            sys.argv[6],
+            int(sys.argv[7]),
+            int(sys.argv[8]),
+        )
+    if len(sys.argv) == 12:
+        example = ObjectDetection(
+            platform,
+            sys.argv[1],
+            sys.argv[2],
+            sys.argv[3],
+            sys.argv[4],
+            sys.argv[5],
+            sys.argv[6],
+            int(sys.argv[7]),
+            int(sys.argv[8]),
+            int(sys.argv[9]),
+            int(sys.argv[10]),
+            int(sys.argv[11]),
+        )
     example.run()
-

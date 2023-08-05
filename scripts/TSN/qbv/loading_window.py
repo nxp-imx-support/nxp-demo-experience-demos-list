@@ -7,12 +7,13 @@ loading window until new window gets opened
 """
 
 import gi
-import sys, subprocess
-gi.require_version('Gtk', '3.0')
+import sys
+
+gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk, GdkPixbuf, Gio, GLib
 
-class MyWindow(Gtk.Window):
 
+class MyWindow(Gtk.Window):
     def __init__(self):
         Gtk.Window.__init__(self)
         image = Gtk.Image()
@@ -28,13 +29,14 @@ class MyWindow(Gtk.Window):
         animation_path = "/home/root/.nxp-demo-experience/scripts/TSN/qbv/loading.gif"
         animation = GdkPixbuf.PixbufAnimation.new_from_file(animation_path)
         image.set_from_animation(animation)
-        if (sys.argv[1] == "launch"):
-           GLib.timeout_add_seconds(2.9, Gtk.main_quit)
-        elif (sys.argv[1] == "run_demo"):
-           GLib.timeout_add_seconds(19.7, Gtk.main_quit)
+        if sys.argv[1] == "launch":
+            GLib.timeout_add_seconds(2.9, Gtk.main_quit)
+        elif sys.argv[1] == "run_demo":
+            GLib.timeout_add_seconds(19.7, Gtk.main_quit)
         self.add(image)
         self.show_all()
+
+
 window = MyWindow()
 window.connect("destroy", Gtk.main_quit)
 Gtk.main()
-

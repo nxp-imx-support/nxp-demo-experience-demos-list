@@ -1,13 +1,10 @@
 #!/bin/bash
 
-###
-#Copyright 2023 NXP
+# Copyright 2023 NXP
+# SPDX-License-Identifier: BSD-3-Clause
 #
-#SPDX-License-Identifier: BSD-3-Clause
-#
-#This scripts assigns IP to the interfaces
-#of the i.mx8mp board.
-###
+# This scripts assigns IP to the interfaces
+# of the i.mx8mp board.
 
 ifconfig eth0 192.168.0.1 up
 sleep 0.2

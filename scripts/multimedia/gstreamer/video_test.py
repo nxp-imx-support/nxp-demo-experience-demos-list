@@ -1,7 +1,7 @@
 """
 Video Test Demo.
 
-Copyright 2022 NXP
+Copyright 2022-2023 NXP
 SPDX-License-Identifier: BSD-3-Clause
 
 This demo is meant for users to try out cameras and displays connected to a
@@ -12,14 +12,16 @@ import glob
 import threading
 import subprocess
 import os
-
 import gi
+
 gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk, Gio, GLib
 
+
 def run_pipeline(pipeline, type):
     """Run the pipeline the user selects."""
-    subprocess.run(pipeline.split(' '))
+    subprocess.run(pipeline.split(" "))
+
 
 class MainWindow(Gtk.Window):
     """Main UI window."""
@@ -30,8 +32,7 @@ class MainWindow(Gtk.Window):
         self.set_default_size(450, 200)
         self.set_resizable(False)
         self.set_border_width(10)
-        main_grid = Gtk.Grid(
-            row_homogeneous=True, column_spacing=15, row_spacing=15)
+        main_grid = Gtk.Grid(row_homogeneous=True, column_spacing=15, row_spacing=15)
         main_grid.set_margin_end(10)
         main_grid.set_margin_start(10)
 
@@ -47,12 +48,10 @@ class MainWindow(Gtk.Window):
         header.pack_end(quit_button)
         quit_button.connect("clicked", self.on_exit)
 
-        source_label = Gtk.Label(
-            label="Source"
-        )
+        source_label = Gtk.Label(label="Source")
 
         self.devices = ["Test Source"]
-        for device in glob.glob('/dev/video*'):
+        for device in glob.glob("/dev/video*"):
             self.devices.append(device)
         self.source_select = Gtk.ComboBoxText()
         for option in self.devices:
@@ -60,12 +59,16 @@ class MainWindow(Gtk.Window):
         self.source_select.set_active(0)
         self.source_select.set_hexpand(True)
 
-        resolution_label = Gtk.Label(
-            label="Resolution"
-        )
+        resolution_label = Gtk.Label(label="Resolution")
 
-        resolutions = ["3840x2160", "2560x1440", "1920x1080",
-        "1280x720", "800x600", "720x480"]
+        resolutions = [
+            "3840x2160",
+            "2560x1440",
+            "1920x1080",
+            "1280x720",
+            "800x600",
+            "720x480",
+        ]
         self.resolution_select = Gtk.ComboBoxText()
         for res in resolutions:
             self.resolution_select.append_text(res)
@@ -104,18 +107,17 @@ class MainWindow(Gtk.Window):
         else:
             source = "v4l2src device=" + source
         resolution = self.resolution_select.get_active_text()
-        width = resolution[:resolution.find("x")]
-        height = resolution[resolution.find("x")+1:]
+        width = resolution[: resolution.find("x")]
+        height = resolution[resolution.find("x") + 1 :]
         format = "video/x-raw,width=" + width + ",height=" + height
         if self.scale_check.get_active():
             sink = "waylandsink"
         else:
-            sink = (
-                "waylandsink window-width=" + width + " window-height=" +
-                height)
+            sink = "waylandsink window-width=" + width + " window-height=" + height
         pipeline = "gst-launch-1.0 " + source + " ! " + format + " ! " + sink
         stream_thread = threading.Thread(
-            target=run_pipeline, args=(pipeline,"gstreamer"))
+            target=run_pipeline, args=(pipeline, "gstreamer")
+        )
         stream_thread.start()
         if source != "videotestsrc":
             index = self.devices.index(self.source_select.get_active_text())
@@ -126,10 +128,11 @@ class MainWindow(Gtk.Window):
         self.resolution_select.set_sensitive(True)
         self.scale_check.set_sensitive(True)
         self.launch_button.set_sensitive(True)
-    
+
     def on_exit(self, widget):
         subprocess.run(["pkill", "-P", str(os.getpid())])
         Gtk.main_quit()
+
 
 if __name__ == "__main__":
     main_window = MainWindow()
