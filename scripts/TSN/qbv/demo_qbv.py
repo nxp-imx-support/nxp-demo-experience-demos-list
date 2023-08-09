@@ -73,7 +73,7 @@ class DialogWindow(Gtk.Window):
             ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
             ssh.connect(hostIP, port=22, username=hostUserName, password=hostPwd)
             stdin, stdout, stderr = ssh.exec_command(
-                "v4l2-ctl --list-devices | grep -A 9999 -i camera | grep -o '/dev/video[0-9]' | awk 'NR==1 || NR==3 || NR==5 || NR==7 || NR==9'"
+                "v4l2-ctl --list-devices | grep -A 9999 -i cam | tail -n +1 | grep -o '/dev/video[0-9]' | awk 'NR==1 || NR==3 || NR==5 || NR==7 || NR==9'"
             )
             output = stdout.read().decode("utf-8")
             detected_ports = output.strip().split("\n")
