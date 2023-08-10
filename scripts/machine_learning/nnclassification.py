@@ -17,6 +17,7 @@ import os
 import sys
 import logging
 import gi
+import re
 import cairo
 
 gi.require_version("Gst", "1.0")
@@ -77,6 +78,13 @@ class NNStreamerExample:
         self.b = b
         self.g = g
         self.platform = platform
+        self.current_framerate = 1000
+
+        # Define PXP or GPU2D converter
+        if self.platform == "imx93evk":
+            self.nxp_converter = "imxvideoconvert_pxp "
+        else:
+            self.nxp_converter = "imxvideoconvert_g2d "
 
         if not self.tflite_init():
             raise Exception
@@ -87,17 +95,27 @@ class NNStreamerExample:
         """Starts pipeline and run demo"""
 
         if self.backend == "CPU":
-            backend = "true:cpu custom=NumThreads:4"
+            if self.platform == "imx93evk":
+                backend = "true:cpu custom=NumThreads:2"
+            else:
+                backend = "true:cpu custom=NumThreads:4"
         elif self.backend == "GPU":
             os.environ["USE_GPU_INFERENCE"] = "1"
             backend = (
                 "true:gpu custom=Delegate:External," "ExtDelegateLib:libvx_delegate.so"
             )
         else:
-            os.environ["USE_GPU_INFERENCE"] = "0"
-            backend = (
-                "true:npu custom=Delegate:External," "ExtDelegateLib:libvx_delegate.so"
-            )
+            if self.platform == "imx93evk":
+                backend = (
+                    "true:npu custom=Delegate:External,"
+                    "ExtDelegateLib:libethosu_delegate.so"
+                )
+            else:
+                os.environ["USE_GPU_INFERENCE"] = "0"
+                backend = (
+                    "true:npu custom=Delegate:External,"
+                    "ExtDelegateLib:libvx_delegate.so"
+                )
 
         if self.display == "X11":
             display = "ximagesink name=img_tensor"
@@ -105,39 +123,41 @@ class NNStreamerExample:
             self.print_time = GLib.get_monotonic_time()
             display = "fakesink "
         else:
-            display = "waylandsink sync=false name=img_tensor"
+            display = "fpsdisplaysink name=img_tensor text-overlay=false video-sink=waylandsink sync=false"
 
+        # main loop
+        self.loop = GLib.MainLoop()
         self.past_time = GLib.get_monotonic_time()
         self.interval_time = -1
         self.label_time = GLib.get_monotonic_time()
 
+        # Create decoder for video file
         if self.platform == "imx8qmmek":
-            decoder = "h264parse ! v4l2h264dec ! imxvideoconvert_g2d "
+            decoder = "h264parse ! v4l2h264dec ! " + self.nxp_converter
         else:
             decoder = "vpudec "
 
         if "/dev/video" in self.device:
             pipeline = "v4l2src name=cam_src device=" + self.device
-            pipeline += " ! imxvideoconvert_g2d ! video/x-raw,width="
+            pipeline += " ! " + self.nxp_converter + "! video/x-raw,width="
             pipeline += str(int(self.VIDEO_WIDTH)) + ",height="
             pipeline += str(int(self.VIDEO_HEIGHT))
-            pipeline += ",format=BGRx ! tee name=t_raw"
+            pipeline += ",framerate=30/1,format=BGRx ! tee name=t_raw"
         else:
             pipeline = "filesrc location=" + self.device + " ! qtdemux"
             pipeline += " ! " + decoder + "! tee name=t_raw"
-        # main loop
-        self.loop = GLib.MainLoop()
-        pipeline += " t_raw. ! imxvideoconvert_g2d ! "
-        pipeline += "video/x-raw,width=224,height=224,format=RGBA ! "
-        pipeline += "queue max-size-buffers=2 leaky=2 ! "
+
+        pipeline += " t_raw. ! " + self.nxp_converter
+        pipeline += "! video/x-raw,width=224,height=224 ! "
+        pipeline += "queue max-size-buffers=1 leaky=2 ! "
         pipeline += "videoconvert ! video/x-raw,format=RGB ! "
         pipeline += "tensor_converter ! tensor_filter name=tensor_filter "
         pipeline += "framework=tensorflow-lite model="
         pipeline += self.tflite_model + " accelerator=" + backend
         pipeline += " silent=FALSE latency=1 ! tensor_sink name=tensor_sink"
-        pipeline += " t_raw. ! imxvideoconvert_g2d ! cairooverlay "
-        pipeline += "name=tensor_res draw-on-transparent-surface=false ! "
-        pipeline += "queue max-size-buffers=2 leaky=2 ! " + display
+        pipeline += " t_raw. ! " + self.nxp_converter
+        pipeline += "! cairooverlay name=tensor_res ! "
+        pipeline += "queue max-size-buffers=1 leaky=2 ! " + display
 
         # init pipeline
         self.pipeline = Gst.parse_launch(pipeline)
@@ -148,6 +168,7 @@ class NNStreamerExample:
         bus.connect("message", self.on_bus_message)
 
         self.tensor_filter = self.pipeline.get_by_name("tensor_filter")
+        self.wayland_sink = self.pipeline.get_by_name("img_tensor")
 
         # tensor sink signal : new data callback
         tensor_sink = self.pipeline.get_by_name("tensor_sink")
@@ -321,6 +342,13 @@ class NNStreamerExample:
         scale_width = self.VIDEO_WIDTH / 1920
         scale_text = max(scale_height, scale_width)
         inference = self.tensor_filter.get_property("latency")
+
+        # Get current framerate and avg. framerate
+        output_wayland = self.wayland_sink.get_property("last-message")
+        if output_wayland:
+            current_text = re.findall(r"current:\s[\d]+[.\d]*", output_wayland)[0]
+            self.current_framerate = float(re.findall(r"[\d]+[.\d]*", current_text)[0])
+
         context.select_font_face(
             "Sans", cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD
         )
@@ -330,7 +358,7 @@ class NNStreamerExample:
         context.move_to(
             int(50 * scale_width), int(self.VIDEO_HEIGHT - (100 * scale_height))
         )
-        context.show_text("i.MX NNStreamer Identification Demo")
+        context.show_text("i.MX NNStreamer Classification Demo")
         if inference == 0:
             context.move_to(
                 int(50 * scale_width), int(self.VIDEO_HEIGHT - (75 * scale_height))
@@ -347,21 +375,17 @@ class NNStreamerExample:
                 int(50 * scale_width), int(self.VIDEO_HEIGHT - (75 * scale_height))
             )
             context.show_text(
-                "FPS: "
-                + "{:12.2f}".format(1 / (self.refresh_time / 1000000))
-                + " ("
-                + str(self.refresh_time / 1000)
-                + " ms)"
+                "FPS: {:6.2f} ({:6.2f} ms)".format(
+                    self.current_framerate, 1.0 / self.current_framerate * 1000
+                )
             )
             context.move_to(
                 int(50 * scale_width), int(self.VIDEO_HEIGHT - (50 * scale_height))
             )
             context.show_text(
-                "IPS: "
-                + "{:12.2f}".format(1 / (self.inference / 1000000))
-                + " ("
-                + str(self.inference / 1000)
-                + " ms)"
+                "IPS: {:6.2f} ({:6.2f} ms)".format(
+                    1 / (inference / 1000000), inference / 1000
+                )
             )
         else:
             self.reload_time = GLib.get_monotonic_time()
@@ -371,21 +395,17 @@ class NNStreamerExample:
                 int(50 * scale_width), int(self.VIDEO_HEIGHT - (75 * scale_height))
             )
             context.show_text(
-                "FPS: "
-                + "{:12.2f}".format(1 / (self.refresh_time / 1000000))
-                + " ("
-                + str(self.refresh_time / 1000)
-                + " ms)"
+                "FPS: {:6.2f} ({:6.2f} ms)".format(
+                    self.current_framerate, 1.0 / self.current_framerate * 1000
+                )
             )
             context.move_to(
                 int(50 * scale_width), int(self.VIDEO_HEIGHT - (50 * scale_height))
             )
             context.show_text(
-                "IPS: "
-                + "{:12.2f}".format(1 / (self.inference / 1000000))
-                + " ("
-                + str(self.inference / 1000)
-                + " ms)"
+                "IPS: {:6.2f} ({:6.2f} ms)".format(
+                    1 / (inference / 1000000), inference / 1000
+                )
             )
         context.move_to(int(50 * scale_width), int(100 * scale_height))
         context.set_font_size(int(100 * scale_text))

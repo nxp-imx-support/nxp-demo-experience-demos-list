@@ -33,11 +33,15 @@ class MLLaunch(Gtk.Window):
         os.environ["VIV_VX_CACHE_BINARY_GRAPH_DIR"] = "/home/root/.cache/demoexperience"
         os.environ["VIV_VX_ENABLE_CACHE_GRAPH_BINARY"] = "1"
 
+        # Get platform
+        self.platform = os.uname().nodename
+
         # Get widget properties
+        devices = []
         if self.demo != "brand" and self.demo != "selfie_nn":
-            devices = ["Example Video"]
-        else:
-            devices = []
+            if self.platform != "imx93evk":
+                devices.append("Example Video")
+
         for device in glob.glob("/dev/video*"):
             devices.append(device)
 
@@ -50,10 +54,7 @@ class MLLaunch(Gtk.Window):
             backends_available.insert(1, "GPU")
         if os.path.exists("/usr/lib/libneuralnetworks.so") and self.demo != "brand":
             backends_available.insert(0, "NPU")
-        if (
-            os.path.exists("/usr/lib/libethosu_delegate.so")
-            and self.demo == "selfie_nn"
-        ):
+        if os.path.exists("/usr/lib/libethosu_delegate.so"):
             backends_available.insert(0, "NPU")
             backends_available.pop()
 
@@ -186,9 +187,6 @@ class MLLaunch(Gtk.Window):
             header.set_title("NNStreamer Demo")
         header.set_subtitle("NNStreamer Examples")
 
-        # Get platform
-        self.platform = os.uname().nodename
-
     def start(self, button):
         """Starts the ML Demo with selected settings"""
         self.update_time = GLib.get_monotonic_time()
@@ -233,14 +231,20 @@ class MLLaunch(Gtk.Window):
             elif device == -1 or device == -2 or device == -3:
                 error = "detect_example.mov"
         if self.demo == "id":
-            model = utils.download_file("mobilenet_v1_1.0_224_quant.tflite")
+            if self.platform == "imx93evk":
+                model = utils.download_file("mobilenet_v1_1.0_224_quant_vela.tflite")
+            else:
+                model = utils.download_file("mobilenet_v1_1.0_224_quant.tflite")
             labels = utils.download_file("1_1.0_224_labels.txt")
             if self.device_combo.get_active_text() == "Example Video":
                 device = utils.download_file("id_example.mov")
             else:
                 device = self.device_combo.get_active_text()
             if model == -1 or model == -2 or model == -3:
-                error = "mobilenet_v1_1.0_224_quant.tflite"
+                if self.platform == "imx93evk":
+                    error = "mobilenet_v1_1.0_224_quant_vela.tflite"
+                else:
+                    error = "mobilenet_v1_1.0_224_quant.tflite"
             elif labels == -1 or labels == -2 or labels == -3:
                 error = "1_1.0_224_labels.txt"
             elif device == -1 or device == -2 or device == -3:
@@ -460,7 +464,7 @@ class MLLaunch(Gtk.Window):
 
             if refresh_time != 0 and inference_time != 0:
                 # Print pipeline information
-                if self.demo == "selfie_nn":
+                if self.demo == "selfie_nn" or self.demo == "id":
                     self.time_label.set_text(
                         "{:12.2f} ms".format(1.0 / time.current_framerate * 1000.0)
                     )

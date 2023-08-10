@@ -4,7 +4,7 @@
              "name": "Object Classification",
              "id": "obj_class_nn",
              "executable": "python3 /home/root/.nxp-demo-experience/scripts/machine_learning/MLDemoLauncher.py id",
-             "compatible": "imx8mp, imx8mm, imx8qmmek",
+             "compatible": "imx8mp, imx93, imx8mm, imx8qmmek",
              "screenshot": "ml_id.png",
              "icon": "photo-video-solid.svg",
              "description": "An example of how to use NNStreamer to classify objects in a video or camera feed. An internet connection may be required."
