@@ -13,11 +13,11 @@ import threading
 import subprocess
 import sys
 
-sys.path.append("/home/root/.nxp-demo-experience/scripts/")
-import utils
-
 gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk, GLib, Gio, Gdk
+
+sys.path.append("/home/root/.nxp-demo-experience/scripts/")
+import utils
 
 
 class DownloadGUI(Gtk.Window):
@@ -95,7 +95,12 @@ class DownloadGUI(Gtk.Window):
         GLib.idle_add(self.status_label.set_text, "\n\nRunning NPU Model...")
         npu_out = (
             subprocess.check_output(
-                [benchmark_path, "--num_threads=2", "--graph=" + self.npu_model]
+                [
+                    benchmark_path,
+                    "--num_threads=2",
+                    "--graph=" + self.npu_model,
+                    "--external_delegate_path=/usr/lib/libethosu_delegate.so",
+                ]
             )
             .decode("utf-8")
             .splitlines()
@@ -133,7 +138,7 @@ class DownloadGUI(Gtk.Window):
         """Get the time (in ms) from the output"""
         for line in output:
             if line.startswith("Inference timings in us:"):
-                time = float(line[line.find("Inference (avg):") + 17 :]) / 1000
+                time = float(line[line.find("Inference (avg):") + 17 :]) / 1000.0
                 return time
 
 
