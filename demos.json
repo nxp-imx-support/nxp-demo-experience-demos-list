@@ -12,7 +12,7 @@
              "name": "Object Detection",
              "id": "obj_detect_nn",
              "executable": "python3 /home/root/.nxp-demo-experience/scripts/machine_learning/MLDemoLauncher.py detect",
-             "compatible": "imx8mp, imx8mm, imx8qmmek",
+             "compatible": "imx8mp, imx93, imx8mm, imx8qmmek",
              "screenshot": "ml_detect.png",
              "icon": "photo-video-solid.svg",
              "description": "An example of how to use NNStreamer to detect objects in a video or camera feed. An internet connection may be required."

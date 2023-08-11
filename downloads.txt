@@ -4,6 +4,12 @@ url:https://github.com/google-coral/test_data/raw/master/ssd_mobilenet_v2_coco_q
 alt_url:https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.1.22_2.0.0/models/ssd_mobilenet_v2_coco_quant_postprocess.tflite
 sha:
 
+name:mobilenet_ssd_v2_coco_quant_postprocess_vela.tflite
+path:
+url:
+alt_url:
+sha:
+
 name:coco_labels.txt
 path:/usr/share/gstnninferencedemo/google-coral/examples-camera/coco_labels.txt
 url:https://github.com/google-coral/test_data/raw/master/coco_labels.txt

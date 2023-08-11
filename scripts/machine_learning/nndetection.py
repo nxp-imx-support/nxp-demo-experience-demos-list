@@ -10,12 +10,13 @@ Original Source: https://github.com/nnstreamer/nnstreamer-example
 This demo shows how you can use the NNStreamer to detect objects.
 
 From the original source, this was modified to better work with the a
-GUI and to get better performance on the i.MX 8M Plus.
+GUI and to get better performance on the i.MX 8M Plus and i.MX93.
 """
 
 import os
 import sys
 import gi
+import re
 import logging
 import numpy as np
 import cairo
@@ -93,6 +94,13 @@ class ObjectDetection:
         self.b = b
         self.g = g
         self.platform = platform
+        self.current_framerate = 1000
+
+        # Define PXP or GPU2D converter
+        if self.platform == "imx93evk":
+            self.nxp_converter = "imxvideoconvert_pxp "
+        else:
+            self.nxp_converter = "imxvideoconvert_g2d "
 
         if not self.tflite_init():
             raise Exception
@@ -103,17 +111,27 @@ class ObjectDetection:
         """Starts pipeline and run demo"""
 
         if self.backend == "CPU":
-            backend = "true:CPU custom=NumThreads:4"
+            if self.platform == "imx93evk":
+                backend = "true:cpu custom=NumThreads:2"
+            else:
+                backend = "true:cpu custom=NumThreads:4"
         elif self.backend == "GPU":
             os.environ["USE_GPU_INFERENCE"] = "1"
             backend = (
                 "true:gpu custom=Delegate:External," "ExtDelegateLib:libvx_delegate.so"
             )
         else:
-            os.environ["USE_GPU_INFERENCE"] = "0"
-            backend = (
-                "true:npu custom=Delegate:External," "ExtDelegateLib:libvx_delegate.so"
-            )
+            if self.platform == "imx93evk":
+                backend = (
+                    "true:npu custom=Delegate:External,"
+                    "ExtDelegateLib:libethosu_delegate.so"
+                )
+            else:
+                os.environ["USE_GPU_INFERENCE"] = "0"
+                backend = (
+                    "true:npu custom=Delegate:External,"
+                    "ExtDelegateLib:libvx_delegate.so"
+                )
 
         if self.display == "X11":
             display = "ximagesink name=img_tensor "
@@ -121,7 +139,7 @@ class ObjectDetection:
             self.print_time = GLib.get_monotonic_time()
             display = "fakesink "
         else:
-            display = "waylandsink sync=false name=img_tensor "
+            display = "fpsdisplaysink name=img_tensor text-overlay=false video-sink=waylandsink sync=false"
 
         # main loop
         self.loop = GLib.MainLoop()
@@ -130,34 +148,34 @@ class ObjectDetection:
         self.reload_time = -1
         self.interval_time = 999999
 
+        # Create decoder for video file
         if self.platform == "imx8qmmek":
-            decoder = "h264parse ! v4l2h264dec ! imxvideoconvert_g2d "
+            decoder = "h264parse ! v4l2h264dec ! " + self.nxp_converter
         else:
             decoder = "vpudec "
 
         if "/dev/video" in self.device:
             gst_launch_cmdline = "v4l2src name=cam_src device=" + self.device
-            gst_launch_cmdline += " ! imxvideoconvert_g2d ! video/x-raw,width="
+            gst_launch_cmdline += " ! " + self.nxp_converter + "! video/x-raw,width="
             gst_launch_cmdline += str(int(self.VIDEO_WIDTH)) + ",height="
             gst_launch_cmdline += str(int(self.VIDEO_HEIGHT))
-            gst_launch_cmdline += ",format=BGRx ! tee name=t"
+            gst_launch_cmdline += ",framerate=30/1,format=BGRx ! tee name=t"
         else:
             gst_launch_cmdline = "filesrc location=" + self.device
             gst_launch_cmdline += " ! qtdemux ! " + decoder + "! tee name=t"
 
-        gst_launch_cmdline += " t. ! imxvideoconvert_g2d !  video/x-raw,"
+        gst_launch_cmdline += " t. ! " + self.nxp_converter + "!  video/x-raw,"
         gst_launch_cmdline += "width={:d},".format(self.MODEL_WIDTH)
         gst_launch_cmdline += "height={:d},".format(self.MODEL_HEIGHT)
-        gst_launch_cmdline += "format=ARGB ! imxvideoconvert_g2d ! "
-        gst_launch_cmdline += "queue max-size-buffers=2 leaky=2 ! "
+        gst_launch_cmdline += " ! queue max-size-buffers=2 leaky=2 ! "
         gst_launch_cmdline += "videoconvert ! video/x-raw,format=RGB !"
         gst_launch_cmdline += " tensor_converter ! tensor_filter"
-        gst_launch_cmdline += " framework=tensorflow2-lite model="
+        gst_launch_cmdline += " framework=tensorflow-lite model="
         gst_launch_cmdline += self.tflite_model + " accelerator=" + backend
         gst_launch_cmdline += " silent=FALSE name=tensor_filter latency=1 ! "
         gst_launch_cmdline += "tensor_sink name=tensor_sink t. ! "
-        gst_launch_cmdline += " imxvideoconvert_g2d !"
-        gst_launch_cmdline += " cairooverlay name=tensor_res ! "
+        gst_launch_cmdline += self.nxp_converter + "! "
+        gst_launch_cmdline += "cairooverlay name=tensor_res ! "
         gst_launch_cmdline += "queue max-size-buffers=2 leaky=2 ! "
         gst_launch_cmdline += display
 
@@ -169,6 +187,7 @@ class ObjectDetection:
         bus.connect("message", self.on_bus_message)
 
         self.tensor_filter = self.pipeline.get_by_name("tensor_filter")
+        self.wayland_sink = self.pipeline.get_by_name("img_tensor")
 
         # tensor sink signal : new data callback
         tensor_sink = self.pipeline.get_by_name("tensor_sink")
@@ -405,6 +424,12 @@ class ObjectDetection:
                 break
 
         inference = self.tensor_filter.get_property("latency")
+        # Get current framerate and avg. framerate
+        output_wayland = self.wayland_sink.get_property("last-message")
+        if output_wayland:
+            current_text = re.findall(r"current:\s[\d]+[.\d]*", output_wayland)[0]
+            self.current_framerate = float(re.findall(r"[\d]+[.\d]*", current_text)[0])
+
         context.set_font_size(int(25.0 * scale_text))
         context.move_to(
             int(50 * scale_width), int(self.VIDEO_HEIGHT - (100 * scale_height))
@@ -426,21 +451,17 @@ class ObjectDetection:
                 int(50 * scale_width), int(self.VIDEO_HEIGHT - (75 * scale_height))
             )
             context.show_text(
-                "FPS: "
-                + "{:12.2f}".format(1 / (self.refresh_time / 1000000))
-                + " ("
-                + str(self.refresh_time / 1000)
-                + " ms)"
+                "FPS: {:6.2f} ({:6.2f} ms)".format(
+                    self.current_framerate, 1.0 / self.current_framerate * 1000
+                )
             )
             context.move_to(
                 int(50 * scale_width), int(self.VIDEO_HEIGHT - (50 * scale_height))
             )
             context.show_text(
-                "IPS: "
-                + "{:12.2f}".format(1 / (self.inference / 1000000))
-                + " ("
-                + str(self.inference / 1000)
-                + " ms)"
+                "IPS: {:6.2f} ({:6.2f} ms)".format(
+                    1 / (inference / 1000000), inference / 1000
+                )
             )
         else:
             self.reload_time = GLib.get_monotonic_time()
@@ -450,21 +471,17 @@ class ObjectDetection:
                 int(50 * scale_width), int(self.VIDEO_HEIGHT - (75 * scale_height))
             )
             context.show_text(
-                "FPS: "
-                + "{:12.2f}".format(1 / (self.refresh_time / 1000000))
-                + " ("
-                + str(self.refresh_time / 1000)
-                + " ms)"
+                "FPS: {:6.2f} ({:6.2f} ms)".format(
+                    self.current_framerate, 1.0 / self.current_framerate * 1000
+                )
             )
             context.move_to(
                 int(50 * scale_width), int(self.VIDEO_HEIGHT - (50 * scale_height))
             )
             context.show_text(
-                "IPS: "
-                + "{:12.2f}".format(1 / (self.inference / 1000000))
-                + " ("
-                + str(self.inference / 1000)
-                + " ms)"
+                "IPS: {:6.2f} ({:6.2f} ms)".format(
+                    1 / (inference / 1000000), inference / 1000
+                )
             )
         if self.first_frame:
             context.move_to(int(400 * scale_width), int(600 * scale_height))

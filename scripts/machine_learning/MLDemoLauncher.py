@@ -216,16 +216,20 @@ class MLLaunch(Gtk.Window):
             g = 0
             b = 0
         if self.demo == "detect":
-            model = utils.download_file(
-                "mobilenet_ssd_v2_coco_quant_postprocess.tflite"
-            )
+            if self.platform == "imx93evk":
+                model = utils.download_file("mobilenet_ssd_v2_coco_quant_postprocess_vela.tflite")
+            else:
+                model = utils.download_file("mobilenet_ssd_v2_coco_quant_postprocess.tflite")
             labels = utils.download_file("coco_labels.txt")
             if self.device_combo.get_active_text() == "Example Video":
                 device = utils.download_file("detect_example.mov")
             else:
                 device = self.device_combo.get_active_text()
             if model == -1 or model == -2 or model == -3:
-                error = "mobilenet_ssd_v2_coco_quant_postprocess.tflite"
+                if self.platform == "imx93evk":
+                    error = "mobilenet_ssd_v2_coco_quant_postprocess_vela.tflite"
+                else:
+                    error = "mobilenet_ssd_v2_coco_quant_postprocess.tflite"
             elif labels == -1 or labels == -2 or labels == -3:
                 error = "coco_labels.txt"
             elif device == -1 or device == -2 or device == -3:
@@ -464,7 +468,7 @@ class MLLaunch(Gtk.Window):
 
             if refresh_time != 0 and inference_time != 0:
                 # Print pipeline information
-                if self.demo == "selfie_nn" or self.demo == "id":
+                if self.demo == "selfie_nn" or self.demo == "id" or self.demo == "detect":
                     self.time_label.set_text(
                         "{:12.2f} ms".format(1.0 / time.current_framerate * 1000.0)
                     )
