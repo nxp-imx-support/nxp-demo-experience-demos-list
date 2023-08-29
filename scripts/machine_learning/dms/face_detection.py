@@ -20,7 +20,10 @@ def sigmoid(x):
 
 class MediapipeFace(object):
     def __init__(self, model_path, threshold=0.75):
-        self.interpreter = tflite.Interpreter(model_path=model_path)
+        ext_delegate = tflite.load_delegate("/usr/lib/libethosu_delegate.so")
+        self.interpreter = tflite.Interpreter(
+            model_path=model_path, num_threads=2, experimental_delegates=[ext_delegate]
+        )
         self.interpreter.allocate_tensors()
 
         self.input_index = self.interpreter.get_input_details()[0]["index"]

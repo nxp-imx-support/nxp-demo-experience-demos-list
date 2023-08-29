@@ -8,13 +8,16 @@ import tflite_runtime.interpreter as tflite
 
 class FaceLandmark(object):
     def __init__(self, model_path):
-        self.interpreter = tflite.Interpreter(model_path=model_path)
+        ext_delegate = tflite.load_delegate("/usr/lib/libethosu_delegate.so")
+        self.interpreter = tflite.Interpreter(
+            model_path=model_path, num_threads=2, experimental_delegates=[ext_delegate]
+        )
         self.interpreter.allocate_tensors()
 
         self.input_index = self.interpreter.get_input_details()[0]["index"]
         self.input_shape = self.interpreter.get_input_details()[0]["shape"]
-        self.landmark_index = self.interpreter.get_output_details()[1]["index"]
-        self.score_index = self.interpreter.get_output_details()[0]["index"]
+        self.landmark_index = self.interpreter.get_output_details()[0]["index"]
+        self.score_index = self.interpreter.get_output_details()[1]["index"]
 
     def _pre_processing(self, input_data):
         input_data = cv2.cvtColor(input_data, cv2.COLOR_BGR2RGB)
