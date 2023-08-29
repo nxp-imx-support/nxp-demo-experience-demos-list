@@ -39,13 +39,16 @@ class Eye(object):
     ]
 
     def __init__(self, model_path):
-        self.interpreter = tflite.Interpreter(model_path=model_path)
+        ext_delegate = tflite.load_delegate("/usr/lib/libethosu_delegate.so")
+        self.interpreter = tflite.Interpreter(
+            model_path=model_path, num_threads=2, experimental_delegates=[ext_delegate]
+        )
         self.interpreter.allocate_tensors()
 
         self.input_index = self.interpreter.get_input_details()[0]["index"]
         self.input_shape = self.interpreter.get_input_details()[0]["shape"]
-        self.eye_index = self.interpreter.get_output_details()[0]["index"]
-        self.iris_index = self.interpreter.get_output_details()[1]["index"]
+        self.eye_index = self.interpreter.get_output_details()[1]["index"]
+        self.iris_index = self.interpreter.get_output_details()[0]["index"]
 
     def get_eye_roi(self, face_landmarks, side):
         if side == 0:
