@@ -52,7 +52,7 @@ class MLLaunch(Gtk.Window):
             and self.demo != "selfie_nn"
         ):
             backends_available.insert(1, "GPU")
-        if os.path.exists("/usr/lib/libneuralnetworks.so") and self.demo != "brand":
+        if os.path.exists("/usr/lib/libneuralnetworks.so") and self.demo != "brand" and self.platform != "imx8qmmek":
             backends_available.insert(0, "NPU")
         if os.path.exists("/usr/lib/libethosu_delegate.so"):
             backends_available.insert(0, "NPU")
