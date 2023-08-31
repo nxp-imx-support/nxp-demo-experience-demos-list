@@ -112,7 +112,7 @@ class NNStreamerExample:
         self.label_time = GLib.get_monotonic_time()
 
         if self.platform == "imx8qmmek":
-            decoder = "h264parse ! v4l2h264dec ! imxvideoconvert_g2d "
+            decoder = "h264parse ! v4l2h264dec "
         else:
             decoder = "vpudec "
 
