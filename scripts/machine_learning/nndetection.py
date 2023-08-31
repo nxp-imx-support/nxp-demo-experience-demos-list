@@ -150,7 +150,7 @@ class ObjectDetection:
 
         # Create decoder for video file
         if self.platform == "imx8qmmek":
-            decoder = "h264parse ! v4l2h264dec ! " + self.nxp_converter
+            decoder = "h264parse ! v4l2h264dec "
         else:
             decoder = "vpudec "
 
