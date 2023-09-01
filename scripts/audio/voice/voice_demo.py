@@ -27,18 +27,25 @@ class VoiceGUI(Gtk.Window):
 
     WINDOW = "--Window [0,0,480,360]"
     EXE = [
-        "/opt/imx-gpu-sdk/GLES2/Bloom/GLES2.Bloom_Wayland " + WINDOW,
-        "/opt/imx-gpu-sdk/GLES2/Blur/GLES2.Blur_Wayland " + WINDOW,
-        "/opt/imx-gpu-sdk/GLES2/EightLayerBlend/GLES2.EightLayerBlend_Wayland "
+        "/opt/imx-gpu-sdk/GLES2/Bloom___Wayland_XDG/GLES2.Bloom___Wayland_XDG "
         + WINDOW,
-        "/opt/imx-gpu-sdk/GLES2/FractalShader/GLES2.FractalShader_Wayland " + WINDOW,
-        "/opt/imx-gpu-sdk/GLES2/LineBuilder101/GLES2.LineBuilder101_Wayland " + WINDOW,
-        "/opt/imx-gpu-sdk/GLES2/S03_Transform/GLES2.S03_Transform_Wayland " + WINDOW,
-        "/opt/imx-gpu-sdk/GLES2/S04_Projection/GLES2.S04_Projection_Wayland " + WINDOW,
-        "/opt/imx-gpu-sdk/GLES2/S06_Texturing/GLES2.S06_Texturing_Wayland " + WINDOW,
-        "/opt/imx-gpu-sdk/GLES2/S07_EnvMapping/GLES2.S07_EnvMapping_Wayland " + WINDOW,
-        "/opt/imx-gpu-sdk/GLES2/S08_EnvMappingRefraction/GLES2.S08_EnvMapping"
-        "Refraction_Wayland " + WINDOW,
+        "/opt/imx-gpu-sdk/GLES2/Blur___Wayland_XDG/GLES2.Blur___Wayland_XDG " + WINDOW,
+        "/opt/imx-gpu-sdk/GLES2/EightLayerBlend___Wayland_XDG/GLES2.EightLayerBlend___Wayland_XDG "
+        + WINDOW,
+        "/opt/imx-gpu-sdk/GLES2/FractalShader___Wayland_XDG/GLES2.FractalShader___Wayland_XDG "
+        + WINDOW,
+        "/opt/imx-gpu-sdk/GLES2/LineBuilder101___Wayland_XDG/GLES2.LineBuilder101___Wayland_XDG "
+        + WINDOW,
+        "/opt/imx-gpu-sdk/GLES2/S03_Transform___Wayland_XDG/GLES2.S03_Transform___Wayland_XDG "
+        + WINDOW,
+        "/opt/imx-gpu-sdk/GLES2/S04_Projection___Wayland_XDG/GLES2.S04_Projection___Wayland_XDG "
+        + WINDOW,
+        "/opt/imx-gpu-sdk/GLES2/S06_Texturing___Wayland_XDG/GLES2.S06_Texturing___Wayland_XDG "
+        + WINDOW,
+        "/opt/imx-gpu-sdk/GLES2/S07_EnvMapping___Wayland_XDG/GLES2.S07_EnvMapping___Wayland_XDG "
+        + WINDOW,
+        "/opt/imx-gpu-sdk/GLES2/S08_EnvMappingRefraction___Wayland_XDG/GLES2.S08_EnvMappingRefraction___Wayland_XDG "
+        + WINDOW,
         "/home/root/.nxp-demo-experience/scripts/audio/voice/sleep.sh",
     ]
 
