@@ -118,7 +118,7 @@ class VoiceGUI(Gtk.Window):
         if board == "i.MX8MP":
             if self.lpv_button.get_active():
                 res = subprocess.getstatusoutput(
-                    "cp /unit_tests/nxp-afe/asound.conf_rpmsg_imx8mp /etc/"
+                    "cp /unit_tests/nxp-afe/asound.conf_imx8mp /etc/"
                     "asound.conf"
                 )
             else:
@@ -128,12 +128,12 @@ class VoiceGUI(Gtk.Window):
         else:
             if self.lpv_button.get_active():
                 res = subprocess.getstatusoutput(
-                    "cp /unit_tests/nxp-afe/asound.conf_rpmsg_imx8mm /etc/"
+                    "cp /unit_tests/nxp-afe/asound.conf_imx8mm /etc/"
                     "asound.conf"
                 )
             else:
                 res = subprocess.getstatusoutput(
-                    "cp /unit_tests/nxp-afe/asound.conf /etc/asound.conf"
+                    "cp /unit_tests/nxp-afe/asound.conf_imx8mm /etc/asound.conf"
                 )
         if res[0] != 0:
             GLib.idle_add(self.status_label.set_text, "Configure files not found!")
