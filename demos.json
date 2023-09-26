@@ -96,6 +96,15 @@
             "compatible": "imx8mp",
             "description": "This is a GStreamer pipeline able to create a camera preview example using VPU to encode and decode the image."
         },{
+            "name": "2Way Video Chat",
+            "id": "video_chat",
+            "executable": "python3 /home/root/.nxp-demo-experience/scripts/multimedia/gstreamer/2waychat.py",
+            "source": "",
+            "icon": "photo-video-solid.svg",
+            "screenshot": "gst_camera_preview_screenshot.png",
+            "compatible": "imx8mp, imx8mm",
+            "description": "Allows user to implement an intercomm system with two way video call."
+        },{
             "name": "Multi Cameras Preview",
             "id": "video_test_multi",
             "executable": "python3 /home/root/.nxp-demo-experience/scripts/multimedia/gstreamer/imx8mp_camera_demo.py --multi_cam=True",
