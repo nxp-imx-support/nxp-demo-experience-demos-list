@@ -4,12 +4,11 @@
 
 Copyright 2023 NXP
 
-SPDX-License-Identifier: Apache-2.0
+SPDX-License-Identifier: BSD-3-Clause
 
 This application allows the user to implement an intercomm system with two way video call
 between i.MX Demo Experience devices in local network
 
-Reference: https://stackoverflow.com/questions/65807310/how-to-get-total-screen-size-in-python-gtk-without-using-deprecated-gdk-screen
 
 """
 
@@ -24,21 +23,60 @@ import sys
 import json
 import gi
 
-gi.require_version('Gtk', '3.0')
-gi.require_version('Gst', '1.0')
+gi.require_version("Gtk", "3.0")
+gi.require_version("Gst", "1.0")
 gi.require_version("Gdk", "3.0")
 
 from gi.repository import Gtk, Gst, GObject, Gio, GLib, Gdk
+
 sys.path.append("/home/root/.nxp-demo-experience/scripts/")
 import utils
 
+
+class ErrorDialogWindow(Gtk.Window):
+    """
+    Display error message for user
+    """
+
+    def __init__(self):
+        super().__init__()
+        self.dialog()
+
+    def dialog(self):
+        dialog = Gtk.MessageDialog(
+            transient_for=self,
+            flags=0,
+            message_type=Gtk.MessageType.INFO,
+            buttons=Gtk.ButtonsType.OK,
+            text="Error Message",
+        )
+        dialog.format_secondary_text(
+            "No network connection detected. Package installation failed!!!"
+        )
+        dialog.run()
+        dialog.destroy()
+        sys.exit(1)
+
+
+flag = 1
 try:
     from ssdpy import SSDPServer
     from ssdpy import SSDPClient
 except ModuleNotFoundError:
-    subprocess.check_call([sys.executable, '-m', 'pip', 'install', 'ssdpy'])
-    from ssdpy import SSDPServer
-    from ssdpy import SSDPClient
+    flag = 0
+
+if flag == 0:
+    try:
+        subprocess.check_call([sys.executable, "-m", "pip", "install", "ssdpy"])
+    except subprocess.CalledProcessError:
+        # if no network, exit with message
+        wl = ErrorDialogWindow()
+        wl.connect("destroy", Gtk.main_quit)
+        wl.show_all()
+        Gtk.main()
+    else:
+        from ssdpy import SSDPServer
+        from ssdpy import SSDPClient
 
 participantAddr = []
 """
@@ -50,30 +88,33 @@ camera = []
 discoveredDevices = []
 ssdpStatus = "Searching"
 START = True
-file_location = "/home/root/.nxp-demo-experience/device_info.json"
+file_location = "/home/root/.cache/demoexperience/device_info.json"
 participants = []
+
 
 def get_resolution():
     """
     Returns width and height of the display connected
     """
     screen = Gdk.Display.get_default()
-    w=0
-    h=0
+    w = 0
+    h = 0
     for x in range(0, screen.get_n_monitors()):
         w += screen.get_monitor(x).get_geometry().width
-        if (h < screen.get_monitor(x).get_geometry().height):
+        if h < screen.get_monitor(x).get_geometry().height:
             h = screen.get_monitor(x).get_geometry().height
-    return w,h
+    return w, h
+
 
 def getSOCID():
     """
     Returns SOC ID
     """
-    with open('/sys/devices/soc0/soc_id', 'r') as f:
-        soc_id = f.read().replace('\n', '')
+    with open("/sys/devices/soc0/soc_id", "r") as f:
+        soc_id = f.read().replace("\n", "")
         f.close()
     return soc_id
+
 
 def getMyIp():
     """
@@ -88,8 +129,9 @@ def getMyIp():
     else:
         # Shutting down socket, cleaning up resources
         sock_obj.close()
-        return self_ip  
-    
+        return self_ip
+
+
 def sendOutSSDPNotification(myIP, SOC_ID):
     """
     This is SSDP server response to relevant M-search packet on local network
@@ -97,15 +139,16 @@ def sendOutSSDPNotification(myIP, SOC_ID):
     server = SSDPServer(USN, device_type=SOC_ID, location=myIP)
     server.serve_forever()
 
+
 def check_file():
     """
-    This fucntion checks if user name exists in file path, else returns false
+    This function checks if user name exists in file path, else returns false
     """
     try:
         if os.path.getsize(file_location) > 0:
             # file exists
             global USN
-            with open(file_location, 'r') as f:
+            with open(file_location, "r") as f:
                 j_object = json.load(f)
                 temp = j_object["name"]
                 f.close()
@@ -113,7 +156,7 @@ def check_file():
                 # empty file
                 return False
             USN = temp
-            return True    
+            return True
     except OSError as e:
         # file does not exists
         return False
@@ -124,23 +167,28 @@ def ssdpSearch(myIP, SOC_ID):
     It will send out M-Search packet on network relaying its presence
     to any server who is listening
     """
+
     def runSearch(devices):
         """
         Filter for i.MX devices
         """
         for device in devices:
             try:
-                if device.get("nt").startswith(SOC_ID[:3]) is True and device.get("location") != myIP and device.get("location") not in participantAddr:
+                if (
+                    device.get("nt").startswith(SOC_ID[:3]) is True
+                    and device.get("location") != myIP
+                    and device.get("location") not in participantAddr
+                ):
                     participantAddr.append(device.get("location"))
                     discoveredDevices.append(device)
-                    d={}
+                    d = {}
                     d["NAME"] = device.get("usn")
                     d["IP"] = device.get("location")
                     d["SOC_ID"] = device.get("nt")
                     participants.append(d)
             except AttributeError:
                 continue
-    
+
     while True:
         global ssdpStatus
         global START
@@ -175,19 +223,26 @@ def ssdpSearch(myIP, SOC_ID):
             GLib.idle_add(win.button1.set_label, "Search Again")
             GLib.idle_add(win.button1.set_sensitive, True)
 
+
 def initiateSSDP():
     """
-    Initiate SSDP advertisement and 
+    Initiate SSDP advertisement and
     M-Search for local devices
     """
-    global myIP 
+    global myIP
     myIP = getMyIp()
     global SOC_ID
     SOC_ID = getSOCID()
-    cast_thread = Thread(target=sendOutSSDPNotification, args=[myIP, SOC_ID], )
+    cast_thread = Thread(
+        target=sendOutSSDPNotification,
+        args=[myIP, SOC_ID],
+    )
     cast_thread.daemon = True
-    cast_thread.start() 
-    search_thread = Thread(target=ssdpSearch, args=[myIP, SOC_ID], )
+    cast_thread.start()
+    search_thread = Thread(
+        target=ssdpSearch,
+        args=[myIP, SOC_ID],
+    )
     search_thread.daemon = True
     search_thread.start()
     global w2
@@ -196,10 +251,12 @@ def initiateSSDP():
     w2.show_all()
     Gtk.main()
 
+
 class MessageDialogWindow(Gtk.Window):
     """
     Display error message for user
     """
+
     def __init__(self):
         super().__init__()
         self.dialog()
@@ -212,13 +269,17 @@ class MessageDialogWindow(Gtk.Window):
             buttons=Gtk.ButtonsType.OK,
             text="Setup Error Message",
         )
-        dialog.format_secondary_text("Please connect a valid Camera device for this demo")
+        dialog.format_secondary_text(
+            "Please connect a valid Camera device for this demo"
+        )
         dialog.run()
         dialog.destroy()
-        sys.exit("No video capture device was detected")
+        sys.exit(1)
+
 
 class InitialWindow(Gtk.Window):
-    """ Initial Window """
+    """Initial Window"""
+
     def __init__(self):
         super().__init__()
         self.set_default_size(100, 150)
@@ -241,7 +302,7 @@ class InitialWindow(Gtk.Window):
         self.entry1 = Gtk.Entry.new()
         self.entry1.set_placeholder_text("Type here...")
         self.entry1.set_activates_default(True)
-        
+
         self.button1 = Gtk.Button(label="Ok")
         self.button1.connect("clicked", self.next_window)
         self.button2 = Gtk.Button(label="Cancel")
@@ -259,8 +320,8 @@ class InitialWindow(Gtk.Window):
             if self.name:
                 global USN
                 USN = self.name
-                with open(file_location, 'w') as f:
-                    dict= {"name": self.name}
+                with open(file_location, "w") as f:
+                    dict = {"name": self.name}
                     j_object = json.dumps(dict, indent=2)
                     f.write(j_object)
                     f.close()
@@ -269,7 +330,7 @@ class InitialWindow(Gtk.Window):
 
 
 class ClientWindow(Gtk.Window):
-    """ Client Window """
+    """Client Window"""
 
     def __init__(self):
         super().__init__()
@@ -277,8 +338,12 @@ class ClientWindow(Gtk.Window):
         self.set_resizable(False)
         self.set_border_width(10)
         self.set_position(Gtk.WindowPosition.CENTER)
-        self.grid = Gtk.Grid(row_homogeneous=True, column_homogeneous=True,
-                             row_spacing=15, column_spacing=30)
+        self.grid = Gtk.Grid(
+            row_homogeneous=True,
+            column_homogeneous=True,
+            row_spacing=15,
+            column_spacing=30,
+        )
         self.header = Gtk.HeaderBar()
         self.header.set_show_close_button(False)
         self.header.props.title = "2Way Chat"
@@ -295,7 +360,7 @@ class ClientWindow(Gtk.Window):
         self.button1 = Gtk.Button(label="Search Again")
         self.button1.connect("clicked", self.status_update)
         self.button1.set_focus_on_click(True)
-        self.label3 = Gtk.Label(label = "Camera Source: ")
+        self.label3 = Gtk.Label(label="Camera Source: ")
         self.source_select = Gtk.ComboBoxText()
         for cam in camera:
             self.source_select.append_text(cam)
@@ -324,12 +389,15 @@ class ClientWindow(Gtk.Window):
         ssdpStatus = "Searching"
 
     def join(self, select):
-        thread = Thread(target=self.start_pipeline, args=[self], )
+        thread = Thread(
+            target=self.start_pipeline,
+            args=[self],
+        )
         thread.daemon = True
-        thread.start() 
-    
+        thread.start()
+
     def start_pipeline(self, widget):
-        """ Join a call """
+        """Join a call"""
         # Pipeline to start server
         self.dev = self.device_select.get_active_text()
         self.src = self.source_select.get_active_text()
@@ -342,21 +410,27 @@ class ClientWindow(Gtk.Window):
         Gst.init(None)
         w, h = get_resolution()
         # Handling error, set default display size for 1080p
-        if w==0:
-            w=1920
-        if h==0:
-            h=1080
+        if w == 0:
+            w = 1920
+        if h == 0:
+            h = 1080
         # mainloop allows to parse events and run operations in background
         self.main_loop = GObject.MainLoop()
-        video_pipeline = 'imxcompositor_g2d name=c '
-        video_pipeline +='sink_1::width={wd} sink_1::height={ht} sink_1::zorder=0 '
-        video_pipeline +='sink_0::width={wdd} sink_0::height={htt} sink_0::zorder=1 ! '
-        video_pipeline +='queue ! waylandsink sync=false udpsrc port=5004 ! application/x-rtp, media=(string)video, clock-rate=(int)90000, '
-        video_pipeline +='encoding-name=(string)H264 ! rtph264depay ! h264parse ! queue ! v4l2h264dec ! queue ! imxvideoconvert_g2d ! queue ! c.sink_1 '
-        video_pipeline +='v4l2src device={sel} ! video/x-raw,width=1920,height=1080,framerate=30/1 ! tee allow-not-linked=true name=a ! c.sink_0 '
-        video_pipeline +='a. ! queue ! vpuenc_h264 bitrate=5000000 quant=25 ! rtph264pay config-interval=1 ! udpsink host={ip} port=5004 sync=false async=false'
-        video_pipeline = video_pipeline.format(ip=self.device_ip,sel=self.src, wd=int(w), ht=int(h), wdd =int(w/3), htt = int(h/3))
-
+        video_pipeline = "imxcompositor_g2d name=c "
+        video_pipeline += "sink_1::width={wd} sink_1::height={ht} sink_1::zorder=0 "
+        video_pipeline += "sink_0::width={wdd} sink_0::height={htt} sink_0::zorder=1 ! "
+        video_pipeline += "queue ! waylandsink sync=false udpsrc port=5004 ! application/x-rtp, media=(string)video, clock-rate=(int)90000, "
+        video_pipeline += "encoding-name=(string)H264 ! rtph264depay ! h264parse ! queue ! v4l2h264dec ! queue ! imxvideoconvert_g2d ! queue ! c.sink_1 "
+        video_pipeline += "v4l2src device={sel} ! video/x-raw,width=1920,height=1080,framerate=30/1 ! tee allow-not-linked=true name=a ! c.sink_0 "
+        video_pipeline += "a. ! queue ! vpuenc_h264 bitrate=5000000 quant=25 ! rtph264pay config-interval=1 ! udpsink host={ip} port=5004 sync=false async=false"
+        video_pipeline = video_pipeline.format(
+            ip=self.device_ip,
+            sel=self.src,
+            wd=int(w),
+            ht=int(h),
+            wdd=int(w / 3),
+            htt=int(h / 3),
+        )
         # creating the pipeline and launching it
         self.pipeline = Gst.parse_launch(video_pipeline)
         # by default pipelines are in NULL state, pipeline suppose to be set in running state
@@ -364,7 +438,7 @@ class ClientWindow(Gtk.Window):
         # message callback
         bus = self.pipeline.get_bus()
         bus.add_signal_watch()
-        bus.connect('message', self.on_message)
+        bus.connect("message", self.on_message)
         if monitor_status == Gst.StateChangeReturn.FAILURE:
             print("ERROR: Unable to set the pipeline to the playing state")
             sys.exit(1)
@@ -402,13 +476,16 @@ class ClientWindow(Gtk.Window):
         elif mtype == Gst.MessageType.QOS:
             data_format, processed, dropped = message.parse_qos_stats()
             format_str = Gst.Format.get_name(data_format)
-            logging.debug("[qos] format[%s] processed[%d] dropped[%d]",
-                          format_str, processed, dropped)
-
+            logging.debug(
+                "[qos] format[%s] processed[%d] dropped[%d]",
+                format_str,
+                processed,
+                dropped,
+            )
 
 
 class SearchWindow(Gtk.Window):
-    """ Main Window """
+    """Main Window"""
 
     def __init__(self):
         super().__init__()
@@ -417,8 +494,12 @@ class SearchWindow(Gtk.Window):
         self.set_resizable(False)
         self.set_border_width(20)
         self.set_position(Gtk.WindowPosition.CENTER)
-        self.grid_display = Gtk.Grid(row_homogeneous=True, column_homogeneous=True,
-                                     row_spacing=10, column_spacing=10)
+        self.grid_display = Gtk.Grid(
+            row_homogeneous=True,
+            column_homogeneous=True,
+            row_spacing=10,
+            column_spacing=10,
+        )
         self.grid_display.set_margin_end(10)
         self.grid_display.set_margin_start(10)
         header = Gtk.HeaderBar()
@@ -431,7 +512,7 @@ class SearchWindow(Gtk.Window):
         quit_button.add(quit_image)
         header.pack_end(quit_button)
         quit_button.connect("clicked", Gtk.main_quit)
-        self.label1 = Gtk.Label(label = "IP: ")
+        self.label1 = Gtk.Label(label="IP: ")
         self.label2 = Gtk.Label()
         global myIP
         self.ip_address = myIP
@@ -457,14 +538,14 @@ class SearchWindow(Gtk.Window):
                 new_value = 0
             self.progressbar.set_fraction(new_value)
         return True
-    
+
     def initiate_client_window(self):
         global win
         win = ClientWindow()
         win.connect("destroy", Gtk.main_quit)
         win.show_all()
         Gtk.main()
-    
+
 
 if __name__ == "__main__":
     # Prerequisite, host setup checks
@@ -484,7 +565,7 @@ if __name__ == "__main__":
             w1 = InitialWindow()
             w1.connect("destroy", Gtk.main_quit)
             w1.show_all()
-            Gtk.main()  
+            Gtk.main()
         elif START:
             # Run SSDP commands if all checks passed
             initiateSSDP()
