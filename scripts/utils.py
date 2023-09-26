@@ -8,8 +8,6 @@ SPDX-License-Identifier: BSD-2-Clause
 This script manages downloads.
 Runs camera setup check.
 
-Reference for camera check : https://www.mankier.com/1/v4l2-ctl#Examples
-
 """
 
 from os.path import exists
