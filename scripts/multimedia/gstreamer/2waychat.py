@@ -67,16 +67,15 @@ except ModuleNotFoundError:
 
 if flag == 0:
     try:
-        subprocess.check_call([sys.executable, "-m", "pip", "install", "ssdpy"])
+        subprocess.run([sys.executable, "-m", "pip", "install", "ssdpy"], check=True)
+        from ssdpy import SSDPServer
+        from ssdpy import SSDPClient
     except subprocess.CalledProcessError:
         # if no network, exit with message
         wl = ErrorDialogWindow()
         wl.connect("destroy", Gtk.main_quit)
         wl.show_all()
         Gtk.main()
-    else:
-        from ssdpy import SSDPServer
-        from ssdpy import SSDPClient
 
 participantAddr = []
 """
