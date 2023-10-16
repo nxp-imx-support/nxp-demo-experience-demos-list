@@ -96,6 +96,15 @@
             "compatible": "imx8mp",
             "description": "This is a GStreamer pipeline able to create a camera preview example using VPU to encode and decode the image."
         },{
+            "name": "2Way Video Streaming",
+            "id": "video_streaming",
+            "executable": "python3 /home/root/.nxp-demo-experience/scripts/multimedia/gstreamer/2wayvideo_streaming.py",
+            "source": "",
+            "icon": "photo-video-solid.svg",
+            "screenshot": "gst_camera_preview_screenshot.png",
+            "compatible": "imx8mp, imx8mm",
+            "description": "Allows user to implement a two way video streaming demo that displays video encode and decode capabilities between i.MX devices in local network."
+        },{
             "name": "Multi Cameras Preview",
             "id": "video_test_multi",
             "executable": "python3 /home/root/.nxp-demo-experience/scripts/multimedia/gstreamer/imx8mp_camera_demo.py --multi_cam=True",

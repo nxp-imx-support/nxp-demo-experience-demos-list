@@ -6,10 +6,13 @@ Copyright 2021-2023 NXP
 SPDX-License-Identifier: BSD-2-Clause
 
 This script manages downloads.
+Runs camera setup check.
+
 """
 
 from os.path import exists
 import subprocess
+import glob
 
 DOWNLOAD_FOLDER = "/home/root/.cache/demoexperience/"
 DOWNLOAD_DB = "/home/root/.nxp-demo-experience/downloads.txt"
@@ -62,3 +65,19 @@ def download_file(name):
     if sha != "" and sha != check_process.stdout.read().split()[0].decode("utf-8"):
         return -3
     return loc
+
+def run_check():
+    """
+    Returns list of device path if camera detected,
+    else returns empty list
+    """
+    devices = []
+    for device in glob.glob('/dev/video*'):
+        devices.append(device)
+    camera = []
+    for dv in devices:
+        dev = 'v4l2-ctl -d ' + dv + ' -D | grep "Video Capture" | wc -l'
+        checkOutput = subprocess.getoutput(dev)
+        if int(checkOutput) > 0 :
+            camera.append(dv)
+    return camera
