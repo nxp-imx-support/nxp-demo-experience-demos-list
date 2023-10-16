@@ -126,12 +126,12 @@ sha:
 
 name:bg_image_landscape.jpg
 path:
-url:https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.1.36_2.1.0/images/bg_image.jpg
+url:https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.1.36_2.1.0/images/bg_image_landscape.jpg
 alt_url:
 sha:
 
 name:selfie_segmenter_landscape_int8_vela.tflite
 path:
-url:https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.1.36_2.1.0/models/selfie_segmenter_int8.tflite
+url:https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.1.36_2.1.0/models/selfie_segmenter_landscape_int8_vela.tflite
 alt_url:
 sha:
