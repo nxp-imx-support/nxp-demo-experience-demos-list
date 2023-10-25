@@ -30,11 +30,14 @@ class MLLaunch(Gtk.Window):
         super().__init__(title=demo)
         self.set_default_size(450, 200)
         self.set_resizable(False)
-        os.environ["VIV_VX_CACHE_BINARY_GRAPH_DIR"] = "/home/root/.cache/demoexperience"
-        os.environ["VIV_VX_ENABLE_CACHE_GRAPH_BINARY"] = "1"
 
         # Get platform
         self.platform = os.uname().nodename
+     
+        # OpenVX graph caching is not available on i.MX 8QuadMax platform.
+        if self.platform != "imx8qmmek" :
+            os.environ["VIV_VX_CACHE_BINARY_GRAPH_DIR"] = "/home/root/.cache/demoexperience"
+            os.environ["VIV_VX_ENABLE_CACHE_GRAPH_BINARY"] = "1"
 
         # Get widget properties
         devices = []
