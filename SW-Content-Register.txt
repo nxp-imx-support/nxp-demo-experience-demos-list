@@ -2,7 +2,7 @@ NXP Software Content Register
 
 Package:                    GoPoint for i.MX Application Processors Demo Files
 Outgoing License:           BSD-2-Clause
-License File:               LICENSE
+License File:               LICENSE.txt
 Package Category:           Configuration
 Type of content:            Scripts, graphics images and data files
 Description and comments:   GoPoint for i.MX Application Processors configuration and launchers

@@ -1,0 +1,2 @@
+The ../icon/License.json file describes the license that all images with the
+extensions "*.png, *.svg" in the same directory is covered by.

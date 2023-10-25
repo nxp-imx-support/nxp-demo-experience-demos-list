@@ -1,7 +1,7 @@
 # GoPoint for i.MX Application Processors Demo List
 ### NOTE: The NXP Demo Experience is now GoPoint for i.MX Application Processors.
 
-[![GitHub](https://img.shields.io/github/license/nxp-imx-support/nxp-demo-experience-demos-list)](./LICENSE)
+[![GitHub](https://img.shields.io/github/license/nxp-imx-support/nxp-demo-experience-demos-list)](./LICENSE.txt)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 ## GoPoint for i.MX Application Processors
@@ -26,4 +26,4 @@ The list of available demos for a certain i.MX EVK can be found at [nxp-demo-exp
 
 ## Licensing
 
-Please see the LICENSE file for more information.
+Please see the LICENSE.txt file for more information.
