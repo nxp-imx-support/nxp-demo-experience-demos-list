@@ -141,7 +141,7 @@ camera = []
 discoveredDevices = []
 ssdpStatus = "Searching"
 START = True
-file_location = "/home/root/.cache/demoexperience/device_info.json"
+file_location = "/home/root/.cache/gopoint/device_info.json"
 participants = []
 
 

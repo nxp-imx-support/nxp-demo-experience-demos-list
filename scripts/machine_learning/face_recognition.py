@@ -684,7 +684,7 @@ if __name__ == "__main__":
     parser.add_argument("--camera", type=int, default=0, help="Which camera to use")
     parser.add_argument("--faces", default="", help="Load existing faces")
     args = parser.parse_args()
-    os.environ["VIV_VX_CACHE_BINARY_GRAPH_DIR"] = "/home/root/.cache" "/demoexperience"
+    os.environ["VIV_VX_CACHE_BINARY_GRAPH_DIR"] = "/home/root/.cache/gopoint"
     os.environ["VIV_VX_ENABLE_CACHE_GRAPH_BINARY"] = "1"
     if args.gui == 0:
         GUI = False

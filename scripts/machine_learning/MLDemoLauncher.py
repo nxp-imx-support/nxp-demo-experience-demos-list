@@ -36,7 +36,7 @@ class MLLaunch(Gtk.Window):
      
         # OpenVX graph caching is not available on i.MX 8QuadMax platform.
         if self.platform != "imx8qmmek" :
-            os.environ["VIV_VX_CACHE_BINARY_GRAPH_DIR"] = "/home/root/.cache/demoexperience"
+            os.environ["VIV_VX_CACHE_BINARY_GRAPH_DIR"] = "/home/root/.cache/gopoint"
             os.environ["VIV_VX_ENABLE_CACHE_GRAPH_BINARY"] = "1"
 
         # Get widget properties

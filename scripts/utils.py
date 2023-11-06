@@ -49,11 +49,11 @@ def download_file(name):
         loc = DOWNLOAD_FOLDER + name
     else:
         out = subprocess.getstatusoutput(
-            "wget -O  /home/root/.cache/demoexperience/" + name + " " + url
+            "wget -O  /home/root/.cache/gopoint/" + name + " " + url
         )[0]
         if out != 0:
             out = subprocess.getstatusoutput(
-                "wget -O  /home/root/.cache/demoexperience/" + name + " " + alt_url
+                "wget -O  /home/root/.cache/gopoint/" + name + " " + alt_url
             )[0]
         if out != 0:
             return -2

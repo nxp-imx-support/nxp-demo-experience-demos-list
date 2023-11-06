@@ -227,7 +227,7 @@ class ServerWindow(Gtk.Window):
             file = [f for f in os.listdir(folder_path) if f.endswith(".nb")]
             return True if len(file) else False
 
-        if check_file("/home/root/.cache/demoexperience") is False:
+        if check_file("/home/root/.cache/gopoint") is False:
             self.to_reduce_warmup()
 
     def to_reduce_warmup(self):
@@ -590,7 +590,7 @@ class DisplayWindow(Gtk.Window):
 
 
 if __name__ == "__main__":
-    os.environ["VIV_VX_CACHE_BINARY_GRAPH_DIR"] = "/home/root/.cache" "/demoexperience"
+    os.environ["VIV_VX_CACHE_BINARY_GRAPH_DIR"] = "/home/root/.cache/gopoint"
     os.environ["VIV_VX_ENABLE_CACHE_GRAPH_BINARY"] = "1"
     BOARD = subprocess.check_output(["cat", "/sys/devices/soc0/soc_id"]).decode(
         "utf-8"
