@@ -14,7 +14,7 @@ from os.path import exists
 import subprocess
 import glob
 
-DOWNLOAD_FOLDER = "/home/root/.cache/demoexperience/"
+DOWNLOAD_FOLDER = "/home/root/.cache/gopoint/"
 DOWNLOAD_DB = "/home/root/.nxp-demo-experience/downloads.txt"
 
 
