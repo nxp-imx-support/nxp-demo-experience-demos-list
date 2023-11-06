@@ -11,6 +11,7 @@ Runs camera setup check.
 """
 
 from os.path import exists
+from os import mkdir
 import subprocess
 import glob
 
@@ -32,6 +33,8 @@ def download_file(name):
     sha = ""
     found = False
     downloads = open(DOWNLOAD_DB, "r").read().splitlines()
+    if exists(DOWNLOAD_FOLDER) is False:
+        mkdir(DOWNLOAD_FOLDER)
     for i in range(len(downloads)):
         if downloads[i] == "name:" + name:
             path = downloads[i + 1][5:]
