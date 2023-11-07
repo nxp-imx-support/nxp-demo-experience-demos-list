@@ -20,7 +20,7 @@ import numpy as np
 import gi
 import subprocess
 import glob
-from gi.repository import Gtk, Gst, GObject, Gio, GLib
+from gi.repository import Gtk, Gst, Gio, GLib
 
 sys.path.append("/home/root/.nxp-demo-experience/scripts/")
 import utils
@@ -465,8 +465,9 @@ class ClientWindow(Gtk.Window):
         client_pipeline += "host={ip_client} dest-host={ip} ! tensor_decoder"
         client_pipeline += " mode=bounding_boxes option1=tf-ssd option2={label} "
         client_pipeline += "option3=0:1:2:3,50 option4=640:480 option5=300:300 !"
+        client_pipeline += " mix. t. ! queue max-size-buffers=2 !"
         client_pipeline += (
-            " mix. t. ! queue max-size-buffers=2 ! imxcompositor_g2d name=mix"
+            " imxcompositor_g2d name=mix latency=30000000 min-upstream-latency=30000000"
         )
         client_pipeline += " sink_0::zorder=2 sink_1::zorder=1 ! waylandsink"
         client_pipeline = client_pipeline.format(
