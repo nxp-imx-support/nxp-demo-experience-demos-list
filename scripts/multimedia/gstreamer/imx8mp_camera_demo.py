@@ -7,9 +7,10 @@ import sys
 import cv2
 import gi
 
+from gi.repository import Gst, Gtk
+
 gi.require_version("Gst", "1.0")
 gi.require_version("Gtk", "3.0")
-from gi.repository import Gst, Gtk
 
 
 CAM_PIPELINE = "gst-launch-1.0 v4l2src device={} ! waylandsink"
@@ -20,13 +21,14 @@ ENC_PIPELINE = (
 )
 
 MULTI_CAM_PIPELINE = (
-    "gst-launch-1.0  imxcompositor_g2d name=c "
+    "gst-launch-1.0 imxcompositor_g2d name=c "
     "sink_0::xpos=0 sink_0::ypos=0 sink_0::width=1920 "
     "sink_0::height=1080 sink_0::keep-ratio=true "
     "sink_1::xpos=0 sink_1::ypos=0 sink_1::width=640 "
-    "sink_1::height=480 sink_1::keep-ratio=true ! waylandsink sync=false "
-    "v4l2src device={} ! c.sink_0 "
-    "v4l2src device={} ! c.sink_1"
+    "sink_1::height=480 sink_1::keep-ratio=true ! "
+    "waylandsink sync=false "
+    "v4l2src device={} ! video/x-raw,width=1920,height=1080,framerate=30/1 ! imxvideoconvert_g2d ! c.sink_0 "
+    "v4l2src device={} ! video/x-raw,width=640,height=480,framerate=30/1 ! imxvideoconvert_g2d ! c.sink_1"
 )
 
 
