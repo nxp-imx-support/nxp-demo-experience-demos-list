@@ -6,16 +6,11 @@ Copyright 2023 NXP
 
 SPDX-License-Identifier: BSD-3-Clause
 
-This application allows the user to implement a two way video
-streaming demo which displays video encode and decode capabilities
-between i.MX Demo Experience devices in local network
-
-
+This application showcases a two way video streaming demo which displays video
+encode and decode capabilities between i.MX8M devices in a local network.
 """
 
-
 import subprocess
-from threading import Thread
 import logging
 import os
 import time
@@ -23,29 +18,29 @@ import socket
 import sys
 import json
 import gi
+from threading import Thread
 
 gi.require_version("Gtk", "3.0")
 gi.require_version("Gst", "1.0")
 gi.require_version("Gdk", "3.0")
 
-from gi.repository import Gtk, Gst, GObject, Gio, GLib, Gdk
+from gi.repository import Gtk, Gst, Gio, GLib, Gdk
 
 sys.path.append("/home/root/.nxp-demo-experience/scripts/")
 import utils
 
 
-class InitialWindow(Gtk.Window):
+class InstallationWindow(Gtk.Window):
     """
-    Display error message for user
+    Display installation progress
     """
 
     def __init__(self):
-
         super().__init__(title="2Way Video Streaming")
         self.set_border_width(10)
         self.connect("destroy", Gtk.main_quit)
 
-        self.label = Gtk.Label(label="Installing packages !!!")
+        self.label = Gtk.Label(label="Installing packages!")
         self.progressbar = Gtk.ProgressBar()
         self.timeout_id = GLib.timeout_add(50, self.on_timeout, None)
         self.activity_mode = 0
@@ -53,13 +48,13 @@ class InitialWindow(Gtk.Window):
         self.grid = Gtk.Grid(
             row_homogeneous=True,
             column_homogeneous=True,
-        )        
+        )
         self.grid.attach(self.progressbar, 0, 0, 2, 1)
         self.grid.attach(self.label, 0, 5, 2, 2)
 
         self.add(self.grid)
         self.show_all()
-    
+
     def on_timeout(self, user_data):
         """
         Update value on the progress bar
@@ -72,6 +67,7 @@ class InitialWindow(Gtk.Window):
                 new_value = 0
             self.progressbar.set_fraction(new_value)
         return True
+
 
 class DialogWindow(Gtk.Window):
     """
@@ -90,39 +86,43 @@ class DialogWindow(Gtk.Window):
             buttons=Gtk.ButtonsType.OK,
             text="Installation Error Message",
         )
-        dialog.format_secondary_text(
-            " Package Installation failed !!!"
-        )
+        dialog.format_secondary_text(" Package Installation failed!")
         dialog.run()
         dialog.destroy()
         sys.exit(1)
 
+
 def installation():
     #  display and install
     global wl
-    wl = InitialWindow()
+    wl = InstallationWindow()
     wl.connect("destroy", Gtk.main_quit)
     wl.show_all()
     Gtk.main()
 
-flag = 1
+
+ssdpy_exists = 1
+
 try:
     from ssdpy import SSDPServer
     from ssdpy import SSDPClient
 except ModuleNotFoundError:
-    flag = 0
+    ssdpy_exists = 0
 
-if flag == 0:
+if ssdpy_exists == 0:
     thread = Thread(
         target=installation,
     )
     thread.start()
     try:
-        subprocess.run([sys.executable, "-m", "pip", "install", "ssdpy"], check=True, timeout=30)
+        subprocess.run(
+            [sys.executable, "-m", "pip3", "install", "ssdpy"], check=True, timeout=30
+        )
         from ssdpy import SSDPServer
         from ssdpy import SSDPClient
+
         GLib.idle_add(wl.destroy)
-        flag = 1
+        ssdpy_exists = 1
     except (subprocess.CalledProcessError, subprocess.TimeoutExpired) as e:
         # if no network, exit with message
         GLib.idle_add(wl.destroy)
@@ -133,7 +133,7 @@ if flag == 0:
 
 participantAddr = []
 """
-The Search Target, used to narrow down the responses that should be received. 
+The Search Target, used to narrow down the responses that should be received.
 Defaults to "ssdp:all" which should get responses from any SSDP-enabled device.
 """
 SSDP_ST = "ssdp:all"
@@ -150,13 +150,13 @@ def get_resolution():
     Returns width and height of the display connected
     """
     screen = Gdk.Display.get_default()
-    w = 0
-    h = 0
+    width = 0
+    height = 0
     for x in range(0, screen.get_n_monitors()):
-        w += screen.get_monitor(x).get_geometry().width
-        if h < screen.get_monitor(x).get_geometry().height:
-            h = screen.get_monitor(x).get_geometry().height
-    return w, h
+        width += screen.get_monitor(x).get_geometry().width
+        if height < screen.get_monitor(x).get_geometry().height:
+            height = screen.get_monitor(x).get_geometry().height
+    return width, height
 
 
 def getSOCID():
@@ -178,7 +178,7 @@ def getMyIp():
     self_ip = sock_obj.getsockname()[0]
     loopback = socket.gethostbyname(socket.gethostname())
     if self_ip == loopback:
-        raise Exception("ERROR: Trying to figure my IP address")
+        raise Exception("ERROR: Trying to figure out my IP address")
     else:
         # Shutting down socket, cleaning up resources
         sock_obj.close()
@@ -459,30 +459,45 @@ class ClientWindow(Gtk.Window):
                 self.device_ip = index.get("IP")
             else:
                 continue
+
         # initializes state in background
         Gst.init(None)
-        w, h = get_resolution()
+        width, height = get_resolution()
+
         # Handling error, set default display size for 1080p
-        if w == 0:
-            w = 1920
-        if h == 0:
-            h = 1080
+        if width == 0:
+            width = 1920
+        if height == 0:
+            height = 1080
+
         # mainloop allows to parse events and run operations in background
-        self.main_loop = GObject.MainLoop()
-        video_pipeline = "imxcompositor_g2d name=c "
+        self.main_loop = GLib.MainLoop()
+
+        video_pipeline = (
+            "imxcompositor_g2d name=c latency=30000000 min-upstream-latency=30000000 "
+        )
         video_pipeline += "sink_1::width={wd} sink_1::height={ht} sink_1::zorder=0 "
         video_pipeline += "sink_0::width={wdd} sink_0::height={htt} sink_0::zorder=1 ! "
-        video_pipeline += "queue ! waylandsink sync=false udpsrc port=5004 ! application/x-rtp, media=(string)video, clock-rate=(int)90000, "
-        video_pipeline += "encoding-name=(string)H264 ! rtph264depay ! h264parse ! queue ! v4l2h264dec ! queue ! imxvideoconvert_g2d ! queue ! c.sink_1 "
-        video_pipeline += "v4l2src device={sel} ! video/x-raw,width=1920,height=1080,framerate=30/1 ! tee allow-not-linked=true name=a ! c.sink_0 "
-        video_pipeline += "a. ! queue ! vpuenc_h264 bitrate=5000000 quant=25 ! rtph264pay config-interval=1 ! udpsink host={ip} port=5004 sync=false async=false"
+        video_pipeline += "waylandsink sync=false "
+        video_pipeline += "udpsrc ! application/x-rtp,media=video,clock-rate=90000,"
+        video_pipeline += "encoding-name=H264 ! rtpjitterbuffer latency=100 ! queue max-size-buffers=0 ! rtph264depay ! "
+        video_pipeline += "decodebin ! imxvideoconvert_g2d ! c.sink_1 "
+        video_pipeline += "v4l2src device={sel} ! video/x-raw,width=1920,height=1080,framerate=30/1 ! "
+        video_pipeline += (
+            "tee allow-not-linked=true name=a a. ! imxvideoconvert_g2d ! c.sink_0 "
+        )
+        video_pipeline += (
+            "a. ! vpuenc_h264 bitrate=5000000 quant=25 ! queue ! rtph264pay ! "
+        )
+        video_pipeline += "udpsink host={ip} port=5004 sync=false async=false"
+
         video_pipeline = video_pipeline.format(
             ip=self.device_ip,
             sel=self.src,
-            wd=int(w),
-            ht=int(h),
-            wdd=int(w / 3),
-            htt=int(h / 3),
+            wd=int(width),
+            ht=int(height),
+            wdd=int(width / 3),
+            htt=int(height / 3),
         )
         # creating the pipeline and launching it
         self.pipeline = Gst.parse_launch(video_pipeline)
@@ -602,7 +617,7 @@ class SearchWindow(Gtk.Window):
 
 if __name__ == "__main__":
     # Prerequisite, host setup checks
-    if flag == 1:
+    if ssdpy_exists == 1:
         global USN
         USN = getSOCID()
         camera = utils.run_check()
