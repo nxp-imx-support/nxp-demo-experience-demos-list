@@ -422,7 +422,7 @@ class ClientWindow(Gtk.Window):
         self.device_select.connect("changed", self.on_changed)
         for index in participants:
             self.device_select.append_text(index.get("NAME"))
-        self.button2 = Gtk.Button(label="Start Call")
+        self.button2 = Gtk.Button(label="Start")
         self.button2.connect("clicked", self.join)
         self.button2.set_sensitive(False)
 
@@ -481,14 +481,14 @@ class ClientWindow(Gtk.Window):
         video_pipeline += "waylandsink sync=false "
         video_pipeline += "udpsrc ! application/x-rtp,media=video,clock-rate=90000,"
         video_pipeline += "encoding-name=H264 ! rtpjitterbuffer latency=100 ! queue max-size-buffers=0 ! rtph264depay ! "
-        video_pipeline += "decodebin ! imxvideoconvert_g2d ! c.sink_1 "
+        video_pipeline += (
+            "h264parse ! queue ! v4l2h264dec ! queue ! imxvideoconvert_g2d ! c.sink_1 "
+        )
         video_pipeline += "v4l2src device={sel} ! video/x-raw,width=1920,height=1080,framerate=30/1 ! "
         video_pipeline += (
             "tee allow-not-linked=true name=a a. ! imxvideoconvert_g2d ! c.sink_0 "
         )
-        video_pipeline += (
-            "a. ! vpuenc_h264 bitrate=5000000 quant=25 ! queue ! rtph264pay ! "
-        )
+        video_pipeline += "a. ! v4l2h264enc ! queue ! rtph264pay ! "
         video_pipeline += "udpsink host={ip} port=5004 sync=false async=false"
 
         video_pipeline = video_pipeline.format(
