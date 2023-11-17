@@ -116,7 +116,7 @@ if ssdpy_exists == 0:
     thread.start()
     try:
         subprocess.run(
-            [sys.executable, "-m", "pip3", "install", "ssdpy"], check=True, timeout=30
+            [sys.executable, "-m", "pip", "install", "ssdpy"], check=True, timeout=30
         )
         from ssdpy import SSDPServer
         from ssdpy import SSDPClient
