@@ -1,10 +1,13 @@
-# Copyright 2021-2023 NXP
-# SPDX-License-Identifier: BSD-3-Clause
+"""
+Copyright 2021-2024 NXP
+SPDX-License-Identifier: BSD-3-Clause
+
+i.MX8M Plus camera demo.
+"""
 
 from argparse import ArgumentParser
 from subprocess import Popen
 import sys
-import cv2
 import gi
 
 from gi.repository import Gst, Gtk
@@ -27,13 +30,18 @@ MULTI_CAM_PIPELINE = (
     "sink_1::xpos=0 sink_1::ypos=0 sink_1::width=640 "
     "sink_1::height=480 sink_1::keep-ratio=true ! "
     "waylandsink sync=false "
-    "v4l2src device={} ! video/x-raw,width=1920,height=1080,framerate=30/1 ! imxvideoconvert_g2d ! c.sink_0 "
-    "v4l2src device={} ! video/x-raw,width=640,height=480,framerate=30/1 ! imxvideoconvert_g2d ! c.sink_1"
+    "v4l2src device={} ! video/x-raw,width=1920,height=1080,framerate=30/1 ! "
+    "imxvideoconvert_g2d ! c.sink_0 "
+    "v4l2src device={} ! video/x-raw,width=640,height=480,framerate=30/1 ! "
+    "imxvideoconvert_g2d ! c.sink_1"
 )
 
 
 class MessageWindow(Gtk.Window):
+    """Window to show messages to the user."""
+
     def __init__(self, message):
+        """Create the message window."""
         Gtk.Window.__init__(self, title="Warning")
         self.set_default_size(640, 480)
 
@@ -46,7 +54,10 @@ class MessageWindow(Gtk.Window):
 
 
 class SelectCamWindow(Gtk.Window):
+    """Main UI Window."""
+
     def __init__(self, func):
+        """Create the UI window."""
         Gtk.Window.__init__(self, title="i.MX 8M Plus Camera Demo")
         self.set_default_size(640, 480)
         self.device = ""
@@ -75,13 +86,17 @@ class SelectCamWindow(Gtk.Window):
         self.add(box)
 
     def on_dev_combo_changed(self, combo):
+        """Device selected by the user."""
         self.device = combo.get_active_text()
 
     def on_run_clicked(self, button):
+        """Run the pipeline."""
         self.func(self.device)
 
 
 class VideoDevice:
+    """Available video devices."""
+
     def __init__(self):
         self.devices_list = []
         self.get_devices()
@@ -91,6 +106,7 @@ class VideoDevice:
             sys.exit("No video capture device was found.")
 
     def get_devices(self):
+        """Get the list of all available video devices."""
         Gst.init()
         dev_monitor = Gst.DeviceMonitor()
         dev_monitor.add_filter("Video/Source")
@@ -107,6 +123,7 @@ class VideoDevice:
         dev_monitor.stop()
 
     def get_device_caps(self, dev_caps):
+        """Get the caps of all available video device."""
         caps_list = []
 
         for i in range(dev_caps.get_size()):
@@ -119,24 +136,19 @@ class VideoDevice:
 
         return caps_list
 
-    def get_video(self):
-        video = None
-
-        if self.devices_list:
-            video = cv2.VideoCapture(self.devices_list[0])
-
-        return video
-
 
 def open_camera(dev):
+    """Launch CAM_PIPELINE gstreamer pipeline."""
     Popen(CAM_PIPELINE.format(dev), shell=True, executable="/bin/bash").wait()
 
 
 def vpu_enc_dec(dev):
+    """Launch ENC_PIPELINE gstreamer pipeline."""
     Popen(ENC_PIPELINE.format(dev), shell=True, executable="/bin/bash").wait()
 
 
 def multi_cam():
+    """Launch MULTI_CAM_PIPELINE gstreamer pipeline."""
     video_dev = VideoDevice()
 
     if len(video_dev.devices_list) < 2:
@@ -152,6 +164,7 @@ def multi_cam():
 
 
 def message_window(message):
+    """Create and launch a window to display a message."""
     window = MessageWindow(message)
     window.connect("destroy", Gtk.main_quit)
     window.show_all()
@@ -159,6 +172,7 @@ def message_window(message):
 
 
 def select_cam(func):
+    """Create and launch the main UI window."""
     window = SelectCamWindow(func)
     window.connect("destroy", Gtk.main_quit)
     window.show_all()

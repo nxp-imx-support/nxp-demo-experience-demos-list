@@ -1,89 +1,106 @@
 {"demos":[{
     "Machine Learning":[{
         "NNStreamer":[{
-             "name": "Object Classification",
+             "name": "Image Classification",
              "id": "obj_class_nn",
-             "executable": "python3 /home/root/.nxp-demo-experience/scripts/machine_learning/MLDemoLauncher.py id",
-             "compatible": "imx8mp, imx93, imx8mm, imx8qmmek",
-             "screenshot": "ml_id.png",
+             "executable": "python3 /home/root/.nxp-demo-experience/scripts/machine_learning/nnstreamer/ml_demo_launcher.py id",
+             "compatible": "imx8mp, imx93, imx8mm, imx8qmmek, imx95",
+             "screenshot": "image_classification.jpg",
              "icon": "photo-video-solid.svg",
-             "description": "An example of how to use NNStreamer to classify objects in a video or camera feed. An internet connection may be required."
+             "description": "Image classification example using NNStreamer. Image classification is an ML task that attempts to comprehend an entire image as a whole. The goal is to classify the image by assigning it to a specific label. Typically, it refers to images in which only one object appears and is analyzed. An internet connection may be required."
          },{
              "name": "Object Detection",
              "id": "obj_detect_nn",
-             "executable": "python3 /home/root/.nxp-demo-experience/scripts/machine_learning/MLDemoLauncher.py detect",
-             "compatible": "imx8mp, imx93, imx8mm, imx8qmmek",
+             "executable": "python3 /home/root/.nxp-demo-experience/scripts/machine_learning/nnstreamer/ml_demo_launcher.py detect",
+             "compatible": "imx8mp, imx93, imx8mm, imx8qmmek, imx95",
              "screenshot": "ml_detect.png",
              "icon": "photo-video-solid.svg",
-             "description": "An example of how to use NNStreamer to detect objects in a video or camera feed. An internet connection may be required."
+             "description": "Object detection example using NNStreamer. Object detection is the ML task that detects instances of objects of a certain class within an image. A bounding box and a class label are found for each detected object. An internet connection may be required."
          },{
-             "name": "Pose Detection",
+             "name": "Pose Estimation",
              "id": "pose_detect_nn",
-             "executable": "python3 /home/root/.nxp-demo-experience/scripts/machine_learning/MLDemoLauncher.py pose",
-             "compatible": "imx8mp, imx8qmmek",
-             "screenshot": "ml_pose.png",
+             "executable": "python3 /home/root/.nxp-demo-experience/scripts/machine_learning/nnstreamer/ml_demo_launcher.py pose",
+             "compatible": "imx8mp, imx8qmmek, imx95",
+             "screenshot": "pose-estimation.jpg",
              "icon": "photo-video-solid.svg",
-             "description": "An example of how to use NNStreamer to detect a pose in a video or camera feed. An internet connection may be required."
-         },{
-             "name": "Brand Detection",
-             "id": "brand_detect_nn",
-             "executable": "python3 /home/root/.nxp-demo-experience/scripts/machine_learning/MLDemoLauncher.py brand",
-             "compatible": "imx8mp, imx8mm, imx8qmmek",
-             "screenshot": "ml_brand.png",
-             "icon": "photo-video-solid.svg",
-             "description": "An example of how to use NNStreamer to detect a branded item from the United States in a video or camera feed. An internet connection may be required."
+             "description": "Pose estimation example using NNStreamer. The goal of pose estimation is to detect the position and orientation of a person or object. In human pose estimation, this is usually done with specific keypoints such as hands, head, legs, etc. An internet connection may be required."
          },{
              "name": "ML Gateway",
              "id": "ml_gate_nn",
-             "executable": "python3 /home/root/.nxp-demo-experience/scripts/machine_learning/MLGateway.py",
-             "compatible": "imx8mp, imx8mm",
-             "screenshot": "",
+             "executable": "python3 /home/root/.nxp-demo-experience/scripts/machine_learning/ml_gateway/ml_gateway.py",
+             "compatible": "imx8mp, imx8mm, imx93",
+             "screenshot": "ml_gateway.jpg",
              "icon": "photo-video-solid.svg",
-             "description": "Application that allows a resource-constraint MCU/MPU systems (clients) to connect and run inferencing on a ML Gateway system (server) that has very high-performance ML capabilities"
+             "description": "ML Gateway easily configures the i.MX8M Plus and i.MX93 EVKs as machine learning accelerator servers and allows resource-constrained MPU systems (clients) without NPUs to connect and run ML inference. This is currently enabled for i.MX8M Mini on the client side."
          },{
              "name": "Selfie Segmenter",
              "id": "selfie_nn",
-             "executable": "python3 /home/root/.nxp-demo-experience/scripts/machine_learning/MLDemoLauncher.py selfie_nn",
+             "executable": "python3 /home/root/.nxp-demo-experience/scripts/machine_learning/selfie_segmenter/selfie_segmenter.py",
              "compatible": "imx8mp, imx93",
-             "screenshot": "selfie_segmenter_ss.png",
+             "screenshot": "selfie_segmenter.jpg",
              "icon": "photo-video-solid.svg",
-             "description": "A machine learning based semantic segmentation demo. One example shows how to remove background from a video; other shows the segmentation mask. An internet connection is required."
-         }],
+             "description": "Selfie Segmenter showcases the ML capabilities of i.MX8M Plus and i.MX93 by using the NPU to accelerate an instance segmentation model. This model lets you segment the portrait of a person and can be used to replace or modify the background of an image. An internet connection is required."
+         },{
+              "name": "i.MX Smart Fitness",
+              "id": "imx-smart-fitness",
+              "executable": "python3 /home/root/.nxp-demo-experience/scripts/machine_learning/imx_smart_fitness/imx_smart_fitness.py",
+              "compatible": "imx8mp, imx93",
+              "screenshot": "imx-smart-fitness.jpg",
+              "icon": "photo-video-solid.svg",
+              "description": "i.MX Smart Fitness showcases the i.MX' Machine Learning capabilities by using an NPU to accelerate two Deep Learning vision-based models. Together, these models detect a person present in the scene and predict 33 3D-keypoints to generate a complete body landmark, known as pose estimation. From the pose estimation, a K-NN pose classifier classifies two different body poses: 'Squat-Down' and 'Squat-Up'. The application tracks the 'squats' fitness exercise and the repetition counter is set to 12 repetitions in an infinite loop."
+        }],
         "TFLite":[{
             "name": "ML Benchmark",
-            "executable": "python3 /home/root/.nxp-demo-experience/scripts/machine_learning/MLBenchmark.py",
-            "compatible": "imx93",
-            "screenshot": "",
+            "executable": "python3 /home/root/.nxp-demo-experience/scripts/machine_learning/ml_benchmark/ml_benchmark.py",
+            "compatible": "imx8mp, imx93",
+            "screenshot": "ml_benchmark.jpg",
             "icon": "cogs-solid.svg",
-            "description": "This demo shows the performance of the NPU when compared to the CPU with TensorFlow Lite."
+            "description": "This tool allows to easily compare the performance of TensorFlow Lite models running on CPU (Cortex-A) and NPU. The tool works on i.MX93 and i.MX8M Plus."
         }],
         "OpenCV":[{
             "name": "Face Recognition",
             "id": "face_recog",
             "executable": "python3 /home/root/.nxp-demo-experience/scripts/machine_learning/face_recognition.py",
             "compatible": "imx8mp",
-            "screenshot": "face_rec.png",
+            "screenshot": "face_recognition.jpg",
             "icon": "photo-video-solid.svg",
-            "description": "An OpenCV example of how to use machine learning to recognize faces. An internet connection is required."
+            "description": "An OpenCV application example of how to use machine learning to recognize faces. The user can save multiple profiles and the application will recognize the identity of each person by their names. An internet connection is required."
         },{
-            "name": "DMS Demo",
+            "name": "DMS",
             "id": "dms",
-            "executable": "python3 /home/root/.nxp-demo-experience/scripts/machine_learning/dms/dms_demo.py",
-            "compatible": "imx93",
-            "screenshot": "",
+            "executable": "python3 /home/root/.nxp-demo-experience/scripts/machine_learning/dms/launcher.py",
+            "compatible": "imx8mp, imx93",
+            "screenshot": "dms.jpg",
             "icon": "photo-video-solid.svg",
-            "description": "An example over how to implement a Driver Monitoring System (DMS)  using the NPU. An internet connection is required."
+            "description": "An example over how to implement a Driver Monitoring System (DMS) using the NPU. An internet connection is required."
+        }],
+        "Low Power":[{
+            "name": "LP Baby Cry Detection",
+            "id": "lp_baby_cry",
+            "executable": "python3 /home/root/.nxp-demo-experience/scripts/machine_learning/low_power_ml/lp_baby_cry_detection.py",
+            "compatible": "imx93",
+            "screenshot": "LP-baby-cry-detection.jpg",
+            "icon": "photo-video-solid.svg",
+            "description": "Note: To run this example, append 'clk_ignore_unused' in u-boot 'mmcargs' env, before booting linux.\n\nAn application example showing how to implement baby cry detection in Cortex-M33 core when Linux is in suspend mode. When the application is started, Linux enters suspend mode, and users must enter the timeout value in Cortex-M33 console. Then Cortex-M33 records one second audio input from MIC array on the i.MX93 EVK board, and try to identify whether there is baby crying sound in the audio by running ML model inference. If baby crying sound is detected, it will wake up Cortex-A55 core and stop. If baby crying sound is not detected, it will suspend Cortex-M33 core for the configured timeout and wake up Cortex-M33 core to record one second audio again, and run the same process in an infinite loop until a baby crying sound is detected. An internet connection is required.\n\n\n\n"
+        },{
+            "name": "LP KWS Detection",
+            "id": "lp_kws",
+            "executable": "python3 /home/root/.nxp-demo-experience/scripts/machine_learning/low_power_ml/lp_kws_detection.py",
+            "compatible": "imx93",
+            "screenshot": "LP-kws-detection.jpg",
+            "icon": "photo-video-solid.svg",
+            "description": "Note: To run this example, append 'clk_ignore_unused' in u-boot 'mmcargs' env, before booting linux.\n\nAn application example showing how to implement key word detection in Cortex-M33 core when Linux is in suspend mode. When the application is started, Linux enters suspend mode. Cortex-M33 will record one second audio input from MIC array on the i.MX93 EVK board, and try to identify whether there is key word UP in the audio by running ML model inference. If key word is detected, it will wake up Cortex-A55 core and stop. If no key word is detected, it will record one second audio again, and run the same process in an infinite loop until a key word is detected. An internet connection is required.\n\n\n\n"
         }]
      }]
      },
     {"Multimedia":[{
         "GStreamer":[{
-            "name": "Video Test Demo",
+            "name": "Video Test",
             "id": "video_test",
             "executable": "python3 /home/root/.nxp-demo-experience/scripts/multimedia/gstreamer/video_test.py",
             "source": "",
             "icon": "photo-video-solid.svg",
-            "screenshot": "gst_test_src_screenshot.png",
+            "screenshot": "gst_test_src_screenshot.jpg",
             "compatible": "imx7ulp, imx8ulp, imx8qxpc0mek, imx8qmmek, imx8mq, imx8mm, imx8mn, imx8mp, imx93",
             "description": "This is a simple demo utility that allows users to play back video captured on a camera or a test source."
         },{
@@ -92,16 +109,16 @@
             "executable": "python3 /home/root/.nxp-demo-experience/scripts/multimedia/gstreamer/imx8mp_camera_demo.py --vpu_enc=True",
             "source": "",
             "icon": "photo-video-solid.svg",
-            "screenshot": "gst_camera_preview_screenshot.png",
+            "screenshot": "camera-vpu.jpg",
             "compatible": "imx8mp",
             "description": "This is a GStreamer pipeline able to create a camera preview example using VPU to encode and decode the image."
         },{
             "name": "2Way Video Streaming",
             "id": "video_streaming",
-            "executable": "python3 /home/root/.nxp-demo-experience/scripts/multimedia/gstreamer/2wayvideo_streaming.py",
+            "executable": "python3 /home/root/.nxp-demo-experience/scripts/multimedia/gstreamer/two_way_video_streaming.py",
             "source": "",
             "icon": "photo-video-solid.svg",
-            "screenshot": "gst_camera_preview_screenshot.png",
+            "screenshot": "two-way-video-streaming.jpg",
             "compatible": "imx8mp, imx8mm",
             "description": "Allows user to implement a two way video streaming demo that displays video encode and decode capabilities between i.MX devices in local network."
         },{
@@ -110,12 +127,12 @@
             "executable": "python3 /home/root/.nxp-demo-experience/scripts/multimedia/gstreamer/imx8mp_camera_demo.py --multi_cam=True",
             "source": "",
             "icon": "photo-video-solid.svg",
-            "screenshot": "gst_camera_preview_screenshot.png",
+            "screenshot": "multi_cameras.jpg",
             "compatible": "imx8mp",
             "description": "This is a GStreamer pipeline able to create a camera preview example using a Basler camera and an OV5640 camera simultaneously."
         }],
         "ISP":[{
-            "name": "ISP Control Demo",
+            "name": "ISP Control",
             "id": "isp_control",
             "executable": "python3 /home/root/.nxp-demo-experience/scripts/multimedia/gstreamer/imx8mp_isp_demo.py",
             "source": "",
@@ -124,12 +141,12 @@
             "compatible": "imx8mp",
             "description": "This program opens a GStreamer pipeline and allows the user to change various parameters of the ISP in real time. This demo will only work with a compatible Basler camera."
         },{
-            "name": "Video Dump Demo",
+            "name": "Video Dump",
             "id": "video_dump",
             "executable": "python3 /home/root/.nxp-demo-experience/scripts/multimedia/gstreamer/imx8mp_isp_dump.py",
             "source": "",
             "icon": "photo-video-solid.svg",
-            "screenshot": "",
+            "screenshot": "video-dump.jpg",
             "compatible": "imx8mp",
             "description": "This program allows users to dump the raw frame data from a camera onto a connected drive. This demo will only work with a compatible Basler camera."
         }],
@@ -139,7 +156,7 @@
             "executable": "/home/root/.nxp-demo-experience/scripts/audio/audio_playback/audio_record.sh",
             "source": "",
             "icon": "volume-up-solid.svg",
-            "screenshot": "",
+            "screenshot": "audio-record.jpg",
             "compatible": "imx7ulp",
             "description": "This test records an audio file from Headphone input with a 10 second duration. Make sure a Headphone is connected to the board."
         },
@@ -149,7 +166,7 @@
             "executable": "/home/root/.nxp-demo-experience/scripts/audio/audio_playback/audio_play.sh",
             "source": "",
             "icon": "volume-up-solid.svg",
-            "screenshot": "",
+            "screenshot": "audio-play.jpg",
             "compatible": "imx7ulp",
             "description": "This test plays the audio file recorded on the 'Audio Record' test. Make sure a Headphone is connected to the board. Need to run the 'Audio Record' test first."
         }],
@@ -159,17 +176,17 @@
             "executable": "python3 /home/root/.nxp-demo-experience/scripts/audio/voice/voice_demo.py",
             "source": "",
             "icon": "volume-up-solid.svg",
-            "screenshot": "",
+            "screenshot": "voice-control.jpg",
             "compatible": "imx8mp, imx8mm",
             "description": "See NXP's Voice Technology in action! Use your voice to open and close various applications. This requires 8-MIC Array Board (8MIC-RPI-MX8) installed on the i.MX hardware (Visit NXP.com for help). Please note that this will override '/etc/asound.conf' file. It will be restored if this application is gracefully terminated."
         },
         {
             "name": "i.MX Multimedia Player",
-            "id": "btplayer",
-            "executable": "/home/root/.nxp-demo-experience/scripts/multimedia/btplayerdemo/init.sh",
+            "id": "voiceplayer",
+            "executable": "/home/root/.nxp-demo-experience/scripts/multimedia/imx-voiceplayer/init.sh",
             "source": "",
             "icon": "bluetooth.svg",
-            "screenshot": "bluetooth.svg",
+            "screenshot": "multimedia-player.jpg",
             "compatible": "imx8mm, imx8mp, imx93",
             "description": "This is an application for controlling an audio player using the Bluetooth communication protocol by the use of voice commands.\nWakeWord supported :\n    'HEY NXP'\nVoice commands supported :\n    PLAY MUSIC\n    PAUSE\n    PREVIOUS SONG\n    NEXT SONG\n    VOLUME UP\n    VOLUME DOWN\n    MUTE\n    STOP\n    STOP PLAYER\n\nThis application requires 8-MIC Array Board (8MIC-RPI-MX8) installed on the i.MX hardware (Visit NXP.com for help).\n\n\n\n\n\n\n\n\n"
         },
@@ -179,7 +196,7 @@
             "executable": "/home/root/.nxp-demo-experience/scripts/multimedia/smart-kitchen/run.sh",
             "source": "",
             "icon": "smart-kitchen-icon.svg",
-            "screenshot": "smart-kitchen-screenshot.png",
+            "screenshot": "smart-kitchen-screenshot.jpg",
             "compatible": "imx8mm, imx8mp, imx93",
             "description": "This application simulates a smart kitchen controlled by voice commands using NXP's Voice Intelligent Technology (VIT).\n\nHow to use: First say a wakeword to select a kitchen's item (hood, oven or aircon) and then say one of the item's available commands (e.g. \"Hey hood, light on\").\n\nThe supported commands are:\nWakeWords supported:\n\tHEY HOOD\n\tHEY OVEN\n\tHEY AIRCON\nGlobal Commands:\n\tENTER\n\tEXIT\n\tRUN DEMO\n\tSTOP DEMO\nHood commands:\n\tFAN OFF\n\tFAN ON\n\tFAN LOW\n\tFAN HIGH\n\tLIGHT OFF\n\tLIGHT ON\nAircon commands:\n\tDRY MODE\n\tCOOL MODE\n\tFAN MODE\n\tSWING OFF\n\tSWING ON\n\tFAN LOW\n\tFAN HIGH\nOven commands:\n\tCLOSE DOOR\n\tOPEN DOOR\n\nThe item's functions can also be activated by clicking on the item's controls using a mouse or touchscreen.\n\n\n\n\n\n\n"
 		}]
@@ -192,7 +209,7 @@
             "executable": "python3 /home/root/.nxp-demo-experience/scripts/TSN/qbv/start_demo.py",
             "source": "",
             "icon": "photo-video-solid.svg",
-            "screenshot": "TSN-802.1Qbv.png",
+            "screenshot": "tsn.jpg",
             "compatible": "imx8mm, imx8mp",
             "description": "Enhancements to Traffic Scheduling: Time-Aware Shaper \nIt separates communication on the Ethernet network into configurable length, repeating time cycles, thereby contributing to the delivery of time-critical traffic.\nEach network node's egress ports have per-queue traffic windows which may be opened/closed at specified times.The talker-to-listener path across the network may be dedicated to this priority traffic alone, at real-time (T), causing the talker's traffic to be delivered reliably and deterministically across the network.\n\n\n\n\n\n\n\n\n\n"
         }]
@@ -205,7 +222,7 @@
             "executable": "/opt/viv_samples/tiger/tiger",
             "source": "",
             "icon": "cube-solid.svg",
-            "screenshot": "g2d_tiger_screenshot.png",
+            "screenshot": "tiger_2d.jpg",
             "compatible": "imx7ulp, imx8mq, imx8mm, imx8mn, imx8qxpc0mek, imx8qmmek, imx8mp, imx8ulp",
             "description": "Vivante Tiger G2D, this demo shows a vector image being rotated and scaled using OpenVG."
         }],
@@ -215,7 +232,7 @@
             "executable": "/opt/viv_samples/es20/vv_launcher/vv_launcher",
             "source": "",
             "icon": "object-group-regular.svg",
-            "screenshot": "vivante_vv_laucher.png",
+            "screenshot": "vivante_vv_laucher.jpg",
             "compatible": "imx7ulp, imx8qxpc0mek, imx8qmmek, imx8mp, imx8ulp",
             "description": "Vivante launcher demo."
         },
@@ -225,7 +242,7 @@
             "executable": "/home/root/.nxp-demo-experience/scripts/opengl/vivante_cover_flow.sh",
             "source": "",
             "icon": "object-group-regular.svg",
-            "screenshot": "vivante_cover_flow.png",
+            "screenshot": "cover-flow.jpg",
             "compatible": "imx7ulp, imx8ulp",
             "description": "Vivante Cover Flow demo."
         },
@@ -235,7 +252,7 @@
             "executable": "/home/root/.nxp-demo-experience/scripts/opengl/vivante_tutorial7.sh",
             "source": "",
             "icon": "object-group-regular.svg",
-            "screenshot": "vivante_tutorial7.png",
+            "screenshot": "vivante-tutorial.jpg",
             "compatible": "imx7ulp, imx8ulp",
             "description": "Vivante OpenGL tutorial"
         },
@@ -246,7 +263,7 @@
             "source": "",
             "icon": "object-group-regular.svg",
             "screenshot": "bloom.jpg",
-            "compatible": "imx8mq, imx8mm, imx8mn, imx8qxpc0mek, imx8qmmek, imx8mp",
+            "compatible": "imx8mq, imx8mm, imx8mn, imx8qxpc0mek, imx8qmmek, imx8mp, imx95",
             "description": "An example of how to create a bloom effect. The idea is not to create the most accurate bloom, but something that is fairly fast to render. Instead of increasing the kernal size to get a good blur we do a fairly fast approximation by downscaling the original image to multiple smaller render-targets and then blurring these using a relative small kernel and then finally rescaling the result to the original size."
         },
         {
@@ -266,7 +283,7 @@
             "source": "",
             "icon": "object-group-regular.svg",
             "screenshot": "blur.jpg",
-            "compatible": "imx8mq, imx8mm, imx8mn, imx8qxpc0mek, imx8qmmek, imx8mp",
+            "compatible": "imx8mq, imx8mm, imx8mn, imx8qxpc0mek, imx8qmmek, imx8mp, imx95",
             "description": "Uses the two pass linear technique and further reduces the bandwidth requirement by downscaling the 'source image' to 1/4 its size (1/2w x 1/2h) before applying the blur and and then upscaling the blurred image to provide the final image. This works well for large kernel sizes and relatively high sigma's but the downscaling produces visible artifacts with low sigma's."
         },
         {
@@ -286,7 +303,7 @@
             "source": "",
             "icon": "object-group-regular.svg",
             "screenshot": "eightlayerblend.jpg",
-            "compatible": "imx8mq, imx8mm, imx8mn, imx8qxpc0mek, imx8qmmek, imx8mp",
+            "compatible": "imx8mq, imx8mm, imx8mn, imx8qxpc0mek, imx8qmmek, imx8mp, imx95",
             "description": "Creates a simple parallax scrolling effect by blending eight 32 bit per pixel 1080p layers on top of each other. This is not the most optimal way to do it as it uses eight passes. But it does provide a good example of the worst case bandwidth use for the operation. The demo was created to compare GLES to the G2D eight blend blit functionality."
         },
         {
@@ -306,7 +323,7 @@
             "source": "",
             "icon": "object-group-regular.svg",
             "screenshot": "fractalshader.jpg",
-            "compatible": "imx8mq, imx8mm, imx8mn, imx8qxpc0mek, imx8qmmek, imx8mp",
+            "compatible": "imx8mq, imx8mm, imx8mn, imx8qxpc0mek, imx8qmmek, imx8mp, imx95",
             "description": "Can render both the julia and mandelbrot set using a fragment shader. This demo was used to demonstrates GPU shader performance by using up roughly 515 instructions to render each fragment while generating the julia set. It uses no textures, has no overdraw and has a minimal bandwidth requirement."
         },
         {
@@ -336,7 +353,7 @@
             "source": "",
             "icon": "object-group-regular.svg",
             "screenshot": "linebuilder101.jpg",
-            "compatible": "imx8mq, imx8mm, imx8mn, imx8qxpc0mek, imx8qmmek, imx8mp",
+            "compatible": "imx8mq, imx8mm, imx8mn, imx8qxpc0mek, imx8qmmek, imx8mp, imx95",
             "description": "A simple example of dynamic line rendering using the LineBuilder helper class. The line builder has 'Add' methods for most FslBase.Math classes like BoundingBox, BoundingSphere, BoundingFrustrum, Ray, etc."
         },
         {
@@ -356,7 +373,7 @@
             "source": "",
             "icon": "object-group-regular.svg",
             "screenshot": "modelloaderbasics.jpg",
-            "compatible": "imx8mq, imx8mm, imx8mn, imx8qxpc0mek, imx8qmmek, imx8mp",
+            "compatible": "imx8mq, imx8mm, imx8mn, imx8qxpc0mek, imx8qmmek, imx8mp, imx95",
             "description": "Demonstrates how to use the FslSceneImporter and Assimp to load a scene and render it using OpenGLES2. The model is rendered using a simple per pixel directional light shader."
         },
         {
@@ -376,7 +393,7 @@
             "source": "",
             "icon": "cubes-solid.svg",
             "screenshot": "s03_transform.jpg",
-            "compatible": "imx8mq, imx8mm, imx8mn, imx8qxpc0mek, imx8qmmek, imx8mp",
+            "compatible": "imx8mq, imx8mm, imx8mn, imx8qxpc0mek, imx8qmmek, imx8mp, imx95",
             "description": "Renders a animated vertex colored triangle. This shows how to modify the model matrix to rotate a triangle and how to utilize demoTime.DeltaTime to do frame rate independent animation."
         },
         {
@@ -396,7 +413,7 @@
             "source": "",
             "icon": "cubes-solid.svg",
             "screenshot": "s04_projection.jpg",
-            "compatible": "imx8mq, imx8mm, imx8mn, imx8qxpc0mek, imx8qmmek, imx8mp",
+            "compatible": "imx8mq, imx8mm, imx8mn, imx8qxpc0mek, imx8qmmek, imx8mp, imx95",
             "description": "This example shows how to: - Build a perspective projection matrix - Render two simple 3d models using frame rate independent animation."
         },
         {
@@ -416,8 +433,8 @@
             "source": "",
             "icon": "cubes-solid.svg",
             "screenshot": "s06_texturing.jpg",
-            "compatible": "imx8mq, imx8mm, imx8mn, imx8qxpc0mek, imx8qmmek, imx8mp",
-            "description": "This example shows how to use the Texture class to use a texture in a cube. It also shows you how to use the ContentManager service to load a 'png' file from the Content directory into a bitmap utility class which is then used to used to create a OpenGL ES texture."
+            "compatible": "imx8mq, imx8mm, imx8mn, imx8qxpc0mek, imx8qmmek, imx8mp, imx95",
+            "description": "This example shows how to use the Texture class to use a texture in a cube. It also shows you how to use the ContentManager service to load a 'png' file from the Content directory into a bitmap utility class which is then used to create an OpenGL ES texture."
         },
         {
             "name": "S06_Texturing",
@@ -427,7 +444,7 @@
             "icon": "cubes-solid.svg",
             "screenshot": "s06_texturing.jpg",
             "compatible": "imx7ulp, imx8ulp",
-            "description": "This example shows how to use the Texture class to use a texture in a cube. It also shows you how to use the ContentManager service to load a 'png' file from the Content directory into a bitmap utility class which is then used to used to create a OpenGL ES texture."
+            "description": "This example shows how to use the Texture class to use a texture in a cube. It also shows you how to use the ContentManager service to load a 'png' file from the Content directory into a bitmap utility class which is then used to create an OpenGL ES texture."
         },
         {
             "name": "Mapping",
@@ -436,8 +453,8 @@
             "source": "",
             "icon": "cubes-solid.svg",
             "screenshot": "s07_environmentmapping.jpg",
-            "compatible": "imx8mq, imx8mm, imx8mn, imx8qxpc0mek, imx8qmmek, imx8mp",
-            "description": "This sample shows how to use a cubemap texture to simulate a reflective material. It also shows you how to use the ContentManager service to load a 'dds' file from the Content directory into a Texture utility class which is then used to used to create a OpenGL ES cubemap texture."
+            "compatible": "imx8mq, imx8mm, imx8mn, imx8qxpc0mek, imx8qmmek, imx8mp, imx95",
+            "description": "This sample shows how to use a cubemap texture to simulate a reflective material. It also shows you how to use the ContentManager service to load a 'dds' file from the Content directory into a Texture utility class which is then used to create an OpenGL ES cubemap texture."
         },
         {
             "name": "Mapping",
@@ -447,7 +464,7 @@
             "icon": "cubes-solid.svg",
             "screenshot": "s07_environmentmapping.jpg",
             "compatible": "imx7ulp, imx8ulp",
-            "description": "This sample shows how to use a cubemap texture to simulate a reflective material. It also shows you how to use the ContentManager service to load a 'dds' file from the Content directory into a Texture utility class which is then used to used to create a OpenGL ES cubemap texture."
+            "description": "This sample shows how to use a cubemap texture to simulate a reflective material. It also shows you how to use the ContentManager service to load a 'dds' file from the Content directory into a Texture utility class which is then used to create an OpenGL ES cubemap texture."
         },
         {
             "name": "Mapping Refraction",
@@ -456,8 +473,8 @@
             "source": "",
             "icon": "cubes-solid.svg",
             "screenshot": "s08_environmentmappingrefraction.jpg",
-            "compatible": "imx8mq, imx8mm, imx8mn, imx8qxpc0mek, imx8qmmek, imx8mp",
-            "description": "This sample is a variation from the previous sample, again, a cubemap texture is used, but this time instead of simulating a reflective material a refractive material is simulated. It also shows you how to use the ContentManager service to load a 'dds' file from the Content directory into a Texture utility class which is then used to used to create a OpenGL ES cubemap texture."
+            "compatible": "imx8mq, imx8mm, imx8mn, imx8qxpc0mek, imx8qmmek, imx8mp, imx95",
+            "description": "This sample is a variation from the previous sample, again, a cubemap texture is used, but this time instead of simulating a reflective material a refractive material is simulated. It also shows you how to use the ContentManager service to load a 'dds' file from the Content directory into a Texture utility class which is then used to create an OpenGL ES cubemap texture."
         },
         {
             "name": "Mapping Refraction",
@@ -467,7 +484,7 @@
             "icon": "cubes-solid.svg",
             "screenshot": "s08_environmentmappingrefraction.jpg",
             "compatible": "imx7ulp, imx8ulp",
-            "description": "This sample is a variation from the previous sample, again, a cubemap texture is used, but this time instead of simulating a reflective material a refractive material is simulated. It also shows you how to use the ContentManager service to load a 'dds' file from the Content directory into a Texture utility class which is then used to used to create a OpenGL ES cubemap texture."
+            "description": "This sample is a variation from the previous sample, again, a cubemap texture is used, but this time instead of simulating a reflective material a refractive material is simulated. It also shows you how to use the ContentManager service to load a 'dds' file from the Content directory into a Texture utility class which is then used to create an OpenGL ES cubemap texture."
         }]
     }]
     }

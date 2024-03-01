@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 
 """
-Copyright 2022-2023 NXP
-
+Copyright 2022-2024 NXP
 SPDX-License-Identifier: Apache-2.0
 
 The following is a demo to show how to recognize faces using
@@ -13,14 +12,14 @@ quality only, and should not be used in production software.
 import os
 import glob
 from typing import NamedTuple
-import cv2
 import time
-import tflite_runtime.interpreter as tflite
-import numpy as np
 import threading
 import sys
 import argparse
 import json
+import cv2
+import tflite_runtime.interpreter as tflite
+import numpy as np
 
 import gi
 
@@ -43,13 +42,30 @@ COUNTDOWN_TIME = 5
 FACE_DEMO = None
 """Holds the demo thread to be accessed by the GUI."""
 
+GUI = True
+
+MAIN_WINDOW = False
+
+OUTPUT = False
+
 
 class FaceDemo:
     """Run the video and inference part of the application."""
 
+    def __init__(self):
+        self.face_models = []
+        self.width = 0
+        self.height = 0
+        self.options_window = False
+        self.mode = 0
+        self.countdown = None
+        self.registered_faces = []
+        self.detect_time = None
+        self.recog_time = None
+        self.write_time = False
+
     def start(self, backend, cam):
         """Starts the camera and sets up the inference engine"""
-        self.face_models = []
         self.setup_inferences(backend)
         if GUI:
             self.width = 1280
@@ -58,7 +74,7 @@ class FaceDemo:
             self.width = 1920
             self.height = 1080
         if GUI:
-            GLib.idle_add(main_window.status_bar.set_text, "Starting cameras...")
+            GLib.idle_add(MAIN_WINDOW.status_bar.set_text, "Starting cameras...")
         if cam == "fake":
             cam_pipeline = cv2.VideoCapture(
                 "videotestsrc ! imxvideoconvert_g2d ! "
@@ -80,7 +96,7 @@ class FaceDemo:
                 + "videoconvert ! appsink"
             )
         if GUI:
-            GLib.idle_add(main_window.destroy)
+            GLib.idle_add(MAIN_WINDOW.destroy)
             self.options_window = OptionsWindow()
             GLib.idle_add(self.options_window.show_all)
             GLib.idle_add(cv2.namedWindow, "i.MX Face Recognition Demo")
@@ -92,12 +108,6 @@ class FaceDemo:
                 cv2.WINDOW_FULLSCREEN,
             )
         status, org_img = cam_pipeline.read()
-        self.mode = 0
-        self.countdown = None
-        self.registered_faces = []
-        self.detect_time = None
-        self.recog_time = None
-        self.write_time = False
         while status:
             mod_img = self.process_frame(org_img)
             if self.write_time:
@@ -137,18 +147,18 @@ class FaceDemo:
         """Gets the model from the server and enables it for use"""
         if GUI:
             GLib.idle_add(
-                main_window.status_bar.set_text, "Downloading " + name + "..."
+                MAIN_WINDOW.status_bar.set_text, "Downloading " + name + "..."
             )
         path = utils.download_file(name)
         if path == -1 or path == -2 or path == -3:
             GLib.idle_add(
-                main_window.status_bar.set_text,
+                MAIN_WINDOW.status_bar.set_text,
                 "Download failed! " + "Restart demo and try again!",
             )
             while True:
                 time.sleep(9999)
         if GUI:
-            GLib.idle_add(main_window.status_bar.set_text, "Creating TFLite Engine...")
+            GLib.idle_add(MAIN_WINDOW.status_bar.set_text, "Creating TFLite Engine...")
         if backend == "NPU":
             ext_delegate = tflite.load_delegate("/usr/lib/libvx_delegate.so")
             interpreter = tflite.Interpreter(
@@ -163,7 +173,7 @@ class FaceDemo:
         input_size_h = input_info[0]["shape"][2]
         if GUI:
             GLib.idle_add(
-                main_window.status_bar.set_text,
+                MAIN_WINDOW.status_bar.set_text,
                 "Warming up backend... (can take a couple minutes)",
             )
         dummy_data = np.zeros(
@@ -411,14 +421,14 @@ class FaceDemo:
             obj = {"name": face[0], "mask": face[1].tolist()}
             out.append(obj)
         data = json.dumps(out)
-        file = open("/home/root/face.json", "w")
+        file = open("/home/root/face.json", "w", encoding="utf-8")
         file.write(data)
         file.close()
         print("File written to /home/root/face.json")
 
     def import_database(self, path):
         """Imports database"""
-        file = open(path, "r")
+        file = open(path, "r", encoding="utf-8")
         data = json.load(file)
         file.close()
         n = 0
@@ -453,7 +463,7 @@ class MainWindow(Gtk.Window):
         devices = []
         for device in glob.glob("/dev/video*"):
             devices.append(device)
-        if os.path.exists("/usr/lib/libneuralnetworks.so"):
+        if os.path.exists("/usr/lib/libtim-vx.so"):
             backends_available = ["NPU", "CPU"]
         else:
             backends_available = ["CPU"]
@@ -644,7 +654,6 @@ class FaceWindow(Gtk.Window):
         question = Gtk.Label(label="Who is in the blue box?")
 
         self.name_box = Gtk.Entry()
-        global FACE_DEMO
         self.name_box.set_text("Person " + str(len(FACE_DEMO.registered_faces) + 1))
 
         self.add_button = Gtk.Button.new_with_label("Register Face")
@@ -692,29 +701,27 @@ if __name__ == "__main__":
         if args.show == 0:
             OUTPUT = False
             print("Will not show output!")
-            output = False
         else:
             OUTPUT = True
             print("Will show output")
-            output = True
         if args.npu == 0:
             print("Will not use NPU!")
-            backend = "CPU"
+            BACKEND = "CPU"
         else:
             print("Will use NPU")
-            backend = "NPU"
+            BACKEND = "NPU"
         if args.camera == -1:
             print("Using videotestsrc!")
-            device = "fake"
+            DEVICE = "fake"
         else:
             print("Using /dev/video" + str(args.camera))
-            device = "/dev/video" + str(args.camera)
+            DEVICE = "/dev/video" + str(args.camera)
         FACE_DEMO = FaceDemo()
-        cam_thread = threading.Thread(
-            target=FaceDemo.start, args=(FACE_DEMO, backend, device)
+        CAM_THREAD = threading.Thread(
+            target=FaceDemo.start, args=(FACE_DEMO, BACKEND, DEVICE)
         )
-        cam_thread.daemon = True
-        cam_thread.start()
+        CAM_THREAD.daemon = True
+        CAM_THREAD.start()
         time.sleep(3)
         if args.faces != "":
             FACE_DEMO.import_database(args.faces)
@@ -738,6 +745,6 @@ if __name__ == "__main__":
     else:
         GUI = True
         Gst.init(None)
-        main_window = MainWindow()
-        main_window.show_all()
+        MAIN_WINDOW = MainWindow()
+        MAIN_WINDOW.show_all()
         Gtk.main()

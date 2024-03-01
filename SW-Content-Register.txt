@@ -1,12 +1,11 @@
 NXP Software Content Register
 
-Package:                    GoPoint for i.MX Application Processors Demo Files
+Package:                    nxp-demo-experience-demos-list
+Version:                    v4.8
 Outgoing License:           BSD-2-Clause
 License File:               LICENSE.txt
-Package Category:           Configuration
-Type of content:            Scripts, graphics images and data files
+Type of content:            Scripts, source code, graphics images and data files
 Description and comments:   GoPoint for i.MX Application Processors configuration and launchers
 Release Location:           https://github.com/nxp-imx-support/nxp-demo-experience-demos-list
 Origin:                     NXP (BSD-2-Clause, BSD-3-Clause, Apache-2.0)
                             Font Awesome (CC-BY-4.0) https://fontawesome.com/icons
-                            NNStreamer (LGPL-2.1-only) https://github.com/nnstreamer/nnstreamer-example/

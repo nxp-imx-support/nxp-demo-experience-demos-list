@@ -1,7 +1,7 @@
 """
 ISP Demo for the i.MX 8M Plus.
 
-Copyright 2021-2023 NXP
+Copyright 2021-2024 NXP
 SPDX-License-Identifier: BSD-3-Clause
 
 Python example on how to control the ISP on the i.Mx 8M Plus. This demo shows
@@ -501,8 +501,9 @@ class ISPDemo(Gtk.Window):
         self.change_isp("<id>:<s.fps>; <fps>:" + str(int(widget.get_value())))
 
     def on_change_awb(self, widget, unused):
-        print(widget)
         """Enable or disable AWB."""
+        print(widget)
+
         if widget.get_active():
             self.change_isp("<id>:<awb.s.en>; <enable>:true")
             if self.awb_r_scale is not None:

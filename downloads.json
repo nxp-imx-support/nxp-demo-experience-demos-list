@@ -1,0 +1,267 @@
+{
+  "coco_labels.txt": [
+    {
+      "name": "coco_labels.txt",
+      "url": "https://github.com/google-coral/test_data/raw/master/coco_labels.txt",
+      "alt_url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.6.3_1.0.0/models/coco_labels.txt",
+      "sha": "52852394f9acf1faa39526a5f010e89a17f91f98"
+    }
+  ],
+  "mobilenet_v1_1.0_224_quant.tflite": [
+    {
+      "name": "mobilenet_v1_1.0_224_quant.tflite",
+      "url": "https://github.com/google-coral/test_data/raw/master/mobilenet_v1_1.0_224_quant.tflite",
+      "alt_url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.6.3_1.0.0/models/mobilenet_v1_1.0_224_quant.tflite",
+      "sha": "7e201c9721be5e57d1c91c2d726df83859a6b237"
+    }
+  ],
+  "id_example.mov": [
+    {
+      "name": "id_example.mov",
+      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.6.3_1.0.0/videos/id_example.mov",
+      "alt_url": "",
+      "sha": "8686e73b23376b70ef7b33030b83f90ee69dea32"
+    }
+  ],
+  "detect_example.mov": [
+    {
+      "name": "detect_example.mov",
+      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.6.3_1.0.0/videos/detect_example.mov",
+      "alt_url": "",
+      "sha": "4677e5f165bccaf3beb04d7e6dad9a98de1dafe8"
+    }
+  ],
+  "pose_example.mov": [
+    {
+      "name": "pose_example.mov",
+      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.6.3_1.0.0/videos/pose_example.mov",
+      "alt_url": "",
+      "sha": "0185664be1d57bb9d40d643ae6ceee44dab36a22"
+    }
+  ],
+  "ssd_mobilenet_v2_face_quant_postprocess.tflite": [
+    {
+      "name": "ssd_mobilenet_v2_face_quant_postprocess.tflite",
+      "url": "https://raw.githubusercontent.com/google-coral/test_data/master/ssd_mobilenet_v2_face_quant_postprocess.tflite",
+      "alt_url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.6.3_1.0.0/models/ssd_mobilenet_v2_face_quant_postprocess.tflite",
+      "sha": "3c54642d3eff00a32858e580b6e950d876c3bebe"
+    }
+  ],
+  "facenet_int_quantized.tflite": [
+    {
+      "name": "facenet_int_quantized.tflite",
+      "url": "https://github.com/shubham0204/FaceRecognition_With_FaceNet_Android/raw/master/app/src/main/assets/facenet_int_quantized.tflite",
+      "alt_url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.6.3_1.0.0/models/facenet_int_quantized.tflite",
+      "sha": "a64cc9df1293b8e7efce03402691a4123350df5a"
+    }
+  ],
+  "face_landmark_ptq.tflite": [
+    {
+      "name": "face_landmark_ptq.tflite",
+      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.6.3_1.0.0/models/face_landmark_ptq.tflite",
+      "alt_url": "",
+      "sha": "e5e2ebd15860a48de9fc9063a1819e20c6d82fd6"
+    }
+  ],
+  "face_detection_ptq.tflite": [
+    {
+      "name": "face_detection_ptq.tflite",
+      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.6.3_1.0.0/models/face_detection_ptq.tflite",
+      "alt_url": "",
+      "sha": "8436d74058d81cfeb63986fbc835274907a028ea"
+    }
+  ],
+  "iris_landmark_ptq.tflite": [
+    {
+      "name": "iris_landmark_ptq.tflite",
+      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.6.3_1.0.0/models/iris_landmark_ptq.tflite",
+      "alt_url": "",
+      "sha": "dfb3e5dbad7693399bebb42e76ac40ae554854f5"
+    }
+  ],
+  "yolov4_tiny_smk_call.tflite": [
+    {
+      "name": "yolov4_tiny_smk_call.tflite",
+      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.6.3_1.0.0/models/yolov4_tiny_smk_call.tflite",
+      "alt_url": "",
+      "sha": "ff38e377458fa636559ca05ae68305ea382b3ef4"
+    }
+  ],
+  "imx8mp_dms_info.jpeg": [
+    {
+      "name": "imx8mp_dms_info.jpeg",
+      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.6.3_1.0.0/images/imx8mp_dms_info.jpeg",
+      "alt_url": "",
+      "sha": "de0fd9aae89651705bfcfbf48638ab47c62f350f"
+    }
+  ],
+  "imx93_dms_info.jpeg": [
+    {
+      "name": "imx93_dms_info.jpeg",
+      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.6.3_1.0.0/images/imx93_dms_info.jpeg",
+      "alt_url": "",
+      "sha": "82875d4b0e30cfcff543447112bf6f2aa65c5364"
+    }
+  ],
+  "background.jpg": [
+    {
+      "name": "background.jpg",
+      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.6.3_1.0.0/images/background.jpg",
+      "alt_url": "",
+      "sha": "192b2708a7002f1d371d6b966d23f61210747bce"
+    }
+  ],
+  "selfie_segmenter_int8.tflite": [
+    {
+      "name": "selfie_segmenter_int8.tflite",
+      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.6.3_1.0.0/models/selfie_segmenter_int8.tflite",
+      "alt_url": "",
+      "sha": "13d19b69fd4f4aeb266a0b62beb61847d59d8560"
+    }
+  ],
+  "background_landscape.jpg": [
+    {
+      "name": "background_landscape.jpg",
+      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.6.3_1.0.0/images/background_landscape.jpg",
+      "alt_url": "",
+      "sha": "d301869a7e05e9621dc6cbfffa5b93541c68205b"
+    }
+  ],
+  "selfie_segmenter_landscape_int8.tflite": [
+    {
+      "name": "selfie_segmenter_landscape_int8.tflite",
+      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.6.3_1.0.0/models/selfie_segmenter_landscape_int8.tflite",
+      "alt_url": "",
+      "sha": "36ee33cf074f99a0605318cfb8b95f59429fe5d9"
+    }
+  ],
+  "pose_detection_quant.tflite": [
+    {
+      "name": "pose_detection_quant.tflite",
+      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.6.3_1.0.0/models/pose_detection_quant.tflite",
+      "alt_url": "",
+      "sha": "0a4bbbc2224b21868edbb5601861406d50ad8619"
+    }
+  ],
+  "pose_landmark_lite_quant.tflite": [
+    {
+      "name": "pose_landmark_lite_quant.tflite",
+      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.6.3_1.0.0/models/pose_landmark_lite_quant.tflite",
+      "alt_url": "",
+      "sha": "58a942015d032fa859c1454d3fd1cbdf8aeb13d2"
+    }
+  ],
+  "anchors.txt": [
+    {
+      "name": "anchors.txt",
+      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.6.3_1.0.0/models/anchors.txt",
+      "alt_url": "",
+      "sha": "9dce1bb5c693cd11d7219a39da6e97239f8419de"
+    }
+  ],
+  "pose_embeddings.csv": [
+    {
+      "name": "pose_embeddings.csv",
+      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.6.3_1.0.0/models/pose_embeddings.csv",
+      "alt_url": "",
+      "sha": "26ca31efcf9780f0774cd4285f982a102dad17ea"
+    }
+  ],
+  "lp_baby_detection.elf": [
+    {
+      "name": "lp_baby_detection.elf",
+      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.6.3_1.0.0/models/lp_baby_detection.elf",
+      "alt_url": "",
+      "sha": "392610c78066e45c30bb467de23e1070f81646fd"
+    }
+  ],
+  "lp_kws_detection.elf": [
+    {
+      "name": "lp_kws_detection.elf",
+      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.6.3_1.0.0/models/lp_kws_detection.elf",
+      "alt_url": "",
+      "sha": "4bce438f18360d9a9832aedf90c9e1307bf85f82"
+    }
+  ],
+  "labels_mobilenet_quant_v1_224.txt": [
+    {
+      "name": "labels_mobilenet_quant_v1_224.txt",
+      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.6.3_1.0.0/models/labels_mobilenet_quant_v1_224.txt",
+      "alt_url": "",
+      "sha": "9bf4e3f155d34ce2f624c864c9cf64c04ff9a06c"
+    }
+  ]
+  ,
+  "mobilenet_v1_1.0_224_quant_uint8_float32.tflite": [
+    {
+      "name": "mobilenet_v1_1.0_224_quant_uint8_float32.tflite",
+      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.6.3_1.0.0/models/mobilenet_v1_1.0_224_quant_uint8_float32.tflite",
+      "alt_url": "",
+      "sha": "ffe71eb53d2f880ff720f8f371bc51719c97dc49"
+    }
+  ],
+  "mobilenet_v1_1.0_224.tflite": [
+    {
+      "name": "mobilenet_v1_1.0_224.tflite",
+      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.6.3_1.0.0/models/mobilenet_v1_1.0_224.tflite",
+      "alt_url": "",
+      "sha": "824e3c3aeb3ce70b90e5d71ef5e23633e8abd98e"
+    }
+  ],
+  "box_priors.txt": [
+    {
+      "name": "box_priors.txt",
+      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.6.3_1.0.0/models/box_priors.txt",
+      "alt_url": "",
+      "sha": "7eaba5955f0ab57ed90a6d20d22c8c2cb89c3a7c"
+    }
+  ],
+  "coco_labels_list.txt": [
+    {
+      "name": "coco_labels_list.txt",
+      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.6.3_1.0.0/models/coco_labels_list.txt",
+      "alt_url": "",
+      "sha": "c75d067ad8ff2de1e828f2167fef7ec5b2f1da2a"
+    }
+  ],
+  "ssdlite_mobilenet_v2_coco_no_postprocess.tflite": [
+    {
+      "name": "ssdlite_mobilenet_v2_coco_no_postprocess.tflite",
+      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.6.3_1.0.0/models/ssdlite_mobilenet_v2_coco_no_postprocess.tflite",
+      "alt_url": "",
+      "sha": "709e8e9914a4ac697b49337cd8b437b7be2af05f"
+    }
+  ],
+  "ssdlite_mobilenet_v2_coco_quant_uint8_float32_no_postprocess.tflite": [
+    {
+      "name": "ssdlite_mobilenet_v2_coco_quant_uint8_float32_no_postprocess.tflite",
+      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.6.3_1.0.0/models/ssdlite_mobilenet_v2_coco_quant_uint8_float32_no_postprocess.tflite",
+      "alt_url": "",
+      "sha": "2965aeb0bf96a3bd311bc8d4549eae026dc76b78"
+    }
+  ],
+  "Conditioning_Drill_1-_Power_Jump.webm.480p.vp9.webm": [
+    {
+      "name": "Conditioning_Drill_1-_Power_Jump.webm.480p.vp9.webm",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/transcoded/1/17/Conditioning_Drill_1-_Power_Jump.webm/Conditioning_Drill_1-_Power_Jump.webm.480p.vp9.webm",
+      "alt_url": "",
+      "sha": "56db4b192d368932d78b54913d8c7ca82747aed6"
+    }
+  ],
+  "movenet_quant.tflite": [
+    {
+      "name": "movenet_quant.tflite",
+      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.6.3_1.0.0/models/movenet_quant.tflite",
+      "alt_url": "",
+      "sha": "d845d1119345586db234ec85495ccb7197083fe3"
+    }
+  ],
+  "movenet_single_pose_lightning.tflite": [
+    {
+      "name": "movenet_single_pose_lightning.tflite",
+      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.6.3_1.0.0/models/movenet_single_pose_lightning.tflite",
+      "alt_url": "",
+      "sha": "9aa0fc4f4d1f926c63b79c453f6c2b9821a4b5a9"
+    }
+  ]
+}

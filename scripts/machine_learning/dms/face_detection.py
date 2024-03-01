@@ -1,7 +1,15 @@
-# Copyright © 2021 Patrick Levin
-# Copyright 2022-2023 NXP
-# SPDX-License-Identifier: MIT
+#!/usr/bin/env python3
 
+"""
+Copyright © 2021 Patrick Levin
+Copyright 2022-2024 NXP
+
+SPDX-License-Identifier: MIT
+Original Source: https://github.com/patlevin/face-detection-tflite
+
+This script define class of face detection used in DMS demo
+"""
+import time
 import numpy as np
 import cv2
 import tflite_runtime.interpreter as tflite
@@ -15,16 +23,47 @@ MIN_SUPPRESSION_THRESHOLD = 0.5
 
 
 def sigmoid(x):
+    """Apply the sigmoid function on the input x"""
     return 1 / (1 + np.exp(-x))
 
 
-class MediapipeFace(object):
-    def __init__(self, model_path, threshold=0.75):
-        ext_delegate = tflite.load_delegate("/usr/lib/libethosu_delegate.so")
-        self.interpreter = tflite.Interpreter(
-            model_path=model_path, num_threads=2, experimental_delegates=[ext_delegate]
-        )
+class FaceDetector:
+    """The class to do face dectcion"""
+
+    def __init__(self, model_path, inf_device, platform, threshold=0.75):
+        """
+        Creates an instance of the face detector
+
+        Arguments:
+        model_path -- the path to the model
+        inf_device -- the inference device, CPU or NPU
+        platform -- the plaform that running this demo
+        threshold -- the threshold for confidence scores
+        """
+
+        if inf_device == "NPU":
+            if platform == "i.MX8MP":
+                delegate = tflite.load_delegate("/usr/lib/libvx_delegate.so")
+            elif platform == "i.MX93":
+                delegate = tflite.load_delegate("/usr/lib/libethosu_delegate.so")
+            else:
+                print("Platform not supported!")
+                return
+            self.interpreter = tflite.Interpreter(
+                model_path=model_path, experimental_delegates=[delegate]
+            )
+        else:
+            # inf_device is CPU
+            self.interpreter = tflite.Interpreter(model_path=model_path)
+
         self.interpreter.allocate_tensors()
+
+        # model warm up
+        time_start = time.time()
+        self.interpreter.invoke()
+        time_end = time.time()
+        print("face detection model warm up time:")
+        print((time_end - time_start) * 1000, " ms")
 
         self.input_index = self.interpreter.get_input_details()[0]["index"]
         self.input_shape = self.interpreter.get_input_details()[0]["shape"]
@@ -46,12 +85,14 @@ class MediapipeFace(object):
         self.threshold = threshold
 
     def _pre_processing(self, input_data):
+        """Preprocessing the input_data for the model"""
         input_data = cv2.cvtColor(input_data, cv2.COLOR_BGR2RGB)
         input_data = cv2.resize(input_data, self.input_shape[1:3]).astype(np.float32)
         input_data = (input_data[np.newaxis, :, :, :] - 128) / 128.0
         return input_data
 
     def detect(self, img):
+        """Detect the face from img and return the bounding box"""
         input_data = self._pre_processing(img)
         self.interpreter.set_tensor(self.input_index, input_data)
         self.interpreter.invoke()
@@ -70,9 +111,11 @@ class MediapipeFace(object):
                 filtered_boxes, filtered_scores, MIN_SUPPRESSION_THRESHOLD
             )
         )
+
         return output_boxes
 
     def _overlap_similarity(self, box1, box2):
+        """Return intersection-over-union similarity of two bounding boxes"""
         if box1 is None or box2 is None:
             return 0
         x1_min, y1_min, x1_max, y1_max = box1
@@ -88,6 +131,7 @@ class MediapipeFace(object):
         return intersect_area / denominator if denominator > 0.0 else 0.0
 
     def _non_maximum_suppression(self, boxes, scores, min_suppression_threshold):
+        """Return only the most significant detections"""
         candidates_list = []
         for i in range(np.size(boxes, 0)):
             candidates_list.append((boxes[i], scores[i]))
@@ -105,7 +149,8 @@ class MediapipeFace(object):
         return kept_list
 
     def _decode_boxes(self, raw_boxes: np.ndarray) -> np.ndarray:
-        """Simplified version of
+        """
+        Simplified version of
         mediapipe/calculators/tflite/tflite_tensors_to_detections_calculator.cc
         """
         # width == height so scale is the same across the board
@@ -128,7 +173,8 @@ class MediapipeFace(object):
         return boxes
 
     def _get_sigmoid_scores(self, raw_scores: np.ndarray) -> np.ndarray:
-        """Extracted loop from ProcessCPU (line 327) in
+        """
+        Extracted loop from ProcessCPU (line 327) in
         mediapipe/calculators/tflite/tflite_tensors_to_detections_calculator.cc
         """
         # just a single class ("face"), which simplifies this a lot
@@ -140,7 +186,8 @@ class MediapipeFace(object):
         return sigmoid(raw_scores)
 
     def _ssd_generate_anchors(self, opts: dict) -> np.ndarray:
-        """This is a trimmed down version of the C++ code; all irrelevant parts
+        """
+        This is a trimmed down version of the C++ code; all irrelevant parts
         have been removed.
         (reference: mediapipe/calculators/tflite/ssd_anchors_calculator.cc)
         """

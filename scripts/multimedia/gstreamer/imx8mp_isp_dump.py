@@ -1,6 +1,5 @@
 """
-Copyright 2021-2023 NXP
-
+Copyright 2021-2024 NXP
 SPDX-License-Identifier: BSD-2-Clause
 
 This script provides a user interface for the “video_test” tool that is used
@@ -128,6 +127,7 @@ class VideoDump(Gtk.Window):
             ["lsblk", "-o", "NAME,MOUNTPOINT", "-x", "MOUNTPOINT", "-J"],
             capture_output=True,
             text=True,
+            check=False,
         )
         drive_db = json.loads(drive_finder.stdout)["blockdevices"]
         for drive in drive_db:
@@ -175,6 +175,10 @@ class VideoDump(Gtk.Window):
         self.mode_combo.connect("changed", self.mode_change)
         self.postprocess_combo.connect("changed", self.process_change)
 
+        self.mode_set = {}
+        self.video_test = None
+        self.stop_flag = False
+
     class Mode:
         """Holds the mode details."""
 
@@ -204,14 +208,15 @@ class VideoDump(Gtk.Window):
             ],
             capture_output=True,
             text=True,
+            check=False,
         )
         mode_text = mode_finder.stdout.replace(" ", "").replace("\t", "").split("\n")
-        self.mode_set = {}
         mode_cur = None
         for line in mode_text:
             if line.startswith("ERROR"):
                 break
-            elif line.startswith("{"):
+
+            if line.startswith("{"):
                 mode_cur = self.Mode(-1, -1, -1, -1, -1)
             elif line.startswith("}"):
                 if mode_cur is None:
@@ -223,14 +228,14 @@ class VideoDump(Gtk.Window):
             elif line.startswith("width"):
                 mode_cur.width = line[6:]
                 if mode_cur.width == "0":
-                    if mode_cur.index == "0" or mode_cur.index == "2":
+                    if mode_cur.index in ("0", "2"):
                         mode_cur.width = "3840"
                     else:
                         mode_cur.width = "1920"
             elif line.startswith("height"):
                 mode_cur.height = line[7:]
                 if mode_cur.height == "0":
-                    if mode_cur.index == "0" or mode_cur.index == "2":
+                    if mode_cur.index in ("0", "2"):
                         mode_cur.height = "2160"
                     else:
                         mode_cur.height = "1080"
@@ -259,7 +264,7 @@ class VideoDump(Gtk.Window):
                 0, self.device_combo.get_active_text() + " failed to load!"
             )
         else:
-            for mode in self.mode_set.keys():
+            for mode in self.mode_set:
                 self.mode_combo.append_text(mode)
             self.mode_combo.set_active(0)
             self.height_entry.set_value(
@@ -425,12 +430,12 @@ class VideoDump(Gtk.Window):
                     self.video_test.terminate()
                     try:
                         self.video_test.wait(5)
-                    except:
+                    except subprocess.TimeoutExpired:
                         self.video_test.kill()
                     GLib.idle_add(
                         self.send_status, "Saving to disk... (This may take a while)"
                     )
-                    subprocess.run(["sync"])
+                    subprocess.run(["sync"], check=False)
                     GLib.idle_add(
                         self.send_status,
                         str(len(os.listdir()))
@@ -444,7 +449,9 @@ class VideoDump(Gtk.Window):
                     self.send_status,
                     "The dump stopped unexpectedly. Looking into reason...",
                 )
-                error_finder = subprocess.run(command, capture_output=True, text=True)
+                error_finder = subprocess.run(
+                    command, capture_output=True, text=True, check=False
+                )
                 error_text = error_finder.stdout.replace("\t", "").split("\n")
                 error_reported = "Unknown error"
                 for line in error_text:

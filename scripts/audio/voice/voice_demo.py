@@ -1,5 +1,5 @@
 """
-Copyright 2022-2023 NXP
+Copyright 2022-2024 NXP
 SPDX-License-Identifier: BSD-3-Clause
 
 This demo sets up and runs the VoiceSeeker/VoiceSpot/VIT demo that has been
@@ -10,10 +10,11 @@ successful, it will display the commands to say and what the current status
 is. If it fails, it will tell the user.
 """
 
-import gi
+import time
 import threading
 import subprocess
-import time
+
+import gi
 
 gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk, GLib, Gio, Gdk
@@ -44,8 +45,8 @@ class VoiceGUI(Gtk.Window):
         + WINDOW,
         "/opt/imx-gpu-sdk/GLES2/S07_EnvMapping___Wayland_XDG/GLES2.S07_EnvMapping___Wayland_XDG "
         + WINDOW,
-        "/opt/imx-gpu-sdk/GLES2/S08_EnvMappingRefraction___Wayland_XDG/GLES2.S08_EnvMappingRefraction___Wayland_XDG "
-        + WINDOW,
+        "/opt/imx-gpu-sdk/GLES2/S08_EnvMappingRefraction___"
+        "Wayland_XDG/GLES2.S08_EnvMappingRefraction___Wayland_XDG " + WINDOW,
         "/home/root/.nxp-demo-experience/scripts/audio/voice/sleep.sh",
     ]
 
@@ -97,7 +98,13 @@ class VoiceGUI(Gtk.Window):
         self.main_grid.attach(self.status_label, 0, 3, 1, 1)
         self.add(self.main_grid)
 
+        self.voicespot = None
+        self.voiceseeker = None
+        self.command_label = None
+        self.main_grid2 = None
+
     def kick_off(self, unused):
+        """Start button clicked. Launch VoiceSpot and VoiceSeeker."""
         GLib.idle_add(self.start_start.set_sensitive, False)
         GLib.idle_add(self.lpv_button.set_sensitive, False)
         voice_start = threading.Thread(target=self.start_up)
@@ -118,8 +125,7 @@ class VoiceGUI(Gtk.Window):
         if board == "i.MX8MP":
             if self.lpv_button.get_active():
                 res = subprocess.getstatusoutput(
-                    "cp /unit_tests/nxp-afe/asound.conf_imx8mp /etc/"
-                    "asound.conf"
+                    "cp /unit_tests/nxp-afe/asound.conf_imx8mp /etc/asound.conf"
                 )
             else:
                 res = subprocess.getstatusoutput(
@@ -128,8 +134,7 @@ class VoiceGUI(Gtk.Window):
         else:
             if self.lpv_button.get_active():
                 res = subprocess.getstatusoutput(
-                    "cp /unit_tests/nxp-afe/asound.conf_imx8mm /etc/"
-                    "asound.conf"
+                    "cp /unit_tests/nxp-afe/asound.conf_imx8mm /etc/asound.conf"
                 )
             else:
                 res = subprocess.getstatusoutput(
@@ -150,9 +155,13 @@ class VoiceGUI(Gtk.Window):
                 stdout=subprocess.PIPE,
                 stderr=subprocess.STDOUT,
             )
-        except:
-            GLib.idle_add(self.status_label.set_text, "Failed to launch Voice UI!")
-            return
+            # Make sure the process is already running
+            self.voicespot.wait(timeout=1)
+        except subprocess.TimeoutExpired:
+            # If return is not None, the process is not running
+            if self.voicespot.poll() is not None:
+                GLib.idle_add(self.status_label.set_text, "Failed to launch Voice UI!")
+                return
         vs_watch = threading.Thread(target=self.handle_voicespot)
         vs_watch.start()
         GLib.idle_add(self.status_label.set_text, "Starting VoiceSeekerLite...")
@@ -162,9 +171,15 @@ class VoiceGUI(Gtk.Window):
                 stdout=subprocess.PIPE,
                 stderr=subprocess.STDOUT,
             )
-        except:
-            GLib.idle_add(self.status_label.set_text, "Failed to start VoiceSeekerLite")
-            return
+            # Make sure the process is already running
+            self.voiceseeker.wait(timeout=1)
+        except subprocess.TimeoutExpired:
+            # If return is not None, the process is not running
+            if self.voiceseeker.poll() is not None:
+                GLib.idle_add(
+                    self.status_label.set_text, "Failed to start VoiceSeekerLite"
+                )
+                return
         vse_watch = threading.Thread(target=self.handle_voiceseeker)
         vse_watch.start()
         GLib.idle_add(self.status_label.set_text, "Finishing up...")
@@ -209,10 +224,10 @@ class VoiceGUI(Gtk.Window):
                 GLib.idle_add(self.status_label.set_text, "Listening...")
             if line.startswith("  Number of Commands"):
                 com_len = int(line.split()[5])
-                self.voicespot.stdout.readline().decode("utf-8")[:-1]
-                self.voicespot.stdout.readline().decode("utf-8")[:-1]
-                self.voicespot.stdout.readline().decode("utf-8")[:-1]
-                for i in range(com_len):
+                _ = self.voicespot.stdout.readline().decode("utf-8")[:-1]
+                _ = self.voicespot.stdout.readline().decode("utf-8")[:-1]
+                _ = self.voicespot.stdout.readline().decode("utf-8")[:-1]
+                for _ in range(com_len):
                     item = self.voicespot.stdout.readline().decode("utf-8")[3:-1]
                     self.commands.append(item)
                 self.commands_missing = False
@@ -256,14 +271,14 @@ class VoiceGUI(Gtk.Window):
             else:
                 time.sleep(1)
 
-    def quit_demo(self, object):
+    def quit_demo(self, unused):
         """Stops the demo"""
         self.get_window().set_cursor(Gdk.Cursor(Gdk.CursorType.WATCH))
         if self.demo is not None:
             self.demo.terminate()
         self.voiceseeker.terminate()
         self.voicespot.terminate()
-        subprocess.run(["cp", "/etc/asound_org.conf", "/etc/asound.conf"])
+        subprocess.run(["cp", "/etc/asound_org.conf", "/etc/asound.conf"], check=False)
         Gtk.main_quit()
 
 

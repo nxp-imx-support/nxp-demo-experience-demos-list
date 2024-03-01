@@ -1,10 +1,16 @@
-# Copyright 2022-2023 NXP
-# SPDX-License-Identifier: BSD-3-Clause
+#!/usr/bin/env python3
+
+"""
+Copyright 2022-2024 NXP
+SPDX-License-Identifier: BSD-3-Clause
+
+This script define class of Mouth used in DMS demo
+"""
 
 import math
 
 
-class Mouth(object):
+class Mouth:
     """
     This class use 468 points landmark to analyze eye behavior
     """

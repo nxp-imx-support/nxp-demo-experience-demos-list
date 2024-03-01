@@ -1,7 +1,7 @@
 """
 Video Test Demo.
 
-Copyright 2022-2023 NXP
+Copyright 2022-2024 NXP
 SPDX-License-Identifier: BSD-3-Clause
 
 This demo is meant for users to try out cameras and displays connected to a
@@ -15,12 +15,12 @@ import os
 import gi
 
 gi.require_version("Gtk", "3.0")
-from gi.repository import Gtk, Gio, GLib
+from gi.repository import Gtk, Gio
 
 
-def run_pipeline(pipeline, type):
+def run_pipeline(pipeline):
     """Run the pipeline the user selects."""
-    subprocess.run(pipeline.split(" "))
+    subprocess.run(pipeline.split(" "), check=False)
 
 
 class MainWindow(Gtk.Window):
@@ -96,11 +96,12 @@ class MainWindow(Gtk.Window):
         self.add(main_grid)
 
     def on_start(self, widget):
+        """Setup and launch the pipeline."""
         self.source_select.set_sensitive(False)
         self.resolution_select.set_sensitive(False)
         self.scale_check.set_sensitive(False)
         self.launch_button.set_sensitive(False)
-        """Set up and start the pipeline."""
+
         source = self.source_select.get_active_text()
         if source == "Test Source":
             source = "videotestsrc"
@@ -109,15 +110,13 @@ class MainWindow(Gtk.Window):
         resolution = self.resolution_select.get_active_text()
         width = resolution[: resolution.find("x")]
         height = resolution[resolution.find("x") + 1 :]
-        format = "video/x-raw,width=" + width + ",height=" + height
+        video_format = "video/x-raw,width=" + width + ",height=" + height
         if self.scale_check.get_active():
             sink = "waylandsink"
         else:
             sink = "waylandsink window-width=" + width + " window-height=" + height
-        pipeline = "gst-launch-1.0 " + source + " ! " + format + " ! " + sink
-        stream_thread = threading.Thread(
-            target=run_pipeline, args=(pipeline, "gstreamer")
-        )
+        pipeline = "gst-launch-1.0 " + source + " ! " + video_format + " ! " + sink
+        stream_thread = threading.Thread(target=run_pipeline, args=(pipeline,))
         stream_thread.start()
         if source != "videotestsrc":
             index = self.devices.index(self.source_select.get_active_text())
@@ -130,7 +129,8 @@ class MainWindow(Gtk.Window):
         self.launch_button.set_sensitive(True)
 
     def on_exit(self, widget):
-        subprocess.run(["pkill", "-P", str(os.getpid())])
+        """Close the pipeline and UI window."""
+        subprocess.run(["pkill", "-P", str(os.getpid())], check=False)
         Gtk.main_quit()
 
 

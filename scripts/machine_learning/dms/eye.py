@@ -1,15 +1,21 @@
-# Copyright 2022-2023 NXP
-# SPDX-License-Identifier: BSD-3-Clause
+#!/usr/bin/env python3
 
+"""
+Copyright 2022-2024 NXP
+SPDX-License-Identifier: BSD-3-Clause
+
+This script define class of Eye used in DMS demo
+"""
+import time
+import math
 import numpy as np
 import cv2
 import tflite_runtime.interpreter as tflite
-import math
 
 
-class Eye(object):
+class Eye:
     """
-    This class use 468 points face landmark and iris detection model
+    This class uses 468 points of face landmark and iris detection model
     from mediapipe to get 71 normalized eye contour landmarks and a
     separate list of 5 normalized iris landmarks.
     """
@@ -38,19 +44,45 @@ class Eye(object):
         (8, 14),
     ]
 
-    def __init__(self, model_path):
-        ext_delegate = tflite.load_delegate("/usr/lib/libethosu_delegate.so")
-        self.interpreter = tflite.Interpreter(
-            model_path=model_path, num_threads=2, experimental_delegates=[ext_delegate]
-        )
+    def __init__(self, model_path, inf_device, platform):
+        """
+        Creates an instance of the Eye class
+
+        Arguments:
+        model_path -- the path to the model
+        inf_device -- the inference device, CPU or NPU
+        platform -- the plaform that running this demo
+        """
+        if inf_device == "NPU":
+            if platform == "i.MX8MP":
+                delegate = tflite.load_delegate("/usr/lib/libvx_delegate.so")
+            elif platform == "i.MX93":
+                delegate = tflite.load_delegate("/usr/lib/libethosu_delegate.so")
+            else:
+                print("Platform not supported!")
+                return
+            self.interpreter = tflite.Interpreter(
+                model_path=model_path, experimental_delegates=[delegate]
+            )
+        else:
+            self.interpreter = tflite.Interpreter(model_path=model_path)
+
         self.interpreter.allocate_tensors()
+
+        # model warm up
+        time_start = time.time()
+        self.interpreter.invoke()
+        time_end = time.time()
+        print("iris landmark model warm up time:")
+        print((time_end - time_start) * 1000, " ms")
 
         self.input_index = self.interpreter.get_input_details()[0]["index"]
         self.input_shape = self.interpreter.get_input_details()[0]["shape"]
-        self.eye_index = self.interpreter.get_output_details()[1]["index"]
-        self.iris_index = self.interpreter.get_output_details()[0]["index"]
+        self.eye_index = self.interpreter.get_output_details()[0]["index"]
+        self.iris_index = self.interpreter.get_output_details()[1]["index"]
 
     def get_eye_roi(self, face_landmarks, side):
+        """Get the left/right eye's ROI position from face landmarks' position"""
         if side == 0:
             x1, y1 = face_landmarks[self.LEFT_EYE_START]
             x2, y2 = face_landmarks[self.LEFT_EYE_END]
@@ -68,12 +100,14 @@ class Eye(object):
         return roi_xmin, roi_ymin, roi_xmax, roi_ymax
 
     def _pre_processing(self, input_data):
+        """Preprocessing the input_data for the model"""
         input_data = cv2.cvtColor(input_data, cv2.COLOR_BGR2RGB)
         input_data = cv2.resize(input_data, self.input_shape[1:3]).astype(np.float32)
-        input_data = input_data[np.newaxis, :, :, :] / 255.0
+        input_data = (input_data[np.newaxis, :, :, :] - 128) / 128.0
         return input_data
 
     def get_landmark(self, frame, roi, side):
+        """Get the eye and iris landmarks from frame, return two lists of landmarks' position"""
         if side == 1:
             frame = cv2.flip(frame, 1)
         input_data = self._pre_processing(frame)
@@ -112,6 +146,7 @@ class Eye(object):
         return eye_landmarks, iris_landmarks
 
     def draw_eye_contour(self, frame, eye_landmarks):
+        """Draw the eye contour on the frame"""
         for connection in self.EYE_LANDMARK_CONNECTIONS:
             idx1, idx2 = connection
             cv2.line(

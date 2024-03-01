@@ -26,6 +26,8 @@ while cap.isOpened():
         cv2.imshow("Camera Streaming", frame)
         if cv2.waitKey(25) & 0xFF == ord("q"):
             break
+        if cv2.getWindowProperty('Camera Streaming',1) == -1:        
+            break 
         count += 1
         if (time.time() - start_time) > value:
             FPS = count / (time.time() - start_time)
