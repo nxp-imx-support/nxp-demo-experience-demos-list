@@ -1,5 +1,5 @@
 """
-Copyright 2023 NXP
+Copyright 2023-2024 NXP
 
 SPDX-License-Identifier: BSD-3-Clause
 
@@ -36,57 +36,44 @@ if len(sys.argv) == 4:
         exit()
 
     if sys.argv[1] == "start":
-        os.system("rm /home/root/.nxp-demo-experience/scripts/TSN/qbv/iperf.txt")
-        os.system("rm /home/root/.nxp-demo-experience/scripts/TSN/qbv/iperf1.txt")
-        os.system("rm /home/root/.nxp-demo-experience/scripts/TSN/qbv/FPS.txt")
-        ssh.exec_command(
-            "sh /home/root/.nxp-demo-experience/scripts/TSN/qbv/start_qbv_priority.sh &"
-        )
+        os.system("rm /opt/gopoint-apps/scripts/TSN/qbv/iperf.txt")
+        os.system("rm /opt/gopoint-apps/scripts/TSN/qbv/iperf1.txt")
+        os.system("rm /opt/gopoint-apps/scripts/TSN/qbv/FPS.txt")
+        ssh.exec_command("sh /opt/gopoint-apps/scripts/TSN/qbv/start_qbv_priority.sh &")
         time.sleep(3)
-        os.system(
-            "iperf -s -i 1 -u >> /home/root/.nxp-demo-experience/scripts/TSN/qbv/iperf.txt &"
-        )
+        os.system("iperf -s -i 1 -u >> /opt/gopoint-apps/scripts/TSN/qbv/iperf.txt &")
         time.sleep(3)
         ssh.exec_command("iperf -c 172.15.0.5 -i 1 -t 100000 -b 900M -u > /dev/null &")
         time.sleep(2)
         os.system(
-            "cat /home/root/.nxp-demo-experience/scripts/TSN/qbv/video.txt | tail -n 1 | awk '{print $0}'> /home/root/.nxp-demo-experience/scripts/TSN/qbv/video1.txt"
+            "cat /opt/gopoint-apps/scripts/TSN/qbv/video.txt | tail -n 1 | awk '{print $0}'> /opt/gopoint-apps/scripts/TSN/qbv/video1.txt"
         )
-        f = open("/home/root/.nxp-demo-experience/scripts/TSN/qbv/video1.txt", "r")
+        f = open("/opt/gopoint-apps/scripts/TSN/qbv/video1.txt", "r")
         f = f.read()
         y = f.replace("\n", "")
         ssh.exec_command(
-            "python3 /home/root/.nxp-demo-experience/scripts/TSN/qbv/camera_server.py "
-            + y
+            "python3 /opt/gopoint-apps/scripts/TSN/qbv/camera_server.py " + y
         )
         time.sleep(2)
         os.system(
-            "python3 /home/root/.nxp-demo-experience/scripts/TSN/qbv/camera_client.py > /dev/null &"
+            "python3 /opt/gopoint-apps/scripts/TSN/qbv/camera_client.py > /dev/null &"
         )
         time.sleep(2)
-        os.system("chmod 777 /home/root/.nxp-demo-experience/scripts/TSN/qbv/iperf.txt")
-        os.system(
-            "python3 /home/root/.nxp-demo-experience/scripts/TSN/qbv/tsn_config_graph.py"
-        )
+        os.system("chmod 777 /opt/gopoint-apps/scripts/TSN/qbv/iperf.txt")
+        os.system("python3 /opt/gopoint-apps/scripts/TSN/qbv/tsn_config_graph.py")
     elif sys.argv[1] == "no_qbv":
-        ssh.exec_command("sh /home/root/.nxp-demo-experience/scripts/TSN/qbv/no_qbv.sh")
+        ssh.exec_command("sh /opt/gopoint-apps/scripts/TSN/qbv/no_qbv.sh")
         time.sleep(2)
     elif sys.argv[1] == "qbv1":
-        ssh.exec_command("sh /home/root/.nxp-demo-experience/scripts/TSN/qbv/qbv1.sh")
+        ssh.exec_command("sh /opt/gopoint-apps/scripts/TSN/qbv/qbv1.sh")
         time.sleep(2)
     elif sys.argv[1] == "qbv2":
-        ssh.exec_command("sh /home/root/.nxp-demo-experience/scripts/TSN/qbv/qbv2.sh")
+        ssh.exec_command("sh /opt/gopoint-apps/scripts/TSN/qbv/qbv2.sh")
         time.sleep(2)
     elif sys.argv[1] == "stop":
-        ssh.exec_command(
-            "sh /home/root/.nxp-demo-experience/scripts/TSN/qbv/stop_qbv_priority.sh"
-        )
-        ssh.exec_command(
-            "sh /home/root/.nxp-demo-experience/scripts/TSN/qbv/kill_server_process.sh"
-        )
-        os.system(
-            "sh /home/root/.nxp-demo-experience/scripts/TSN/qbv/kill_client_process.sh"
-        )
+        ssh.exec_command("sh /opt/gopoint-apps/scripts/TSN/qbv/stop_qbv_priority.sh")
+        ssh.exec_command("sh /opt/gopoint-apps/scripts/TSN/qbv/kill_server_process.sh")
+        os.system("sh /opt/gopoint-apps/scripts/TSN/qbv/kill_client_process.sh")
 
     else:
         print("Wrong arguments")

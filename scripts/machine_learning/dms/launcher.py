@@ -21,7 +21,7 @@ from gi.repository import Gtk as gtk
 from gi.repository import GLib
 
 # Import utils
-sys.path.append("/home/root/.nxp-demo-experience/scripts")
+sys.path.append("/opt/gopoint-apps/scripts")
 import utils
 
 cur_path = os.path.dirname(os.path.abspath(__file__))
@@ -71,12 +71,12 @@ class ImxDMSLauncher:
         self.platform = None
         self.cache_enable = ""
 
-        # Check target (i.MX8M Plus vs i.MX93)
+        # Check target (i.MX 8M Plus vs i.MX 93)
         if os.path.exists("/usr/lib/libvx_delegate.so"):
             self.platform = "i.MX8MP"
             self.cache_enable = (
                 "VIV_VX_ENABLE_CACHE_GRAPH_BINARY='1' "
-                + "VIV_VX_CACHE_BINARY_GRAPH_DIR=/home/root/.cache/gopoint "
+                + "VIV_VX_CACHE_BINARY_GRAPH_DIR=/opt/gopoint-apps/downloads "
             )
         elif os.path.exists("/usr/lib/libethosu_delegate.so"):
             self.platform = "i.MX93"
@@ -210,7 +210,7 @@ class ImxDMSLauncher:
             GLib.idle_add(
                 self.status_bar.set_text,
                 "Downloaded corrupted file!\n"
-                "Please clean /home/root/.cache/gopoint and try to download again.",
+                "Please clean /opt/gopoint-apps/downloads and try to download again.",
             )
             self.run_button.set_sensitive(True)
             self.sources_list.set_sensitive(True)
@@ -229,7 +229,7 @@ class ImxDMSLauncher:
             subprocess.run(
                 self.cache_enable
                 + " /usr/bin/tensorflow-lite-*/examples/benchmark_model "
-                "--graph=/home/root/.cache/gopoint/"
+                "--graph=/opt/gopoint-apps/downloads/"
                 + self.face_detection_model
                 + " --external_delegate_path=/usr/lib/libvx_delegate.so",
                 shell=True,
@@ -244,7 +244,7 @@ class ImxDMSLauncher:
             subprocess.run(
                 self.cache_enable
                 + " /usr/bin/tensorflow-lite-*/examples/benchmark_model "
-                "--graph=/home/root/.cache/gopoint/"
+                "--graph=/opt/gopoint-apps/downloads/"
                 + self.face_landmark_model
                 + " --external_delegate_path=/usr/lib/libvx_delegate.so",
                 shell=True,
@@ -259,7 +259,7 @@ class ImxDMSLauncher:
             subprocess.run(
                 self.cache_enable
                 + " /usr/bin/tensorflow-lite-*/examples/benchmark_model "
-                "--graph=/home/root/.cache/gopoint/"
+                "--graph=/opt/gopoint-apps/downloads/"
                 + self.iris_landmark_model
                 + " --external_delegate_path=/usr/lib/libvx_delegate.so",
                 shell=True,
@@ -274,7 +274,7 @@ class ImxDMSLauncher:
             subprocess.run(
                 self.cache_enable
                 + " /usr/bin/tensorflow-lite-*/examples/benchmark_model "
-                "--graph=/home/root/.cache/gopoint/"
+                "--graph=/opt/gopoint-apps/downloads/"
                 + self.smk_call_detection_model
                 + " --external_delegate_path=/usr/lib/libvx_delegate.so",
                 shell=True,
@@ -289,7 +289,7 @@ class ImxDMSLauncher:
             smk_call_detection_vela_model = "yolov4_tiny_smk_call_vela.tflite"
 
             if not os.path.exists(
-                "/home/root/.cache/gopoint/" + face_detection_vela_model
+                "/opt/gopoint-apps/downloads/" + face_detection_vela_model
             ):
                 GLib.idle_add(
                     self.status_bar.set_text,
@@ -297,15 +297,15 @@ class ImxDMSLauncher:
                 )
 
                 subprocess.run(
-                    "vela /home/root/.cache/gopoint/"
+                    "vela /opt/gopoint-apps/downloads/"
                     + self.face_detection_model
-                    + " --output-dir=/home/root/.cache/gopoint/",
+                    + " --output-dir=/opt/gopoint-apps/downloads/",
                     shell=True,
                     check=True,
                 )
 
             if not os.path.exists(
-                "/home/root/.cache/gopoint/" + face_landmark_vela_model
+                "/opt/gopoint-apps/downloads/" + face_landmark_vela_model
             ):
                 GLib.idle_add(
                     self.status_bar.set_text,
@@ -313,15 +313,15 @@ class ImxDMSLauncher:
                 )
 
                 subprocess.run(
-                    "vela /home/root/.cache/gopoint/"
+                    "vela /opt/gopoint-apps/downloads/"
                     + self.face_landmark_model
-                    + " --output-dir=/home/root/.cache/gopoint/",
+                    + " --output-dir=/opt/gopoint-apps/downloads/",
                     shell=True,
                     check=True,
                 )
 
             if not os.path.exists(
-                "/home/root/.cache/gopoint/" + iris_landmark_vela_model
+                "/opt/gopoint-apps/downloads/" + iris_landmark_vela_model
             ):
                 GLib.idle_add(
                     self.status_bar.set_text,
@@ -329,15 +329,15 @@ class ImxDMSLauncher:
                 )
 
                 subprocess.run(
-                    "vela /home/root/.cache/gopoint/"
+                    "vela /opt/gopoint-apps/downloads/"
                     + self.iris_landmark_model
-                    + " --output-dir=/home/root/.cache/gopoint/",
+                    + " --output-dir=/opt/gopoint-apps/downloads/",
                     shell=True,
                     check=True,
                 )
 
             if not os.path.exists(
-                "/home/root/.cache/gopoint/" + smk_call_detection_vela_model
+                "/opt/gopoint-apps/downloads/" + smk_call_detection_vela_model
             ):
                 GLib.idle_add(
                     self.status_bar.set_text,
@@ -345,9 +345,9 @@ class ImxDMSLauncher:
                 )
 
                 subprocess.run(
-                    "vela /home/root/.cache/gopoint/"
+                    "vela /opt/gopoint-apps/downloads/"
                     + self.smk_call_detection_model
-                    + " --output-dir=/home/root/.cache/gopoint/",
+                    + " --output-dir=/opt/gopoint-apps/downloads/",
                     shell=True,
                     check=True,
                 )
@@ -369,7 +369,7 @@ class ImxDMSLauncher:
             + device
             + " --backend="
             + backend
-            + " --model_path=/home/root/.cache/gopoint",
+            + " --model_path=/opt/gopoint-apps/downloads",
             shell=True,
             check=True,
             capture_output=True,

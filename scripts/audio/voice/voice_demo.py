@@ -47,7 +47,7 @@ class VoiceGUI(Gtk.Window):
         + WINDOW,
         "/opt/imx-gpu-sdk/GLES2/S08_EnvMappingRefraction___"
         "Wayland_XDG/GLES2.S08_EnvMappingRefraction___Wayland_XDG " + WINDOW,
-        "/home/root/.nxp-demo-experience/scripts/audio/voice/sleep.sh",
+        "/opt/gopoint-apps/scripts/audio/voice/sleep.sh",
     ]
 
     def __init__(self):
@@ -150,7 +150,7 @@ class VoiceGUI(Gtk.Window):
                     "script",
                     "-q",
                     "-c",
-                    "/home/root/.nxp-demo-experience/bin/voice_ui_app",
+                    "/opt/gopoint-apps/bin/voice_ui_app",
                 ],
                 stdout=subprocess.PIPE,
                 stderr=subprocess.STDOUT,

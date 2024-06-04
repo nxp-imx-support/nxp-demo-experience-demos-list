@@ -2,7 +2,7 @@
 Copyright 2021-2024 NXP
 SPDX-License-Identifier: BSD-3-Clause
 
-i.MX8M Plus camera demo.
+i.MX 8M Plus camera demo.
 """
 
 from argparse import ArgumentParser

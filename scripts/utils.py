@@ -14,8 +14,8 @@ import json
 from os import mkdir
 from os.path import exists
 
-DOWNLOAD_FOLDER = "/home/root/.cache/gopoint"
-DOWNLOAD_DB = "/home/root/.nxp-demo-experience/downloads.json"
+DOWNLOAD_FOLDER = "/opt/gopoint-apps/downloads"
+DOWNLOAD_DB = "/opt/gopoint-apps/downloads.json"
 
 
 def download_file(file_name):
@@ -51,11 +51,11 @@ def download_file(file_name):
         path = DOWNLOAD_FOLDER + "/" + file_name
     else:
         out = subprocess.getstatusoutput(
-            "wget -O  /home/root/.cache/gopoint/" + file_name + " " + url
+            "wget -O  /opt/gopoint-apps/downloads/" + file_name + " " + url
         )[0]
         if out != 0:
             out = subprocess.getstatusoutput(
-                "wget -O  /home/root/.cache/gopoint/" + file_name + " " + alt_url
+                "wget -O  /opt/gopoint-apps/downloads/" + file_name + " " + alt_url
             )[0]
         if out != 0:
             return -2

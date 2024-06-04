@@ -21,10 +21,10 @@ from gi.repository import Gtk as gtk
 from gi.repository import GLib
 
 # Import utils
-sys.path.append("/home/root/.nxp-demo-experience/scripts")
+sys.path.append("/opt/gopoint-apps/scripts")
 import utils
 
-MODELS_PATH = "/home/root/.cache/gopoint/"
+MODELS_PATH = "/opt/gopoint-apps/downloads/"
 
 
 def threaded(fn):
@@ -42,7 +42,7 @@ class MLBenchmark:
     def __init__(self):
         # Obtain GUI settings and configurations
         glade_file = (
-            "/home/root/.nxp-demo-experience/"
+            "/opt/gopoint-apps/"
             "scripts/machine_learning/ml_benchmark/ml_benchmark.glade"
         )
         self.builder = gtk.Builder()
@@ -76,12 +76,12 @@ class MLBenchmark:
         self.npu_model = str()
         self.delegate = str()
 
-        # Check target (i.MX8M Plus vs i.MX93)
+        # Check target (i.MX 8M Plus vs i.MX 93)
         if os.path.exists("/usr/lib/libvx_delegate.so"):
             self.platform = "i.MX8MP"
             self.cache_enable = (
                 "VIV_VX_ENABLE_CACHE_GRAPH_BINARY='1' "
-                + "VIV_VX_CACHE_BINARY_GRAPH_DIR=/home/root/.cache/gopoint "
+                + "VIV_VX_CACHE_BINARY_GRAPH_DIR=/opt/gopoint-apps/downloads "
             )
             self.threads_available = ["1", "2", "3", "4"]
             self.delegate = "/usr/lib/libvx_delegate.so"
@@ -271,7 +271,7 @@ class MLBenchmark:
 
         self.file_chooser.set_filename(self.cpu_model)
 
-        # Compile model using vela tool for i.MX93
+        # Compile model using vela tool for i.MX 93
         if self.platform == "i.MX93":
             self.compile_vela()
         else:
@@ -294,7 +294,7 @@ class MLBenchmark:
             )
 
             subprocess.run(
-                "vela " + self.cpu_model + " --output-dir=/home/root/.cache/gopoint/",
+                "vela " + self.cpu_model + " --output-dir=/opt/gopoint-apps/downloads/",
                 shell=True,
                 check=True,
             )

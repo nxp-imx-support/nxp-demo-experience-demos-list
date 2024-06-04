@@ -1,5 +1,5 @@
 """
-Copyright 2023 NXP
+Copyright 2023-2024 NXP
 SPDX-License-Identifier: BSD-3-Clause
 
 This script provides the UI to the user, showcasing the setup diagram,
@@ -19,7 +19,7 @@ hostUserName = "root"
 hostIP = "172.15.0.1"
 hostPwd = "null"
 
-#Check if Ethernet interfaces are UP and collect IP addresses
+# Check if Ethernet interfaces are UP and collect IP addresses
 eth0_operstate = os.popen("cat /sys/class/net/eth0/operstate").read()
 eth1_operstate = os.popen("cat /sys/class/net/eth1/operstate").read()
 output1 = subprocess.check_output(
@@ -32,7 +32,8 @@ output2 = subprocess.check_output(
 ip_address2 = output2.strip().decode()
 list1 = ["Fail", "Fail"]
 
-#Create window that checks the setup for correct IP addresses and video source
+
+# Create window that checks the setup for correct IP addresses and video source
 class DialogWindow(Gtk.Window):
     def __init__(self):
         Gtk.Window.__init__(self)
@@ -57,7 +58,7 @@ class DialogWindow(Gtk.Window):
         )
         box.pack_start(label1, True, True, 0)
         pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(
-            filename="/home/root/.nxp-demo-experience/scripts/TSN/qbv/TSN_Qbv_setup_diagram.png",
+            filename="/opt/gopoint-apps/scripts/TSN/qbv/TSN_Qbv_setup_diagram.png",
             width=900,
             height=520,
             preserve_aspect_ratio=False,
@@ -65,22 +66,22 @@ class DialogWindow(Gtk.Window):
         image = Gtk.Image.new_from_pixbuf(pixbuf)
         box.pack_start(image, True, True, 0)
         label3 = Gtk.Label("Video source:")
-        #Check for correctly set IP addresses and link status
+        # Check for correctly set IP addresses and link status
         if (
             eth0_operstate.strip() == "up"
             and eth1_operstate.strip() == "up"
             and ip_address1 == "192.168.0.2"
             and ip_address2 == "172.15.0.5"
         ):
-            #Connect (ssh) i.MX8mm -> i.MX8MP
-            detected_ports= ""
+            # Connect (ssh) i.MX8mm -> i.MX8MP
+            detected_ports = ""
             try:
                 ssh_connection = 1
                 ssh = paramiko.SSHClient()
                 ssh.load_system_host_keys()
                 ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
                 ssh.connect(hostIP, port=22, username=hostUserName, password=hostPwd)
-                #check for video source
+                # check for video source
                 stdin, stdout, stderr = ssh.exec_command(
                     "v4l2-ctl --list-devices | grep -A 9999 -i cam | tail -n +1 | grep -o '/dev/video[0-9]' | awk 'NR==1 || NR==3 || NR==5 || NR==7 || NR==9'"
                 )
@@ -89,8 +90,8 @@ class DialogWindow(Gtk.Window):
             except ssh_exception.NoValidConnectionsError:
                 print("SSH Port not reachable")
                 ssh_connection = 0
-                
-            #If ssh fails create window asking to set IPs on i.MX8MP kill all client/server proccesses
+
+            # If ssh fails create window asking to set IPs on i.MX8MP kill all client/server proccesses
             if ssh_connection == 0:
                 dialog = Gtk.Dialog(
                     title="Notification",
@@ -100,7 +101,7 @@ class DialogWindow(Gtk.Window):
                 )
                 image = Gtk.Image()
                 image.set_from_file(
-                    "/home/root/.nxp-demo-experience/scripts/TSN/qbv/TSN_Qbv_setup_diagram.png"
+                    "/opt/gopoint-apps/scripts/TSN/qbv/TSN_Qbv_setup_diagram.png"
                 )
                 box_notification = Gtk.Box(
                     orientation=Gtk.Orientation.VERTICAL, spacing=6
@@ -116,22 +117,22 @@ class DialogWindow(Gtk.Window):
                 dialog.show_all()
                 dialog.run()
                 os.system(
-                    "python3 /home/root/.nxp-demo-experience/scripts/TSN/qbv/tsnqbv.py stop root 192.168.0.1"
+                    "python3 /opt/gopoint-apps/scripts/TSN/qbv/tsnqbv.py stop root 192.168.0.1"
                 )
                 dialog.destroy()
-                
-            #If camera isn't detected notify in window and kill all client/server proccesses
+
+            # If camera isn't detected notify in window and kill all client/server proccesses
             elif detected_ports in [[""]]:
                 dialog = Gtk.Dialog(
                     title="Notification",
                     parent=None,
                     flags=0,
-                    #change to add_buttons?
+                    # change to add_buttons?
                     buttons=(Gtk.STOCK_OK, Gtk.ResponseType.OK),
                 )
                 image = Gtk.Image()
                 image.set_from_file(
-                    "/home/root/.nxp-demo-experience/scripts/TSN/qbv/TSN_Qbv_setup_diagram.png"
+                    "/opt/gopoint-apps/scripts/TSN/qbv/TSN_Qbv_setup_diagram.png"
                 )
                 box_notification = Gtk.Box(
                     orientation=Gtk.Orientation.VERTICAL, spacing=6
@@ -147,11 +148,11 @@ class DialogWindow(Gtk.Window):
                 dialog.show_all()
                 dialog.run()
                 os.system(
-                    "python3 /home/root/.nxp-demo-experience/scripts/TSN/qbv/tsnqbv.py stop root 192.168.0.1"
+                    "python3 /opt/gopoint-apps/scripts/TSN/qbv/tsnqbv.py stop root 192.168.0.1"
                 )
                 dialog.destroy()
-        
-        #If ssh connection is good and camera is connected continue with demo. 
+
+        # If ssh connection is good and camera is connected continue with demo.
         videos = ["--Select Video Port--"] + detected_ports
         print(videos)
         self.video_combo = Gtk.ComboBoxText()
@@ -186,10 +187,10 @@ class DialogWindow(Gtk.Window):
     def on_start(self):
         if list1[0] == "Pass" and list1[1] == "Pass":
             os.system(
-                "python3 /home/root/.nxp-demo-experience/scripts/TSN/qbv/loading_window.py run_demo &"
+                "python3 /opt/gopoint-apps/scripts/TSN/qbv/loading_window.py run_demo &"
             )
             os.system(
-                "python3 /home/root/.nxp-demo-experience/scripts/TSN/qbv/tsnqbv.py start root 192.168.0.1 &"
+                "python3 /opt/gopoint-apps/scripts/TSN/qbv/tsnqbv.py start root 192.168.0.1 &"
             )
             self.button1.set_sensitive(True)
         else:
@@ -208,13 +209,13 @@ class DialogWindow(Gtk.Window):
 
     def on_stop(self, button):
         os.system(
-            "python3 /home/root/.nxp-demo-experience/scripts/TSN/qbv/tsnqbv.py stop root 192.168.0.1 &"
+            "python3 /opt/gopoint-apps/scripts/TSN/qbv/tsnqbv.py stop root 192.168.0.1 &"
         )
 
     def on_video_combo_changed(self, combo):
         text = combo.get_active_text()
         print(text)
-        y = open("/home/root/.nxp-demo-experience/scripts/TSN/qbv/video.txt", "w")
+        y = open("/opt/gopoint-apps/scripts/TSN/qbv/video.txt", "w")
         y.write(text)
         y.close()
         list1[0] = "Pass"

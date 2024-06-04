@@ -1,5 +1,5 @@
 """
-Copyright 2023 NXP
+Copyright 2023-2024 NXP
 
 SPDX-License-Identifier: BSD-3-Clause
 
@@ -26,13 +26,13 @@ while cap.isOpened():
         cv2.imshow("Camera Streaming", frame)
         if cv2.waitKey(25) & 0xFF == ord("q"):
             break
-        if cv2.getWindowProperty('Camera Streaming',1) == -1:        
-            break 
+        if cv2.getWindowProperty("Camera Streaming", 1) == -1:
+            break
         count += 1
         if (time.time() - start_time) > value:
             FPS = count / (time.time() - start_time)
             FPS = str(FPS)
-            _file = open("/home/root/.nxp-demo-experience/scripts/TSN/qbv/FPS.txt", "w")
+            _file = open("/opt/gopoint-apps/scripts/TSN/qbv/FPS.txt", "w")
             _file.write(FPS)
             count = 0
             start_time = time.time()

@@ -5,7 +5,7 @@ Copyright 2023-2024 NXP
 SPDX-License-Identifier: BSD-3-Clause
 
 This application showcases a two way video streaming demo which displays video
-encode and decode capabilities between i.MX8M devices in a local network.
+encode and decode capabilities between i.MX 8M devices in a local network.
 """
 
 import subprocess
@@ -23,7 +23,7 @@ from gi.repository import Gtk, Gst, Gio, GLib, Gdk
 gi.require_version("Gtk", "3.0")
 gi.require_version("Gst", "1.0")
 gi.require_version("Gdk", "3.0")
-sys.path.append("/home/root/.nxp-demo-experience/scripts/")
+sys.path.append("/opt/gopoint-apps/scripts/")
 import utils
 
 SSDPY_EXISTS = 1
@@ -37,7 +37,7 @@ CAMERA = []
 DISCOVERED_DEVICES = []
 SSDP_STATUS = "Searching"
 START = True
-FILE_LOCATION = "/home/root/.cache/gopoint/device_info.json"
+FILE_LOCATION = "/opt/gopoint-apps/downloads/device_info.json"
 PARTICIPANTS = []
 MY_IP = None
 SOC_ID = None

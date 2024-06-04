@@ -27,7 +27,7 @@ gi.require_version("Gtk", "3.0")
 gi.require_version("Gst", "1.0")
 from gi.repository import Gtk, Gst, GLib, Gio
 
-sys.path.append("/home/root/.nxp-demo-experience/scripts/")
+sys.path.append("/opt/gopoint-apps/scripts/")
 import utils
 
 DEFAULT_DETECTION_ACCURACY = 0.3
@@ -421,10 +421,10 @@ class FaceDemo:
             obj = {"name": face[0], "mask": face[1].tolist()}
             out.append(obj)
         data = json.dumps(out)
-        file = open("/home/root/face.json", "w", encoding="utf-8")
+        file = open("/opt/gopoint-apps/downloads/face.json", "w", encoding="utf-8")
         file.write(data)
         file.close()
-        print("File written to /home/root/face.json")
+        print("File written to /opt/gopoint-apps/downloads/face.json")
 
     def import_database(self, path):
         """Imports database"""
@@ -693,7 +693,7 @@ if __name__ == "__main__":
     parser.add_argument("--camera", type=int, default=0, help="Which camera to use")
     parser.add_argument("--faces", default="", help="Load existing faces")
     args = parser.parse_args()
-    os.environ["VIV_VX_CACHE_BINARY_GRAPH_DIR"] = "/home/root/.cache/gopoint"
+    os.environ["VIV_VX_CACHE_BINARY_GRAPH_DIR"] = "/opt/gopoint-apps/downloads"
     os.environ["VIV_VX_ENABLE_CACHE_GRAPH_BINARY"] = "1"
     if args.gui == 0:
         GUI = False

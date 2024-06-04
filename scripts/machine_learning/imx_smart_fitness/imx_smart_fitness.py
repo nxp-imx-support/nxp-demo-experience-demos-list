@@ -21,7 +21,7 @@ from gi.repository import Gtk as gtk
 from gi.repository import GLib
 
 # Import utils
-sys.path.append("/home/root/.nxp-demo-experience/scripts")
+sys.path.append("/opt/gopoint-apps/scripts")
 import utils
 
 
@@ -44,7 +44,7 @@ class ImxSmartFitness:
     def __init__(self):
         # Obtain GUI settings and configurations
         glade_file = (
-            "/home/root/.nxp-demo-experience/"
+            "/opt/gopoint-apps/"
             "scripts/machine_learning/imx_smart_fitness/imx_smart_fitness.glade"
         )
         self.builder = gtk.Builder()
@@ -81,12 +81,12 @@ class ImxSmartFitness:
         # Main process for imx_smart_fitness
         self.output_process = None
 
-        # Check target (i.MX8M Plus vs i.MX93)
+        # Check target (i.MX 8M Plus vs i.MX 93)
         if os.path.exists("/usr/lib/libvx_delegate.so"):
             self.platform = "i.MX8MP"
             self.cache_enable = (
                 "VIV_VX_ENABLE_CACHE_GRAPH_BINARY='1' "
-                + "VIV_VX_CACHE_BINARY_GRAPH_DIR=/home/root/.cache/gopoint "
+                + "VIV_VX_CACHE_BINARY_GRAPH_DIR=/opt/gopoint-apps/downloads "
             )
         elif os.path.exists("/usr/lib/libethosu_delegate.so"):
             self.platform = "i.MX93"
@@ -199,7 +199,7 @@ class ImxSmartFitness:
             GLib.idle_add(
                 self.status_bar.set_text,
                 "Downloaded corrupted file!\n"
-                "Please clean /home/root/.cache/gopoint and try to download again.",
+                "Please clean /opt/gopoint-apps/downloads and try to download again.",
             )
             self.run_button.set_sensitive(True)
             self.sources_list.set_sensitive(True)
@@ -217,7 +217,7 @@ class ImxSmartFitness:
             subprocess.run(
                 self.cache_enable
                 + " /usr/bin/tensorflow-lite-*/examples/benchmark_model "
-                "--graph=/home/root/.cache/gopoint/"
+                "--graph=/opt/gopoint-apps/downloads/"
                 + self.model_detection_tflite
                 + " --external_delegate_path=/usr/lib/libvx_delegate.so",
                 shell=True,
@@ -232,7 +232,7 @@ class ImxSmartFitness:
             subprocess.run(
                 self.cache_enable
                 + " /usr/bin/tensorflow-lite-*/examples/benchmark_model "
-                "--graph=/home/root/.cache/gopoint/"
+                "--graph=/opt/gopoint-apps/downloads/"
                 + self.model_landmark_tflite
                 + " --external_delegate_path=/usr/lib/libvx_delegate.so",
                 shell=True,
@@ -241,7 +241,7 @@ class ImxSmartFitness:
 
         if self.platform == "i.MX93":
             if not os.path.exists(
-                "/home/root/.cache/gopoint/" + self.model_detection_vela
+                "/opt/gopoint-apps/downloads/" + self.model_detection_vela
             ):
                 GLib.idle_add(
                     self.status_bar.set_text,
@@ -249,15 +249,15 @@ class ImxSmartFitness:
                 )
 
                 subprocess.run(
-                    "vela /home/root/.cache/gopoint/"
+                    "vela /opt/gopoint-apps/downloads/"
                     + self.model_detection_tflite
-                    + " --output-dir=/home/root/.cache/gopoint/",
+                    + " --output-dir=/opt/gopoint-apps/downloads/",
                     shell=True,
                     check=True,
                 )
 
             if not os.path.exists(
-                "/home/root/.cache/gopoint/" + self.model_landmark_vela
+                "/opt/gopoint-apps/downloads/" + self.model_landmark_vela
             ):
                 GLib.idle_add(
                     self.status_bar.set_text,
@@ -265,9 +265,9 @@ class ImxSmartFitness:
                 )
 
                 subprocess.run(
-                    "vela /home/root/.cache/gopoint/"
+                    "vela /opt/gopoint-apps/downloads/"
                     + self.model_landmark_tflite
-                    + " --output-dir=/home/root/.cache/gopoint/",
+                    + " --output-dir=/opt/gopoint-apps/downloads/",
                     shell=True,
                     check=True,
                 )
@@ -281,26 +281,26 @@ class ImxSmartFitness:
         )
 
         self.output_process = subprocess.Popen(
-            self.cache_enable + " /home/root/.nxp-demo-experience/scripts/"
+            self.cache_enable + " /opt/gopoint-apps/scripts/"
             "machine_learning/imx_smart_fitness/imx-smart-fitness "
             "--device="
             + device
             + " --target="
             + self.platform
-            + " --pose-detection-model=/home/root/.cache/gopoint/"
+            + " --pose-detection-model=/opt/gopoint-apps/downloads/"
             + (
                 self.model_detection_tflite
                 if self.platform == "i.MX8MP"
                 else self.model_detection_vela
             )
-            + " --pose-landmark-model=/home/root/.cache/gopoint/"
+            + " --pose-landmark-model=/opt/gopoint-apps/downloads/"
             + (
                 self.model_landmark_tflite
                 if self.platform == "i.MX8MP"
                 else self.model_landmark_vela
             )
-            + " --pose-embeddings=/home/root/.cache/gopoint/pose_embeddings.csv"
-            " --anchors=/home/root/.cache/gopoint/anchors.txt",
+            + " --pose-embeddings=/opt/gopoint-apps/downloads/pose_embeddings.csv"
+            " --anchors=/opt/gopoint-apps/downloads/anchors.txt",
             shell=True,
             stdin=subprocess.PIPE,
             stdout=subprocess.PIPE,

@@ -18,8 +18,8 @@ This model was created by:
     Karthik Raveendran, Google
 
 This script shows human segmentation from video. Application could be aimed at video conference.
-MediaPipe's Selfie Segmenter model was quantized to be accelerated by the NPU on the i.MX8M Plus
-and i.MX93 EVKs.
+MediaPipe's Selfie Segmenter model was quantized to be accelerated by the NPU on the i.MX 8M Plus
+and i.MX 93 EVKs.
 """
 
 import os
@@ -44,10 +44,10 @@ from gi.repository import Gtk as gtk
 from gi.repository import Gst, GLib
 
 # Import utils
-sys.path.append("/home/root/.nxp-demo-experience/scripts")
+sys.path.append("/opt/gopoint-apps/scripts")
 import utils
 
-MODELS_PATH = "/home/root/.cache/gopoint/"
+MODELS_PATH = "/opt/gopoint-apps/downloads/"
 
 
 def threaded(fn):
@@ -65,7 +65,7 @@ class SelfieSegmenter:
     def __init__(self):
         # Obtain GUI settings and configurations
         glade_file = (
-            "/home/root/.nxp-demo-experience/"
+            "/opt/gopoint-apps/"
             "scripts/machine_learning/selfie_segmenter/selfie_segmenter.glade"
         )
         self.builder = gtk.Builder()
@@ -165,12 +165,12 @@ class SelfieSegmenter:
         self.model_height = 256
         self.aspect_ratio = "1/1"
 
-        # Check target (i.MX8M Plus vs i.MX93)
+        # Check target (i.MX 8M Plus vs i.MX 93)
         if os.path.exists("/usr/lib/libvx_delegate.so"):
             self.platform = "i.MX8MP"
             self.cache_enable = (
                 "VIV_VX_ENABLE_CACHE_GRAPH_BINARY='1' "
-                + "VIV_VX_CACHE_BINARY_GRAPH_DIR=/home/root/.cache/gopoint "
+                + "VIV_VX_CACHE_BINARY_GRAPH_DIR=/opt/gopoint-apps/downloads "
             )
             self.nxp_converter = "imxvideoconvert_g2d"
             self.nxp_compositor = "imxcompositor_g2d"
@@ -338,7 +338,7 @@ class SelfieSegmenter:
             GLib.idle_add(
                 self.status_bar.set_text,
                 "Downloaded corrupted file!\n"
-                "Please clean /home/root/.cache/gopoint and try to download again.",
+                "Please clean /opt/gopoint-apps/downloads and try to download again.",
             )
             self.pulsing = False
             self.unblock_buttons(True)
@@ -374,7 +374,7 @@ class SelfieSegmenter:
             GLib.idle_add(
                 self.status_bar.set_text,
                 "Downloaded corrupted file!\n"
-                "Please clean /home/root/.cache/gopoint and try to download again.",
+                "Please clean /opt/gopoint-apps/downloads and try to download again.",
             )
             self.pulsing = False
             self.unblock_buttons(True)
@@ -412,7 +412,7 @@ class SelfieSegmenter:
             GLib.idle_add(
                 self.status_bar.set_text,
                 "Downloaded corrupted file!\n"
-                "Please clean /home/root/.cache/gopoint and try to download again.",
+                "Please clean /opt/gopoint-apps/downloads and try to download again.",
             )
             self.pulsing = False
             self.unblock_buttons(True)
@@ -448,7 +448,7 @@ class SelfieSegmenter:
             GLib.idle_add(
                 self.status_bar.set_text,
                 "Downloaded corrupted file!\n"
-                "Please clean /home/root/.cache/gopoint and try to download again.",
+                "Please clean /opt/gopoint-apps/downloads and try to download again.",
             )
             self.pulsing = False
             self.unblock_buttons(True)
@@ -458,7 +458,7 @@ class SelfieSegmenter:
             self.status_bar.set_text, "Landscape background successfully downloaded!"
         )
 
-        # Compile model using vela tool for i.MX93
+        # Compile model using vela tool for i.MX 93
         if self.platform == "i.MX93":
             self.compile_vela()
 
@@ -503,7 +503,7 @@ class SelfieSegmenter:
             subprocess.run(
                 "vela "
                 + self.general_model
-                + " --output-dir=/home/root/.cache/gopoint/",
+                + " --output-dir=/opt/gopoint-apps/downloads/",
                 shell=True,
                 check=True,
             )
@@ -517,7 +517,7 @@ class SelfieSegmenter:
             subprocess.run(
                 "vela "
                 + self.landscape_model
-                + " --output-dir=/home/root/.cache/gopoint/",
+                + " --output-dir=/opt/gopoint-apps/downloads/",
                 shell=True,
                 check=True,
             )

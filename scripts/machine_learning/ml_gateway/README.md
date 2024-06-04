@@ -11,13 +11,13 @@
 
 NXP's *GoPoint for i.MX Applications Processors* unlocks a world of possibilities. This user-friendly app launches
 pre-built applications packed with the Linux BSP, giving you hands-on experience with your i.MX SoC's capabilities.
-Using the i.MX8M Plus or i.MX93 EVKs together with i.MX8M Mini EVK you can run the included *ML Gateway* application
+Using the i.MX 8M Plus or i.MX 93 EVKs together with i.MX 8M Mini EVK you can run the included *ML Gateway* application
 for object detection use case. *ML Gateway* is available on GoPoint launcher as apart of the BSP flashed on to the
 board. For more information about GoPoint, please visit [GoPoint User's Guide](https://www.nxp.com/docs/en/user-guide/GPNTUG.pdf?_gl=1*gz87wm*_ga*ODQxOTk0OTQwLjE3MDQ5ODk3NzA.*_ga_WM5LE0KMSH*MTcwNDk4OTc2OS4xLjEuMTcwNDk4OTgyOS4wLjAuMA..).
 
 *ML Gateway* allows devices with limited *Machine Learning* (ML) processing power to use the resources of another much more
-powerful device to accelerate their ML inferences. This application configures the i.MX8M Plus or i.MX93 EVKs as
-servers, allowing other devices such as the i.MX8M Mini EVK to connect and use their *Neural Processing Unit* (NPU) for
+powerful device to accelerate their ML inferences. This application configures the i.MX 8M Plus or i.MX 93 EVKs as
+servers, allowing other devices such as the i.MX 8M Mini EVK to connect and use their *Neural Processing Unit* (NPU) for
 ML acceleration. Also, the server broadcasts its IP address so clients can connect to the *ML Gateway* effortlessly.
 This application was developed based on the following Application Note: [AN13650](https://www.nxp.com/webapp/Download?colCode=AN13650).
 
@@ -29,8 +29,8 @@ were omitted and only the key elements are shown.
 The [tensor_query](https://github.com/nnstreamer/nnstreamer/tree/main/gst/nnstreamer/tensor_query#nnstreamertensor_query)
 plugin allows devices that have weak ML computational power to use resources from higher-performance devices. Consider a
 network of lightweight devices (i.MX 8M Mini, i.MX 8M Nano, etc.) connected to an embedded device with sufficient compute
-power (i.MX8M Plus, i.MX93). This way, any client can ask the server to handle heavy ML tasks and receive the results from
-it. Since i.MX8M Plus and i.MX93 both contain an NPU, these SoCs can be configured as servers [1].
+power (i.MX 8M Plus, i.MX 93). This way, any client can ask the server to handle heavy ML tasks and receive the results from
+it. Since i.MX 8M Plus and i.MX 93 both contain an NPU, these SoCs can be configured as servers [1].
 
 <br><img src="./data/diagram_overview.svg" width="1080">
 
@@ -50,12 +50,12 @@ are already included in the BSP.
 
 i.MX Board          | Main Software Components
 ---                 | ---
-**i.MX8M Plus EVK** | GStreamer + NNStreamer<br>VX Delegate (NPU)     
-**i.MX93 EVK**      | GStreamer + NNStreamer<br>Ethos-U Delegate (NPU)
-**i.MX8M Mini EVK** | GStreamer + NNStreamer<br>
+**i.MX 8M Plus EVK** | GStreamer + NNStreamer<br>VX Delegate (NPU)     
+**i.MX 93 EVK**      | GStreamer + NNStreamer<br>Ethos-U Delegate (NPU)
+**i.MX 8M Mini EVK** | GStreamer + NNStreamer<br>
 
 The pre-processing and post-processing of data is done completely on the client side. For this application, the client
-is running on the i.MX8M Mini EVK, so frame resizing and conversion is done using the 2D-GPU for acceleration.
+is running on the i.MX 8M Mini EVK, so frame resizing and conversion is done using the 2D-GPU for acceleration.
 
 ### Benchmarks
 
@@ -66,19 +66,19 @@ The quantized INT8 models have been tested on i.MX using `./benchmark_model` too
 
 Platform    | Accelerator     | Avg. latency | Command
 ---         | ---             | ---          | ---
-i.MX8M Plus | CPU (1 thread)  | 247.81 ms    | ./benchmark_model --graph=mobilenet_ssd_v2_coco_quant_postprocess.tflite
-i.MX8M Plus | CPU (4 threads) |  73.96 ms    | ./benchmark_model --graph=mobilenet_ssd_v2_coco_quant_postprocess.tflite --num_threads=4
-i.MX8M Plus | NPU             |  11.20 ms    | ./benchmark_model --graph=mobilenet_ssd_v2_coco_quant_postprocess.tflite --external_delegate_path=/usr/lib/libvx_delegate.so
-i.MX93      | CPU (1 thread)  | 111.79 ms    | ./benchmark_model --graph=mobilenet_ssd_v2_coco_quant_postprocess.tflite
-i.MX93      | CPU (2 threads) |  65.89 ms    | ./benchmark_model --graph=mobilenet_ssd_v2_coco_quant_postprocess.tflite --num_threads=2
-i.MX93      | NPU             |  12.70 ms    | ./benchmark_model --graph=mobilenet_ssd_v2_coco_quant_postprocess_vela.tflite --external_delegate_path=/usr/lib/libethosu_delegate.so
+i.MX 8M Plus | CPU (1 thread)  | 247.81 ms    | ./benchmark_model --graph=mobilenet_ssd_v2_coco_quant_postprocess.tflite
+i.MX 8M Plus | CPU (4 threads) |  73.96 ms    | ./benchmark_model --graph=mobilenet_ssd_v2_coco_quant_postprocess.tflite --num_threads=4
+i.MX 8M Plus | NPU             |  11.20 ms    | ./benchmark_model --graph=mobilenet_ssd_v2_coco_quant_postprocess.tflite --external_delegate_path=/usr/lib/libvx_delegate.so
+i.MX 93      | CPU (1 thread)  | 111.79 ms    | ./benchmark_model --graph=mobilenet_ssd_v2_coco_quant_postprocess.tflite
+i.MX 93      | CPU (2 threads) |  65.89 ms    | ./benchmark_model --graph=mobilenet_ssd_v2_coco_quant_postprocess.tflite --num_threads=2
+i.MX 93      | NPU             |  12.70 ms    | ./benchmark_model --graph=mobilenet_ssd_v2_coco_quant_postprocess_vela.tflite --external_delegate_path=/usr/lib/libethosu_delegate.so
 
-#### Benchmark for object detection model running on client's Cortex-A (i.MX8M Mini EVK)
+#### Benchmark for object detection model running on client's Cortex-A (i.MX 8M Mini EVK)
 
 Platform    | Accelerator     | Avg. latency | Command
 ---         | ---             | ---          | ---
-i.MX8M Plus | CPU (1 thread)  | 261.88 ms    | ./benchmark_model --graph=mobilenet_ssd_v2_coco_quant_postprocess.tflite
-i.MX8M Plus | CPU (4 threads) |  77.28 ms    | ./benchmark_model --graph=mobilenet_ssd_v2_coco_quant_postprocess.tflite --num_threads=4
+i.MX 8M Plus | CPU (1 thread)  | 261.88 ms    | ./benchmark_model --graph=mobilenet_ssd_v2_coco_quant_postprocess.tflite
+i.MX 8M Plus | CPU (4 threads) |  77.28 ms    | ./benchmark_model --graph=mobilenet_ssd_v2_coco_quant_postprocess.tflite --num_threads=4
 
 >**NOTE:** Evaluated on BSP LF-6.6.3_1.0.0.
 
@@ -88,13 +88,13 @@ is built for *imx-image-full*, otherwise GoPoint is not included. Machine learni
 
 ## 2 Hardware
 
-To test *ML Gateway*, the i.MX8M Mini EVK and i.MX8M Plus or i.MX93 EVKs are required. The i.MX8M Plus or i.MX93 EVKs are
+To test *ML Gateway*, the i.MX 8M Mini EVK and i.MX 8M Plus or i.MX 93 EVKs are required. The i.MX 8M Plus or i.MX 93 EVKs are
 used as servers, running an NNStreamer pipeline to collect data from client and process it, returning the results back
-to the client. The i.MX8M Mini EVK will be used as client interpreting the results from the *ML Gateway* and shows them
+to the client. The i.MX 8M Mini EVK will be used as client interpreting the results from the *ML Gateway* and shows them
 on the display. This application requires at least two devices (1 server and 1 client), both connected over an internet
 connection.
 
-Component                                         | i.MX8M Plus        | i.MX93             | i.MX8M Mini
+Component                                         | i.MX 8M Plus        | i.MX 93             | i.MX 8M Mini
 ---                                               | :---:              | :---:              | :---:
 Power Supply                                      | :white_check_mark: | :white_check_mark: | :white_check_mark:
 HDMI Display                                      | :white_check_mark: | :white_check_mark: | :white_check_mark:
@@ -108,11 +108,11 @@ MIPI-CSI camera module                            |                    |        
 USB camera (optional, if no MIPI-CSI camera used) |                    |                    | :white_check_mark:
 Mouse                                             | :white_check_mark: | :white_check_mark: | :white_check_mark:
 
->**NOTE:** You do not need both i.MX8M Plus and i.MX93. Choose one to work as the ML Gateway server.
+>**NOTE:** You do not need both i.MX 8M Plus and i.MX 93. Choose one to work as the ML Gateway server.
 
 ## 3 Setup
 
-Launch GoPoint on the board that will be used as server, i.e., i.MX8M Plus or i.MX93 EVK (both have NPU), and click on
+Launch GoPoint on the board that will be used as server, i.e., i.MX 8M Plus or i.MX 93 EVK (both have NPU), and click on
 the *ML Gateway* application shown in the launcher menu. Select the **Launch Demo** button to start *ML Gateway*, which
 will automatically detect the board to be configured as server. It starts downloading the model to be used for object
 detection task. Wait until says “*Model is ready for inference!*”. If model failed to download, please check your
@@ -139,7 +139,7 @@ device connects to the server and displays a video output with the detected obje
 <br><img src="./data/client.jpg" width="360">
 
 >**NOTE:** Sometimes the first time running the application on the client will cause some latency seen in the bounding
-boxes being detected. This might happen only when server is configured on the i.MX8M Plus EVK, which needs a warming-up
+boxes being detected. This might happen only when server is configured on the i.MX 8M Plus EVK, which needs a warming-up
 time to load the ML model. If this occurs, please stop the client process and connect again to the server. This will
 most probably fix the latency issue and bounding boxes should be shown in real time on second run.
 
@@ -153,13 +153,13 @@ When *ML Gateway* starts running on a client, a video overlay with the following
 
 ## 5 FAQs
 
-### I see some latency added to the detected bounding boxes on client side (i.MX8M Mini EVK)
+### I see some latency added to the detected bounding boxes on client side (i.MX 8M Mini EVK)
 
-If the server is running on the i.MX8M Plus EVK, the first time the i.MX8M Mini connects to it and starts running
+If the server is running on the i.MX 8M Plus EVK, the first time the i.MX 8M Mini connects to it and starts running
 might result in some latency added to the detection of bounding boxes. This is due to the warm-up time needed by
 the NPU together with the synchronization process between client and server pipelines. Please try stopping the
 client process and then reconnect to the server. Second try should fix this issue. Do not stop the server when fixing
-this, leave it running, so client re-connects to it when already working. This issue has not been seen on i.MX93
+this, leave it running, so client re-connects to it when already working. This issue has not been seen on i.MX 93
 server, but if it happens, advice is to to the same.
 
 ### When I try to connect the client to the server, I see the following error: "Internal data stream error!"
@@ -171,11 +171,11 @@ in de source drop-down menu and this issue should be fixed when the correct devi
 
 ### The IP server address is not seen on the client window
 
-Please make sure the server process is running on the ML Gateway EVK (i.MX8M Plus or i.MX93) and both the client and
+Please make sure the server process is running on the ML Gateway EVK (i.MX 8M Plus or i.MX 93) and both the client and
 server EVKs are connected to the same network, so they can be seen by each other. If this is not the case, the IP
-address will not be seen on the i.MX8M Mini EVK. If you already confirmed that both EVKs are connected to the same
+address will not be seen on the i.MX 8M Mini EVK. If you already confirmed that both EVKs are connected to the same
 network and the server process is running, you could try typing in the server's IP address in the text box on the
-i.MX8M Mini. The command to get the IP address on the server is `ip addr` and must be typed in in the server
+i.MX 8M Mini. The command to get the IP address on the server is `ip addr` and must be typed in in the server
 command line console. If this does not fix the issue, then it is possible that the client cannot reach out to the server
 due to networking setup configurations. You can try to ping the server by using `ping <ip_address_server>` from the
 client command line console and confirm if ping is successfull or not.
@@ -191,7 +191,7 @@ will be fixed in future releases.
 
 It is possible that files get corrupted during download process due to different reasons, such as a connection shutdown.
 If this happens, the files won't be loaded to the application. To fix this, the easy solution is to clean the following
-path on the board: `/home/root/.cache/gopoint`. Remove all files and try running the application again. If lucky, the
+path on the board: `/opt/gopoint-apps/downloads`. Remove all files and try running the application again. If lucky, the
 files will be downloaded successfully next time.
 
 <br><img src="./data/corrupted.jpg" width="320">

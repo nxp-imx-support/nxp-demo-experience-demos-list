@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Copyright 2023 NXP
+# Copyright 2023-2024 NXP
 # SPDX-License-Identifier: BSD-3-Clause
 #
 # This scripts stops the running processes in the client, 
@@ -15,8 +15,8 @@ ifconfig eth0 0 up
 sleep 0.1
 ifconfig eth1 0 up
 sleep 0.1
-rm /home/root/.nxp-demo-experience/scripts/TSN/qbv/iperf.txt
-rm /home/root/.nxp-demo-experience/scripts/TSN/qbv/iperf1.txt
-rm /home/root/.nxp-demo-experience/scripts/TSN/qbv/FPS.txt
-rm /home/root/.nxp-demo-experience/scripts/TSN/qbv/video.txt
-rm /home/root/.nxp-demo-experience/scripts/TSN/qbv/video1.txt
+rm /opt/gopoint-apps/scripts/TSN/qbv/iperf.txt
+rm /opt/gopoint-apps/scripts/TSN/qbv/iperf1.txt
+rm /opt/gopoint-apps/scripts/TSN/qbv/FPS.txt
+rm /opt/gopoint-apps/scripts/TSN/qbv/video.txt
+rm /opt/gopoint-apps/scripts/TSN/qbv/video1.txt

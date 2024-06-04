@@ -20,7 +20,7 @@ import gi
 import numpy as np
 import tflite_runtime.interpreter as tflite
 
-sys.path.append("/home/root/.nxp-demo-experience/scripts/")
+sys.path.append("/opt/gopoint-apps/scripts/")
 import utils
 
 gi.require_version("Gtk", "3.0")
@@ -63,8 +63,7 @@ class ServerWindow:
 
         # Obtain GUI settings and configurations
         glade_file = (
-            "/home/root/.nxp-demo-experience/"
-            "scripts/machine_learning/ml_gateway/ml_gateway.glade"
+            "/opt/gopoint-apps/scripts/machine_learning/ml_gateway/ml_gateway.glade"
         )
         self.builder = Gtk.Builder()
         self.builder.add_from_file(glade_file)
@@ -174,15 +173,15 @@ class ServerWindow:
         # Wait one second to show message to user
         time.sleep(1)
 
-        # Compile model using vela tool for i.MX93
+        # Compile model using vela tool for i.MX 93
         if self.platform == "i.MX93":
             self.compile_vela()
         else:
-            os.environ["VIV_VX_CACHE_BINARY_GRAPH_DIR"] = "/home/root/.cache/gopoint"
+            os.environ["VIV_VX_CACHE_BINARY_GRAPH_DIR"] = "/opt/gopoint-apps/downloads"
             os.environ["VIV_VX_ENABLE_CACHE_GRAPH_BINARY"] = "1"
 
             if not any(
-                f.endswith(".nb") for f in os.listdir("/home/root/.cache/gopoint")
+                f.endswith(".nb") for f in os.listdir("/opt/gopoint-apps/downloads")
             ):
                 GLib.idle_add(self.status_bar.set_text, "Warmup time...")
                 self.to_reduce_warmup()
@@ -227,7 +226,7 @@ class ServerWindow:
         SSDPServer("imx-server", device_type="imx-ml-server").serve_forever()
 
     def to_reduce_warmup(self):
-        """To reduce NPU warmup time on i.MX8M Plus"""
+        """To reduce NPU warmup time on i.MX 8M Plus"""
         # Load the TFLite model and allocate tensors.
         ext_delegate = tflite.load_delegate("/usr/lib/libvx_delegate.so")
         interpreter = tflite.Interpreter(
@@ -271,7 +270,7 @@ class ServerWindow:
             )
 
             subprocess.run(
-                "vela " + self.model + " --output-dir=/home/root/.cache/gopoint/",
+                "vela " + self.model + " --output-dir=/opt/gopoint-apps/downloads/",
                 shell=True,
                 check=True,
             )
@@ -282,7 +281,8 @@ class ServerWindow:
         """
         tokens = model_name.split(".tflite")
         return (
-            "/home/root/.cache/gopoint/" + (tokens[-2] + "_vela.tflite").split("/")[-1]
+            "/opt/gopoint-apps/downloads/"
+            + (tokens[-2] + "_vela.tflite").split("/")[-1]
         )
 
     def about_button_activate(self, widget):
@@ -382,8 +382,7 @@ class ClientWindow:
     def __init__(self):
         # Obtain GUI settings and configurations
         glade_file = (
-            "/home/root/.nxp-demo-experience/"
-            "scripts/machine_learning/ml_gateway/ml_gateway.glade"
+            "/opt/gopoint-apps/scripts/machine_learning/ml_gateway/ml_gateway.glade"
         )
         self.builder = Gtk.Builder()
         self.builder.add_from_file(glade_file)

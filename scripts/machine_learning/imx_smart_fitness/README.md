@@ -10,7 +10,7 @@
 
 NXP's *GoPoint for i.MX Applications Processors* unlocks a world of possibilities. This user-friendly app launches
 pre-built applications packed with the Linux BSP, giving you hands-on experience with your i.MX SoC's capabilities.
-Using the i.MX8M Plus or i.MX93 EVKs you can run the included *i.MX Smart Fitness* application available on GoPoint
+Using the i.MX 8M Plus or i.MX 93 EVKs you can run the included *i.MX Smart Fitness* application available on GoPoint
 launcher as apart of the BSP flashed on to the board. For more information about GoPoint, please refer to
 [GoPoint for i.MX Applications Processors User's Guide](https://www.nxp.com/docs/en/user-guide/GPNTUG.pdf?_gl=1*gz87wm*_ga*ODQxOTk0OTQwLjE3MDQ5ODk3NzA.*_ga_WM5LE0KMSH*MTcwNDk4OTc2OS4xLjEuMTcwNDk4OTgyOS4wLjAuMA..).
 
@@ -21,8 +21,8 @@ known as pose estimation. From the pose estimation, a K-NN pose classifier class
 '*Squat-Down*' and '*Squat-Up*'. The application tracks the 'squats' fitness exercise and the repetition counter is set
 to 12 repetitions in an infinite loop.
 
-This application is developed using GStreamer and NNStreamer. On the i.MX93, *PXP* acceleration is used for the color
-space conversion and frame resizing during pre-processing and post-processing of data. On i.MX8M Plus, the *2D-GPU*
+This application is developed using GStreamer and NNStreamer. On the i.MX 93, *PXP* acceleration is used for the color
+space conversion and frame resizing during pre-processing and post-processing of data. On i.MX 8M Plus, the *2D-GPU*
 accelerator is used for the same purpose.
 
 ## Implementation using GStreamer and NNStreamer
@@ -71,8 +71,8 @@ application are already included in the BSP.
 
 i.MX Board          | Main Software Components
 ---                 | ---
-**i.MX8M Plus EVK** | GStreamer + NNStreamer<br>VX Delegate (NPU)     
-**i.MX93 EVK**      | GStreamer + NNStreamer<br>Ethos-U Delegate (NPU)
+**i.MX 8M Plus EVK** | GStreamer + NNStreamer<br>VX Delegate (NPU)     
+**i.MX 93 EVK**      | GStreamer + NNStreamer<br>Ethos-U Delegate (NPU)
 
 ### Models information
 
@@ -102,32 +102,32 @@ Target platform      | MPUs
 
 ### Benchmarks
 
-The quantized INT8 models have been tested on i.MX8M Plus and i.MX93 using `./benchmark_model` tool
+The quantized INT8 models have been tested on i.MX 8M Plus and i.MX 93 using `./benchmark_model` tool
 (see [i.MX Machine Learning User's Guide](https://www.nxp.com/docs/en/user-guide/IMX-MACHINE-LEARNING-UG.pdf)).
 
 #### BlazePose performance
 
 Platform    | Accelerator     | Avg. latency | Command
 ---         | ---             | ---          | ---
-i.MX8M Plus | CPU (1 thread)  | 170.23 ms    | ./benchmark_model --graph=pose_detection_quant.tflite
-i.MX8M Plus | CPU (4 threads) |  67.36 ms    | ./benchmark_model --graph=pose_detection_quant.tflite --num_threads=4
-i.MX8M Plus | NPU             |   8.29 ms    | ./benchmark_model --graph=pose_detection_quant.tflite --external_delegate_path=/usr/lib/libvx_delegate.so
-i.MX93      | CPU (1 thread)  | 104.24 ms    | ./benchmark_model --graph=pose_detection_quant.tflite
-i.MX93      | CPU (2 threads) |  70.97 ms    | ./benchmark_model --graph=pose_detection_quant.tflite --num_threads=2
-i.MX93      | NPU             |   7.21 ms    | ./benchmark_model --graph=pose_detection_quant_vela.tflite --external_delegate_path=/usr/lib/libethosu_delegate.so
+i.MX 8M Plus | CPU (1 thread)  | 169.48 ms    | ./benchmark_model --graph=pose_detection_quant.tflite
+i.MX 8M Plus | CPU (4 threads) |  65.60 ms    | ./benchmark_model --graph=pose_detection_quant.tflite --num_threads=4
+i.MX 8M Plus | NPU             |   8.04 ms    | ./benchmark_model --graph=pose_detection_quant.tflite --external_delegate_path=/usr/lib/libvx_delegate.so
+i.MX 93      | CPU (1 thread)  | 104.16 ms    | ./benchmark_model --graph=pose_detection_quant.tflite
+i.MX 93      | CPU (2 threads) |  71.06 ms    | ./benchmark_model --graph=pose_detection_quant.tflite --num_threads=2
+i.MX 93      | NPU             |   7.33 ms    | ./benchmark_model --graph=pose_detection_quant_vela.tflite --external_delegate_path=/usr/lib/libethosu_delegate.so
 
 #### BlazePose GHUM 3D Lite performance
 
 Platform    | Accelerator     | Avg. latency | Command
 ---         | ---             | ---          | ---
-i.MX8M Plus | CPU (1 thread)  | 161.58 ms    | ./benchmark_model --graph=pose_landmark_lite_quant.tflite
-i.MX8M Plus | CPU (4 threads) |  78.34 ms    | ./benchmark_model --graph=pose_landmark_lite_quant.tflite --num_threads=4
-i.MX8M Plus | NPU             |  16.48 ms    | ./benchmark_model --graph=pose_landmark_lite_quant.tflite --external_delegate_path=/usr/lib/libvx_delegate.so
-i.MX93      | CPU (1 thread)  | 116.42 ms    | ./benchmark_model --graph=pose_landmark_lite_quant.tflite
-i.MX93      | CPU (2 threads) |  84.69 ms    | ./benchmark_model --graph=pose_landmark_lite_quant.tflite --num_threads=2
-i.MX93      | NPU             |  9.83 ms     | ./benchmark_model --graph=pose_landmark_lite_quant_vela.tflite --external_delegate_path=/usr/lib/libethosu_delegate.so
+i.MX 8M Plus | CPU (1 thread)  | 160.75 ms    | ./benchmark_model --graph=pose_landmark_lite_quant.tflite
+i.MX 8M Plus | CPU (4 threads) |  77.81 ms    | ./benchmark_model --graph=pose_landmark_lite_quant.tflite --num_threads=4
+i.MX 8M Plus | NPU             |  16.13 ms    | ./benchmark_model --graph=pose_landmark_lite_quant.tflite --external_delegate_path=/usr/lib/libvx_delegate.so
+i.MX 93      | CPU (1 thread)  | 116.50 ms    | ./benchmark_model --graph=pose_landmark_lite_quant.tflite
+i.MX 93      | CPU (2 threads) |  84.83 ms    | ./benchmark_model --graph=pose_landmark_lite_quant.tflite --num_threads=2
+i.MX 93      | NPU             |  10.05 ms    | ./benchmark_model --graph=pose_landmark_lite_quant_vela.tflite --external_delegate_path=/usr/lib/libethosu_delegate.so
 
->**NOTE:** Evaluated on BSP LF-6.6.3_1.0.0.
+>**NOTE:** Evaluated on BSP LF-6.6.23_2.0.0.
 
 >**NOTE:** If you are building the BSP using Yocto Project instead of downloading the pre-built BSP, make sure
 the BSP is built for *imx-image-full*, otherwise GoPoint is not included. Machine learning software is only
@@ -135,9 +135,9 @@ available in *imx-image-full*.
 
 ## 2 Hardware
 
-To test *i.MX Smart Fitness*, either the i.MX8M Plus or i.MX93 EVKs are required with their respective hardware components.
+To test *i.MX Smart Fitness*, either the i.MX 8M Plus or i.MX 93 EVKs are required with their respective hardware components.
 
-Component                                         | i.MX8M Plus        | i.MX93
+Component                                         | i.MX 8M Plus        | i.MX 93
 ---                                               | :---:              | :---:
 Power Supply                                      | :white_check_mark: | :white_check_mark:
 HDMI Display                                      | :white_check_mark: | :white_check_mark:
@@ -152,6 +152,28 @@ Mouse                                             | :white_check_mark: | :white_
 
 ## 3 Setup
 
+### Using Basler or OS08A20 cameras (Optional, only for i.MX 8M Plus)
+
+If you want to use these cameras, you need to change the device tree:
+
+- Open the Arm Cortex-A core console as descibed in the Section 3:
+**Basic Terminal Setup** of the [i.MX Linux User's Guide](https://www.nxp.com/docs/en/user-guide/IMX_LINUX_USERS_GUIDE.pdf)
+, then press any key to enter U-Boot console.
+
+- There, enter the following command: `fatls mmc ${mmcdev}:${mmcpart}`.
+You should see a list of all available device tree files. Make sure
+the device trees **imx8mp-evk-basler.dtb** and **imx8mp-evk-os08a20.dtb**
+are listed.
+
+- Change the device tree using the `editenv fdtfile` command. Replace the
+.dtb file with **imx8mp-evk-basler.dtb** or **imx8mp-evk-os08a20.dtb**
+, depending on which camera you are using, and enter the `boot` command.
+
+- *Optional*. You can save this configuration using the `saveenv` command to
+the next time you use the board.
+
+### Launching i.MX Smart Fitness
+
 Launch GoPoint on the board and click on the *i.MX Smart Fitness* application shown in the launcher menu. Select 
 the **Launch Demo** button to start it. A window shows up to let the user select the camera source to be used.
 Make sure a camera module is connected, ether MIPI-CSI or USB camera. Once detected and selected in the drop-down
@@ -159,8 +181,8 @@ menu, start the application by clicking **Run i.MX Smart Fitness**.
 
 <img src="./data/first_window.jpg" height="143"> <img src="./data/compiling.jpg" height="143">
 
-When running the *i.MX Smart Fitness* application on i.MX8M Plus, a warm-up time is needed for models to be ready
-for acceleration on the NPU. On i.MX93, the models are compiled using vela compiler for Ethos-U NPU acceleration.
+When running the *i.MX Smart Fitness* application on i.MX 8M Plus, a warm-up time is needed for models to be ready
+for acceleration on the NPU. On i.MX 93, the models are compiled using vela compiler for Ethos-U NPU acceleration.
 The process is done automatically, but takes a couple of minutes on each board. Once the process finishes and models
 are ready, the application starts right away. This only happens during first time running the application, since
 compiled models are stored on the cache for future use.
@@ -213,7 +235,7 @@ this is the case, try using another connection such as a mobile device working a
 
 It is possible that files get corrupted during download process due to different reasons, such as a connection shutdown.
 If this happens, the files won't be loaded to the application. To fix this, the easy solution is to clean the following
-path on the board: `/home/root/.cache/gopoint`. Remove all files and try running the application again. If lucky, the
+path on the board: `/opt/gopoint-apps/downloads`. Remove all files and try running the application again. If lucky, the
 files will be downloaded successfully next time.
 
 <img src="./data/corrupted.jpg" width="360">
@@ -241,6 +263,7 @@ Questions regarding the content/correctness of this example can be entered as Is
 Version | Description                         | Date
 ---     | ---                                 | ---
 1.0.0   | Initial release                     | March 29<sup>th</sup> 2024
+1.0.1   | Updated benchmarks and added steps for MIPI-CSI cameras | June 28<sup>th</sup> 2024
  
 
 ## Licensing

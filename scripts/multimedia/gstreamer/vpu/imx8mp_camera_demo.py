@@ -1,0 +1,1 @@
+../multi_cameras/imx8mp_camera_demo.py

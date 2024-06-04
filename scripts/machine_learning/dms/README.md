@@ -11,11 +11,11 @@
 
 NXP's *GoPoint for i.MX Applications Processors* unlocks a world of possibilities. This user-friendly app launches
 pre-built applications packed with the Linux BSP, giving you hands-on experience with your i.MX SoC's capabilities.
-Using the i.MX8M Plus or i.MX93 EVKs you can run the included *Driver Monitor System (DMS)* application available on GoPoint
+Using the i.MX 8M Plus or i.MX 93 EVKs you can run the included *Driver Monitor System (DMS)* application available on GoPoint
 launcher as apart of the BSP flashed on to the board. For more information about GoPoint, please refer to
 [GoPoint for i.MX Applications Processors User's Guide](https://www.nxp.com/docs/en/user-guide/GPNTUG.pdf).
 
-With rapid development in automotive industry recently, *Driver Monitor System* (DMS) has become a common requirement in today's vehicle. In general, DMS is a vehicle safety system to assess the driver's alertness and warn the driver if needed, which helps to prevent traffic accident and protect driver in the first place. With *Machine Learning* (ML) and *Neural Network* (NN)'s help, DMS can now achieve very high accuracy and low latency. This GoPoint application showcases the capability of implementing DMS on i.MX8M Plus and i.MX93 platform, and the performance boost brought by *Neural Processing Unit* (NPU) on these platforms.
+With rapid development in automotive industry recently, *Driver Monitor System* (DMS) has become a common requirement in today's vehicle. In general, DMS is a vehicle safety system to assess the driver's alertness and warn the driver if needed, which helps to prevent traffic accident and protect driver in the first place. With *Machine Learning* (ML) and *Neural Network* (NN)'s help, DMS can now achieve very high accuracy and low latency. This GoPoint application showcases the capability of implementing DMS on i.MX 8M Plus and i.MX 93 platform, and the performance boost brought by *Neural Processing Unit* (NPU) on these platforms.
 
 ## Table of Contents
 
@@ -34,7 +34,7 @@ With rapid development in automotive industry recently, *Driver Monitor System* 
 
 <img src="./data/dms_gst_pipeline.svg" width="1080">
 
->**NOTE:** On the i.MX93, *PXP* acceleration is used for the color space conversion and image resizing during pre-processing and display composition. On i.MX8M Plus, the *2D-GPU* accelerator is used for the same purpose.
+>**NOTE:** On the i.MX 93, *PXP* acceleration is used for the color space conversion and image resizing during pre-processing and display composition. On i.MX 8M Plus, the *2D-GPU* accelerator is used for the same purpose.
 
 When a new frame reaches *AppSink*, the following inference process will start to run using the *tflite_runtime* framework and NPU delegate, and finally return the driver status to be rendered on the display.
 
@@ -94,7 +94,7 @@ Origin               | Model trained by NXP
 
 ### Benchmarks
 
-The quantized INT8 models have been tested on i.MX8M Plus and i.MX93 using `./benchmark_model` tool. For i.MX93, INT8 models need to be compiled by vela tool first before using NPU delegate.
+The quantized INT8 models have been tested on i.MX 8M Plus and i.MX 93 using `./benchmark_model` tool. For i.MX 93, INT8 models need to be compiled by vela tool first before using NPU delegate.
 (see [i.MX Machine Learning User's Guide](https://www.nxp.com/docs/en/user-guide/IMX-MACHINE-LEARNING-UG.pdf) for more details).
 
 >**NOTE:** Evaluated on BSP LF-6.6.3_1.0.0.
@@ -103,51 +103,51 @@ The quantized INT8 models have been tested on i.MX8M Plus and i.MX93 using `./be
 
 Platform    | Accelerator     | Avg. Inference Time | Command
 ---         | ---             | ---                 | ---
-i.MX8M Plus | CPU (1 thread)  | 16.372 ms           | ./benchmark_model --graph=face_detection_ptq.tflite
-i.MX8M Plus | CPU (4 threads) |  6.991 ms           | ./benchmark_model --graph=face_detection_ptq.tflite --num_threads=4
-i.MX8M Plus | NPU             |  1.194 ms           | ./benchmark_model --graph=face_detection_ptq.tflite --external_delegate_path=/usr/lib/libvx_delegate.so
-i.MX93      | CPU (1 thread)  | 10.312 ms           | ./benchmark_model --graph=face_detection_ptq.tflite
-i.MX93      | CPU (2 threads) |  7.308 ms           | ./benchmark_model --graph=face_detection_ptq.tflite --num_threads=2
-i.MX93      | NPU             |  1.970 ms           | ./benchmark_model --graph=face_detection_ptq_vela.tflite --external_delegate_path=/usr/lib/libethosu_delegate.so
+i.MX 8M Plus | CPU (1 thread)  | 16.372 ms           | ./benchmark_model --graph=face_detection_ptq.tflite
+i.MX 8M Plus | CPU (4 threads) |  6.991 ms           | ./benchmark_model --graph=face_detection_ptq.tflite --num_threads=4
+i.MX 8M Plus | NPU             |  1.194 ms           | ./benchmark_model --graph=face_detection_ptq.tflite --external_delegate_path=/usr/lib/libvx_delegate.so
+i.MX 93      | CPU (1 thread)  | 10.312 ms           | ./benchmark_model --graph=face_detection_ptq.tflite
+i.MX 93      | CPU (2 threads) |  7.308 ms           | ./benchmark_model --graph=face_detection_ptq.tflite --num_threads=2
+i.MX 93      | NPU             |  1.970 ms           | ./benchmark_model --graph=face_detection_ptq_vela.tflite --external_delegate_path=/usr/lib/libethosu_delegate.so
 
 #### MediaPipe Face Mesh performance
 
 Platform	  | Accelerator	    | Avg. Inference Time | Command
 ---         | ---             | ---                 | ---
-i.MX8M Plus | CPU (1 thread)  | 55.329 ms           | ./benchmark_model --graph=face_landmark_ptq.tflite
-i.MX8M Plus | CPU (4 threads) | 45.820 ms           | ./benchmark_model --graph=face_landmark_ptq.tflite --num_threads=4
-i.MX8M Plus | NPU             |  4.254 ms           | ./benchmark_model --graph=face_landmark_ptq.tflite --external_delegate_path=/usr/lib/libvx_delegate.so
-i.MX93      | CPU (1 thread)  | 48.950 ms           | ./benchmark_model --graph=face_landmark_ptq.tflite
-i.MX93      | CPU (2 threads) | 45.444 ms           | ./benchmark_model --graph=face_landmark_ptq.tflite --num_threads=2
-i.MX93      | NPU             |  2.893 ms           | ./benchmark_model --graph=face_landmark_ptq_vela.tflite --external_delegate_path=/usr/lib/libethosu_delegate.so
+i.MX 8M Plus | CPU (1 thread)  | 55.329 ms           | ./benchmark_model --graph=face_landmark_ptq.tflite
+i.MX 8M Plus | CPU (4 threads) | 45.820 ms           | ./benchmark_model --graph=face_landmark_ptq.tflite --num_threads=4
+i.MX 8M Plus | NPU             |  4.254 ms           | ./benchmark_model --graph=face_landmark_ptq.tflite --external_delegate_path=/usr/lib/libvx_delegate.so
+i.MX 93      | CPU (1 thread)  | 48.950 ms           | ./benchmark_model --graph=face_landmark_ptq.tflite
+i.MX 93      | CPU (2 threads) | 45.444 ms           | ./benchmark_model --graph=face_landmark_ptq.tflite --num_threads=2
+i.MX 93      | NPU             |  2.893 ms           | ./benchmark_model --graph=face_landmark_ptq_vela.tflite --external_delegate_path=/usr/lib/libethosu_delegate.so
 
 #### MediaPipe Iris performance
 
 Platform	  | Accelerator	    | Avg. Inference Time | Command
 ---         | ---             | ---                 | ---
-i.MX8M Plus | CPU (1 thread)  | 51.372 ms           | ./benchmark_model --graph=iris_landmark_ptq.tflite
-i.MX8M Plus | CPU (4 threads) | 40.801 ms           | ./benchmark_model --graph=iris_landmark_ptq.tflite --num_threads=4
-i.MX8M Plus | NPU             |  3.412 ms           | ./benchmark_model --graph=iris_landmark_ptq.tflite --external_delegate_path=/usr/lib/libvx_delegate.so
-i.MX93      | CPU (1 thread)  | 42.433 ms           | ./benchmark_model --graph=iris_landmark_ptq.tflite
-i.MX93      | CPU (2 threads) | 40.587 ms           | ./benchmark_model --graph=iris_landmark_ptq.tflite --num_threads=2
-i.MX93      | NPU             |  2.136 ms           | ./benchmark_model --graph=iris_landmark_ptq_vela.tflite --external_delegate_path=/usr/lib/libethosu_delegate.so
+i.MX 8M Plus | CPU (1 thread)  | 51.372 ms           | ./benchmark_model --graph=iris_landmark_ptq.tflite
+i.MX 8M Plus | CPU (4 threads) | 40.801 ms           | ./benchmark_model --graph=iris_landmark_ptq.tflite --num_threads=4
+i.MX 8M Plus | NPU             |  3.412 ms           | ./benchmark_model --graph=iris_landmark_ptq.tflite --external_delegate_path=/usr/lib/libvx_delegate.so
+i.MX 93      | CPU (1 thread)  | 42.433 ms           | ./benchmark_model --graph=iris_landmark_ptq.tflite
+i.MX 93      | CPU (2 threads) | 40.587 ms           | ./benchmark_model --graph=iris_landmark_ptq.tflite --num_threads=2
+i.MX 93      | NPU             |  2.136 ms           | ./benchmark_model --graph=iris_landmark_ptq_vela.tflite --external_delegate_path=/usr/lib/libethosu_delegate.so
 
 #### Smoking&Calling Detection performance
 
 Platform	  | Accelerator	    | Avg. Inference Time | Command
 ---         | ---             | ---                 | ---
-i.MX8M Plus | CPU (1 thread)  |  883.531 ms         | ./benchmark_model --graph=yolov4_tiny_smk_call.tflite
-i.MX8M Plus | CPU (4 threads) |  371.685 ms         | ./benchmark_model --graph=yolov4_tiny_smk_call.tflite --num_threads=4
-i.MX8M Plus | NPU             |  18.367 ms          | ./benchmark_model --graph=yolov4_tiny_smk_call.tflite --external_delegate_path=/usr/lib/libvx_delegate.so
-i.MX93      | CPU (1 thread)  |  407.963 ms         | ./benchmark_model --graph=yolov4_tiny_smk_call.tflite
-i.MX93      | CPU (2 threads) |  303.159 ms         | ./benchmark_model --graph=yolov4_tiny_smk_call.tflite --num_threads=2
-i.MX93      | NPU             |  23.008 ms          | ./benchmark_model --graph=yolov4_tiny_smk_call_vela.tflite --external_delegate_path=/usr/lib/libethosu_delegate.so
+i.MX 8M Plus | CPU (1 thread)  |  883.531 ms         | ./benchmark_model --graph=yolov4_tiny_smk_call.tflite
+i.MX 8M Plus | CPU (4 threads) |  371.685 ms         | ./benchmark_model --graph=yolov4_tiny_smk_call.tflite --num_threads=4
+i.MX 8M Plus | NPU             |  18.367 ms          | ./benchmark_model --graph=yolov4_tiny_smk_call.tflite --external_delegate_path=/usr/lib/libvx_delegate.so
+i.MX 93      | CPU (1 thread)  |  407.963 ms         | ./benchmark_model --graph=yolov4_tiny_smk_call.tflite
+i.MX 93      | CPU (2 threads) |  303.159 ms         | ./benchmark_model --graph=yolov4_tiny_smk_call.tflite --num_threads=2
+i.MX 93      | NPU             |  23.008 ms          | ./benchmark_model --graph=yolov4_tiny_smk_call_vela.tflite --external_delegate_path=/usr/lib/libethosu_delegate.so
 
 ## 3 Hardware
 
-To run *i.MX Driver Monitor System*, either the i.MX8M Plus or i.MX93 EVKs are required with their respective hardware components.
+To run *i.MX Driver Monitor System*, either the i.MX 8M Plus or i.MX 93 EVKs are required with their respective hardware components.
 
-Component                                         | i.MX8M Plus        | i.MX93
+Component                                         | i.MX 8M Plus        | i.MX 93
 ---                                               | :---:              | :---:
 Power Supply                                      | :white_check_mark: | :white_check_mark:
 HDMI Display                                      | :white_check_mark: | :white_check_mark:
@@ -166,7 +166,7 @@ Launch GoPoint on the board and click on the **DMS** application shown in the la
 
 <img src="./data/launcher.jpg" width="360">
 
-When running the application on i.MX8M Plus, a warm-up time is needed for models to be ready for acceleration on the NPU. On i.MX93, the models need to be compiled using vela tool for acceleration on the Ethos-U NPU. The process is done automatically, but may take about one minute to finish on each platform. This only happens during the first time of running the application, since compiled models are stored as cache files for future use.
+When running the application on i.MX 8M Plus, a warm-up time is needed for models to be ready for acceleration on the NPU. On i.MX 93, the models need to be compiled using vela tool for acceleration on the Ethos-U NPU. The process is done automatically, but may take about one minute to finish on each platform. This only happens during the first time of running the application, since compiled models are stored as cache files for future use.
 
 <img src="./data/compiling.jpg" width="360">
 
@@ -212,7 +212,7 @@ Please make sure the internet connection is working on the board. The applicatio
 
 ### Files are corrupted
 
-It is possible that files get corrupted during download process due to different reasons, such as a connection shutdown. If this happens, the files won't be loaded to the application. To fix this, the easy solution is to clean the following path on the board: `/home/root/.cache/gopoint`. Remove all files and try running the application again. If lucky, the files will be downloaded successfully next time.
+It is possible that files get corrupted during download process due to different reasons, such as a connection shutdown. If this happens, the files won't be loaded to the application. To fix this, the easy solution is to clean the following path on the board: `/opt/gopoint-apps/downloads`. Remove all files and try running the application again. If lucky, the files will be downloaded successfully next time.
 
 <img src="./data/file_corrupted.jpg" width="360">
 

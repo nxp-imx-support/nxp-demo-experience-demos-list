@@ -19,7 +19,7 @@ import signal
 gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk, GLib, Gio
 
-sys.path.append("/home/root/.nxp-demo-experience/scripts/")
+sys.path.append("/opt/gopoint-apps/scripts/")
 import utils
 
 
@@ -45,7 +45,7 @@ class MLLaunch(Gtk.Window):
 
         # OpenVX graph caching is not available on i.MX 8QuadMax platform.
         if self.platform != ("i.MX8QM", "i.MX93", "i.MX95"):
-            os.environ["VIV_VX_CACHE_BINARY_GRAPH_DIR"] = "/home/root/.cache/gopoint"
+            os.environ["VIV_VX_CACHE_BINARY_GRAPH_DIR"] = "/opt/gopoint-apps/downloads"
             os.environ["VIV_VX_ENABLE_CACHE_GRAPH_BINARY"] = "1"
 
         # Get widget properties
@@ -68,7 +68,7 @@ class MLLaunch(Gtk.Window):
             backends_available.insert(0, "NPU")
         if os.path.exists("/usr/lib/libethosu_delegate.so"):
             backends_available.insert(0, "NPU")
-            #backends_available.pop()
+            # backends_available.pop()
 
         displays_available = ["Weston"]
 
@@ -112,7 +112,7 @@ class MLLaunch(Gtk.Window):
         main_grid.attach(device_label, 0, 1, 2, 1)
         device_label.set_hexpand(True)
         main_grid.attach(backend_label, 0, 2, 2, 1)
-        if(self.demo != "pose"):
+        if self.demo != "pose":
             main_grid.attach(self.width_label, 0, 4, 2, 1)
             main_grid.attach(self.height_label, 0, 5, 2, 1)
             main_grid.attach(self.fps_label, 0, 6, 2, 1)
@@ -120,7 +120,7 @@ class MLLaunch(Gtk.Window):
         main_grid.attach(self.device_combo, 2, 1, 2, 1)
         self.device_combo.set_hexpand(True)
         main_grid.attach(self.backend_combo, 2, 2, 2, 1)
-        if(self.demo != "pose"):
+        if self.demo != "pose":
             main_grid.attach(self.width_entry, 2, 4, 2, 1)
             main_grid.attach(self.height_entry, 2, 5, 2, 1)
             main_grid.attach(self.fps_entry, 2, 6, 2, 1)
@@ -181,9 +181,7 @@ class MLLaunch(Gtk.Window):
         if self.demo == "id":
             backend = self.backend_combo.get_active_text()
             if backend != "NPU":
-                model = utils.download_file(
-                    "mobilenet_v1_1.0_224.tflite"
-                )
+                model = utils.download_file("mobilenet_v1_1.0_224.tflite")
             else:
                 model = utils.download_file(
                     "mobilenet_v1_1.0_224_quant_uint8_float32.tflite"
@@ -196,13 +194,9 @@ class MLLaunch(Gtk.Window):
         if self.demo == "pose":
             backend = self.backend_combo.get_active_text()
             if backend != "NPU":
-                model = utils.download_file(
-                    "movenet_single_pose_lightning.tflite"
-                )
+                model = utils.download_file("movenet_single_pose_lightning.tflite")
             else:
-                model = utils.download_file(
-                    "movenet_quant.tflite"
-                )
+                model = utils.download_file("movenet_quant.tflite")
                 if self.platform == "i.MX93":
                     model = self.compile_vela(model)
             labels = 0
@@ -229,70 +223,72 @@ class MLLaunch(Gtk.Window):
             return
 
         if self.demo == "detect":
-            command = "CAMERA_WIDTH=\"" + str(int(self.width_entry.get_value())) + "\" "
-            command += "CAMERA_HEIGHT=\"" + str(int(self.height_entry.get_value())) + "\" "
-            command += "CAMERA_FPS=\"" + str(int(self.fps_entry.get_value())) + "\" "
-            command += "BACKEND=\"" + self.backend_combo.get_active_text() + "\" "
-            command += "CAMERA_DEVICE=\"" + device + "\" "
-            command += ("/home/root/.nxp-demo-experience/scripts/machine_learning/"
-                       "nnstreamer/detection/example_detection_mobilenet_ssd_v2_tflite.sh")
+            command = 'CAMERA_WIDTH="' + str(int(self.width_entry.get_value())) + '" '
+            command += (
+                'CAMERA_HEIGHT="' + str(int(self.height_entry.get_value())) + '" '
+            )
+            command += 'CAMERA_FPS="' + str(int(self.fps_entry.get_value())) + '" '
+            command += 'BACKEND="' + self.backend_combo.get_active_text() + '" '
+            command += 'CAMERA_DEVICE="' + device + '" '
+            command += (
+                "/opt/gopoint-apps/scripts/machine_learning/"
+                "nnstreamer/detection/example_detection_mobilenet_ssd_v2_tflite.sh"
+            )
             self.output_process = subprocess.Popen(
                 command,
                 shell=True,
                 stdin=subprocess.PIPE,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
-                encoding="utf-8"
+                encoding="utf-8",
             )
         if self.demo == "id":
-            command = "CAMERA_WIDTH=\"" + str(int(self.width_entry.get_value())) + "\" "
-            command += "CAMERA_HEIGHT=\"" + str(int(self.height_entry.get_value())) + "\" "
-            command += "CAMERA_FPS=\"" + str(int(self.fps_entry.get_value())) + "\" "
-            command += "BACKEND=\"" + self.backend_combo.get_active_text() + "\" "
-            command += "CAMERA_DEVICE=\"" + device + "\" "
-            command += ("/home/root/.nxp-demo-experience/scripts/machine_learning/"
-                       "nnstreamer/classification/example_classification_mobilenet_v1_tflite.sh")
+            command = 'CAMERA_WIDTH="' + str(int(self.width_entry.get_value())) + '" '
+            command += (
+                'CAMERA_HEIGHT="' + str(int(self.height_entry.get_value())) + '" '
+            )
+            command += 'CAMERA_FPS="' + str(int(self.fps_entry.get_value())) + '" '
+            command += 'BACKEND="' + self.backend_combo.get_active_text() + '" '
+            command += 'CAMERA_DEVICE="' + device + '" '
+            command += (
+                "/opt/gopoint-apps/scripts/machine_learning/"
+                "nnstreamer/classification/example_classification_mobilenet_v1_tflite.sh"
+            )
             self.output_process = subprocess.Popen(
                 command,
                 shell=True,
                 stdin=subprocess.PIPE,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
-                encoding="utf-8"
+                encoding="utf-8",
             )
         if self.demo == "pose":
-            command = "BACKEND=\"" + self.backend_combo.get_active_text() + "\" "
-            command += "CAMERA_DEVICE=\"" + device + "\" "
-            if(device.startswith("/dev/")):
+            command = 'BACKEND="' + self.backend_combo.get_active_text() + '" '
+            command += 'CAMERA_DEVICE="' + device + '" '
+            if device.startswith("/dev/"):
                 command += "SOURCE=CAMERA "
             else:
                 command += "SOURCE=VIDEO "
-            command += ("/home/root/.nxp-demo-experience/scripts/machine_learning/"
-                       "nnstreamer/pose/example_pose_movenet_tflite.py")
+            command += (
+                "/opt/gopoint-apps/scripts/machine_learning/"
+                "nnstreamer/pose/example_pose_movenet_tflite.py"
+            )
             self.output_process = subprocess.Popen(
                 command,
                 shell=True,
                 stdin=subprocess.PIPE,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
-                encoding="utf-8"
+                encoding="utf-8",
             )
         self.launch_button.set_sensitive(True)
-    
+
     def status_update(self, pros):
-        GLib.idle_add(
-                self.launch_button.set_sensitive, False
-            )
-        GLib.idle_add(
-                self.status_bar.set_text, "Running..."
-            )
+        GLib.idle_add(self.launch_button.set_sensitive, False)
+        GLib.idle_add(self.status_bar.set_text, "Running...")
         pros.wait()
-        GLib.idle_add(
-                self.status_bar.set_text, "Script Stopped"
-            )
-        GLib.idle_add(
-                self.launch_button.set_sensitive, True
-            )
+        GLib.idle_add(self.status_bar.set_text, "Script Stopped")
+        GLib.idle_add(self.launch_button.set_sensitive, True)
 
     def on_source_change(self, widget):
         """Callback to lock sliders"""
@@ -315,7 +311,7 @@ class MLLaunch(Gtk.Window):
             )
 
             subprocess.run(
-                "vela " + model + " --output-dir=/home/root/.cache/gopoint/",
+                "vela " + model + " --output-dir=/opt/gopoint-apps/downloads/",
                 shell=True,
                 check=True,
             )
@@ -328,19 +324,19 @@ class MLLaunch(Gtk.Window):
         """
         tokens = model_name.split(".tflite")
         return (
-            "/home/root/.cache/gopoint/" + (tokens[-2] + "_vela.tflite").split("/")[-1]
+            "/opt/gopoint-apps/downloads/"
+            + (tokens[-2] + "_vela.tflite").split("/")[-1]
         )
-    
+
     def but_exit(self, unused):
-        self.exit(None,None)
+        self.exit(None, None)
 
     def exit(self, unused, unused2):
-        if(self.output_process != 0):
-            if(self.demo == "pose"):
+        if self.output_process != 0:
+            if self.demo == "pose":
                 self.output_process.kill()
             else:
-                subprocess.run("pkill gst-launch-1.0",
-                shell=True)
+                subprocess.run("pkill gst-launch-1.0", shell=True)
         exit()
 
 
