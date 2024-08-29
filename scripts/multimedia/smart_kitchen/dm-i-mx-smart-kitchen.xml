@@ -1,0 +1,28 @@
+<data:item xmlns:data="data" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="data ../../xsd/alp.xsd" type="demo" format="yocto_project" versionSchema="1.0.0" name="i.MX Smart Kitchen" uuid="4219870f-5efa-415b-88cf-5456555fe058">
+    <display_title>
+        i.MX Smart Kitchen
+    </display_title>
+    <overview>
+        <![CDATA[i.MX Smart Kitchen emulates an interactive kitchen through a GUI controlled by voice commands.]]>
+    </overview>
+    <toolchains>
+        <toolchain name="vscode"></toolchain>
+    </toolchains>
+    <families>
+        <family name="imx"></family>
+    </families>
+    <nxp_compatible_hw>
+        <hw id="MCIMX93-EVK"></hw>
+        <hw id="EVK-MIMX8MM"></hw>
+        <hw id="EVK-MIMX8MP"></hw>
+    </nxp_compatible_hw>
+    <peripherals>
+        <peripheral name="display"></peripheral>
+    </peripherals>
+    <categories>
+        <category name="hmi"></category>
+        <category name="ui"></category>
+        <category name="graphics"></category>
+        <category name="voice"></category>
+    </categories>
+</data:item>

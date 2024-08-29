@@ -1,0 +1,28 @@
+<data:item xmlns:data="data" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="data ../../xsd/alp.xsd" type="demo" format="python_linux" versionSchema="1.0.0" name="i.MX DMS" uuid="e669f84e-d018-4547-9331-ffa7c7a00271">
+    <display_title>
+        i.MX Driver Monitor System
+    </display_title>
+    <overview>
+        <![CDATA[i.MX Driver Monitor System is a vehicle safety system to assess the driver's alertness and warn the driver if needed using a camera and NPU.]]>
+    </overview>
+    <toolchains>
+        <toolchain name="vscode"></toolchain>
+    </toolchains>
+    <families>
+        <family name="imx"></family>
+    </families>
+    <nxp_compatible_hw>
+        <hw id="MCIMX93-EVK"></hw>
+        <hw id="EVK-MIMX8MP"></hw>
+    </nxp_compatible_hw>
+    <peripherals>
+        <peripheral name="display"></peripheral>
+        <peripheral name="mipi_csi"></peripheral>
+        <peripheral name="usb"></peripheral>
+        <peripheral name="video"></peripheral>
+    </peripherals>
+    <categories>
+        <category name="aiml"></category>
+        <category name="vision"></category>
+    </categories>
+</data:item>

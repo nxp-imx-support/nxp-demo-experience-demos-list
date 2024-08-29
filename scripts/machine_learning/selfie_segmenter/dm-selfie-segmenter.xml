@@ -1,0 +1,28 @@
+<data:item xmlns:data="data" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="data ../../xsd/alp.xsd" type="demo" format="python_linux" versionSchema="1.0.0" name="Selfie Segmenter" uuid="059f1849-94d0-4e83-aab0-0d12c5d4c176">
+    <display_title>
+        Selfie Segmenter
+    </display_title>
+    <overview>
+        <![CDATA[Selfie Segmenter lets you segment the portrait of a person and can be used to replace or modify the background of an image  using a camera and the NPU.]]>
+    </overview>
+    <toolchains>
+        <toolchain name="vscode"></toolchain>
+    </toolchains>
+    <families>
+        <family name="imx"></family>
+    </families>
+    <nxp_compatible_hw>
+        <hw id="MCIMX93-EVK"></hw>
+        <hw id="EVK-MIMX8MP"></hw>
+    </nxp_compatible_hw>
+    <peripherals>
+        <peripheral name="mipi_csi"></peripheral>
+        <peripheral name="display"></peripheral>
+        <peripheral name="usb"></peripheral>
+        <peripheral name="video"></peripheral>
+    </peripherals>
+    <categories>
+        <category name="vision"></category>
+        <category name="aiml"></category>
+    </categories>
+</data:item>

@@ -1,0 +1,28 @@
+<data:item xmlns:data="data" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="data ../../xsd/alp.xsd" type="demo" format="python_linux" versionSchema="1.0.0" name="i.MX Smart Fitness" uuid="a09554be-2fc3-4797-8a88-669a8b08c2a7">
+    <display_title>
+        i.MX Smart Fitness
+    </display_title>
+    <overview>
+        <![CDATA[i.MX Smart Fitness tracks the 'squats' fitness exercise using a camera and NPU on i.MX Applications Processors.]]>
+    </overview>
+    <toolchains>
+        <toolchain name="vscode"></toolchain>
+    </toolchains>
+    <families>
+        <family name="imx"></family>
+    </families>
+    <nxp_compatible_hw>
+        <hw id="MCIMX93-EVK"></hw>
+        <hw id="EVK-MIMX8MP"></hw>
+    </nxp_compatible_hw>
+    <peripherals>
+        <peripheral name="mipi_csi"></peripheral>
+        <peripheral name="display"></peripheral>
+        <peripheral name="usb"></peripheral>
+        <peripheral name="video"></peripheral>
+    </peripherals>
+    <categories>
+        <category name="vision"></category>
+        <category name="aiml"></category>
+    </categories>
+</data:item>
