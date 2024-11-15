@@ -9,7 +9,7 @@ NXP's *GoPoint for i.MX Applications Processors* unlocks a world of possibilitie
 pre-built applications packed with the Linux BSP, giving you hands-on experience with your i.MX SoC's capabilities.
 Using the i.MX 8M Plus, i.MX 8M Mini or i.MX 93 EVKs you can run the included *i.MX Smart Kitchen* application available on GoPoint
 launcher as apart of the BSP flashed on to the board. For more information about GoPoint, please refer to
-[GoPoint for i.MX Applications Processors User's Guide](https://www.nxp.com/docs/en/release-note/GPNTRN.pdf).
+[GoPoint for i.MX Applications Processors User's Guide](https://www.nxp.com/IMXLINUX).
 
 [*i.MX Smart Kitchen*](https://github.com/nxp-imx-support/smart-kitchen) showcases the *Multimedia* capabilities of i.MX to emulate an interactive kitchen through a GUI controlled by voice commands. The GUI is
 based on LVGL ([Little Versatile Graphic Library](https://lvgl.io/)) and NXP's [Voice Intelligent Technology](https://www.nxp.com/design/design-center/software/embedded-software/voice-intelligent-technology-wake-word-and-voice-command-engines:VOICE-INTELLIGENT-TECHNOLOGY) (VIT) supports the voice commands.

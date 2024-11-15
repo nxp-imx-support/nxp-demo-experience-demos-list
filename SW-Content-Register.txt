@@ -1,11 +1,11 @@
 NXP Software Content Register
 
 Package:                    nxp-demo-experience-demos-list
-Version:                    v4.10
-Outgoing License:           BSD-2-Clause
+Version:                    v4.11
+Outgoing License:           LA_OPT_Online Code Hosting NXP_Software_License - v1.2 October 2023
 License File:               LICENSE.txt
 Type of content:            Scripts, source code, graphics images and data files
 Description and comments:   GoPoint for i.MX Application Processors configuration and launchers
 Release Location:           https://github.com/nxp-imx-support/nxp-demo-experience-demos-list
-Origin:                     NXP (BSD-2-Clause, BSD-3-Clause, Apache-2.0)
-                            Font Awesome (CC-BY-4.0) https://fontawesome.com/icons
+Origin:                     NXP (Proprietary, BSD-3-Clause, Apache-2.0)
+                            Patrick Levin (MIT) https://github.com/patlevin/face-detection-tflite

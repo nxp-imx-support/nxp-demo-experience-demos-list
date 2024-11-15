@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   height="24px"
+   viewBox="0 -960 960 960"
+   width="24px"
+   fill="#5f6368"
+   version="1.1"
+   id="svg52"
+   sodipodi:docname="fullscreen.svg"
+   inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs56" />
+  <sodipodi:namedview
+     id="namedview54"
+     pagecolor="#505050"
+     bordercolor="#eeeeee"
+     borderopacity="1"
+     inkscape:showpageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#505050"
+     showgrid="false"
+     inkscape:zoom="22.627417"
+     inkscape:cx="14.871339"
+     inkscape:cy="9.8994949"
+     inkscape:window-width="1920"
+     inkscape:window-height="1043"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg52" />
+  <path
+     d="M 320.76273,-160.85265 H 80.762732 V -400.6794 h 79.999998 v 159.82675 h 160 z M 80.544162,-559.92116 v -240 H 320.37091 v 80 H 160.54416 v 160 z M 638.08591,-799.74643 h 240 v 239.82675 h -80 v -159.82675 h -160 z m 238.76603,399.64272 v 240 H 637.0252 v -80 h 159.82674 v -160 z"
+     id="path50"
+     sodipodi:nodetypes="cccccccccccccccccccccccccccc"
+     style="font-variation-settings:normal;opacity:1;vector-effect:none;fill:#5f6368;fill-opacity:1;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;-inkscape-stroke:none;stop-color:#000000;stop-opacity:1" />
+  <path
+     id="rect513"
+     style="font-variation-settings:normal;opacity:1;vector-effect:none;fill:#5f6368;fill-opacity:1;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;-inkscape-stroke:none;stop-color:#000000;stop-opacity:1"
+     d="M 226.875 -650.85938 L 226.875 -303.75 L 732.26562 -303.75 L 732.26562 -650.85938 L 226.875 -650.85938 z M 273.04688 -608.51562 L 692.10938 -608.51562 L 692.10938 -346.09375 L 273.04688 -346.09375 L 273.04688 -608.51562 z " />
+</svg>

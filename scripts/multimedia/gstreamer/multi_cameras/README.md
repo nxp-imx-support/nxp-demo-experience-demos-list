@@ -12,7 +12,7 @@ NXP's *GoPoint for i.MX Applications Processors* unlocks a world of possibilitie
  the i.MX 8M Plus EVK you can run the included *Multi Cameras Preview* application
  available on GoPoint launcher as apart of the BSP flashed on to the board. For
  more information about GoPoint, please refer to
- [GoPoint for i.MX Applications Processors User's Guide](https://www.nxp.com/webapp/Download?colCode=GPNTUG&location=null).
+ [GoPoint for i.MX Applications Processors User's Guide](https://www.nxp.com/IMXLINUX).
 
 *Multi Cameras Preview* showcases the *multimedia* capabilities of i.MX SoCs by
  launching a GStreamer pipeline that displays feed simultaneously from the

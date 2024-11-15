@@ -12,7 +12,7 @@ This user-friendly app launches pre-built applications packed with the Linux BSP
  i.MX 8M Plus EVK you can run the included *ISP Control Example Application*
  available on GoPoint launcher as apart of the BSP flashed on to the board.
  For more information about GoPoint, please refer to
-[GoPoint for i.MX Applications Processors User's Guide](https://www.nxp.com/webapp/Download?colCode=GPNTUG&location=null).
+[GoPoint for i.MX Applications Processors User's Guide](https://www.nxp.com/IMXLINUX).
 
 *ISP Control Example Application* showcases the *multimedia* capabilities of
  i.MX SoCs by launching a GStreamer pipeline that displays the current video

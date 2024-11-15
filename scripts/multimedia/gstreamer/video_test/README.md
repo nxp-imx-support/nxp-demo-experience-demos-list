@@ -18,7 +18,7 @@ NXP's *GoPoint for i.MX Applications Processors* unlocks a world of possibilitie
 pre-built applications packed with the Linux BSP, giving you hands-on experience with your i.MX SoC's capabilities.
 Using the i.MX 7ULP, i.MX 93 or i.MX 8 family processors you can run the included *video test* application available on GoPoint
 launcher as apart of the BSP flashed on to the board. For more information about GoPoint, please refer to
-[GoPoint for i.MX Applications Processors User's Guide](https://www.nxp.com/docs/en/user-guide/GPNTUG.pdf).
+[GoPoint for i.MX Applications Processors User's Guide](https://www.nxp.com/IMXLINUX).
 
 [*Voice test*](https://github.com/nxp-imx-support/nxp-demo-experience-demos-list) was used as an example to test the gstreamer video, the resolution can be configurable.
 

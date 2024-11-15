@@ -2,7 +2,7 @@
 
 """
 Copyright 2021-2024 NXP
-SPDX-License-Identifier: BSD-2-Clause
+SPDX-License-Identifier: BSD-3-Clause
 
 This script manages downloads.
 Runs camera setup check.

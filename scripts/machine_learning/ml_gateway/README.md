@@ -13,7 +13,7 @@ NXP's *GoPoint for i.MX Applications Processors* unlocks a world of possibilitie
 pre-built applications packed with the Linux BSP, giving you hands-on experience with your i.MX SoC's capabilities.
 Using the i.MX 8M Plus or i.MX 93 EVKs together with i.MX 8M Mini EVK you can run the included *ML Gateway* application
 for object detection use case. *ML Gateway* is available on GoPoint launcher as apart of the BSP flashed on to the
-board. For more information about GoPoint, please visit [GoPoint User's Guide](https://www.nxp.com/docs/en/user-guide/GPNTUG.pdf?_gl=1*gz87wm*_ga*ODQxOTk0OTQwLjE3MDQ5ODk3NzA.*_ga_WM5LE0KMSH*MTcwNDk4OTc2OS4xLjEuMTcwNDk4OTgyOS4wLjAuMA..).
+board. For more information about GoPoint, please visit [GoPoint User's Guide](https://www.nxp.com/IMXLINUX).
 
 *ML Gateway* allows devices with limited *Machine Learning* (ML) processing power to use the resources of another much more
 powerful device to accelerate their ML inferences. This application configures the i.MX 8M Plus or i.MX 93 EVKs as

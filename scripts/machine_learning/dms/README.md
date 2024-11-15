@@ -13,7 +13,7 @@ NXP's *GoPoint for i.MX Applications Processors* unlocks a world of possibilitie
 pre-built applications packed with the Linux BSP, giving you hands-on experience with your i.MX SoC's capabilities.
 Using the i.MX 8M Plus or i.MX 93 EVKs you can run the included *Driver Monitor System (DMS)* application available on GoPoint
 launcher as apart of the BSP flashed on to the board. For more information about GoPoint, please refer to
-[GoPoint for i.MX Applications Processors User's Guide](https://www.nxp.com/docs/en/user-guide/GPNTUG.pdf).
+[GoPoint for i.MX Applications Processors User's Guide](https://www.nxp.com/IMXLINUX).
 
 With rapid development in automotive industry recently, *Driver Monitor System* (DMS) has become a common requirement in today's vehicle. In general, DMS is a vehicle safety system to assess the driver's alertness and warn the driver if needed, which helps to prevent traffic accident and protect driver in the first place. With *Machine Learning* (ML) and *Neural Network* (NN)'s help, DMS can now achieve very high accuracy and low latency. This GoPoint application showcases the capability of implementing DMS on i.MX 8M Plus and i.MX 93 platform, and the performance boost brought by *Neural Processing Unit* (NPU) on these platforms.
 

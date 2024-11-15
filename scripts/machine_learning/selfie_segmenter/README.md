@@ -12,7 +12,7 @@ NXP's *GoPoint for i.MX Applications Processors* unlocks a world of possibilitie
 pre-built applications packed with the Linux BSP, giving you hands-on experience with your i.MX SoC's capabilities.
 Using the i.MX 8M Plus or i.MX 93 EVKs you can run the included *Selfie Segmenter* application available on GoPoint
 launcher as apart of the BSP flashed on to the board. For more information about GoPoint, please refer to
-[GoPoint for i.MX Applications Processors User's Guide](https://www.nxp.com/docs/en/user-guide/GPNTUG.pdf?_gl=1*gz87wm*_ga*ODQxOTk0OTQwLjE3MDQ5ODk3NzA.*_ga_WM5LE0KMSH*MTcwNDk4OTc2OS4xLjEuMTcwNDk4OTgyOS4wLjAuMA..).
+[GoPoint for i.MX Applications Processors User's Guide](https://www.nxp.com/IMXLINUX?_gl=1*gz87wm*_ga*ODQxOTk0OTQwLjE3MDQ5ODk3NzA.*_ga_WM5LE0KMSH*MTcwNDk4OTc2OS4xLjEuMTcwNDk4OTgyOS4wLjAuMA..).
 
 *Selfie Segmenter* showcases the *Machine Learning* (ML) capabilities of i.MX SoCs by using a *Neural Processing Unit* (NPU)
 to accelerate an instance segmentation model. This model lets you segment the portrait of a person and can be used to

@@ -6,6 +6,8 @@ SPDX-License-Identifier: Apache-2.0
 
 This script benchmarks the ML performance on NPU and CPU
 User can choose a desired TFLite model for benchmark comparison
+
+Note for i.MX 95:   Currently, i.MX 95 only supports benchmark of default model.
 """
 
 import os
@@ -76,21 +78,27 @@ class MLBenchmark:
         self.npu_model = str()
         self.delegate = str()
 
-        # Check target (i.MX 8M Plus vs i.MX 93)
-        if os.path.exists("/usr/lib/libvx_delegate.so"):
-            self.platform = "i.MX8MP"
+        # Get platform
+        self.platform = subprocess.check_output(
+            ["cat", "/sys/devices/soc0/soc_id"]
+        ).decode("utf-8")[:-1]
+
+        # OpenVX graph caching != available on i.MX 8QuadMax platform.
+        if self.platform == "i.MX8MP":
+            self.threads_available = ["1", "2", "3", "4"]
+            self.delegate = "/usr/lib/libvx_delegate.so"
             self.cache_enable = (
                 "VIV_VX_ENABLE_CACHE_GRAPH_BINARY='1' "
                 + "VIV_VX_CACHE_BINARY_GRAPH_DIR=/opt/gopoint-apps/downloads "
             )
-            self.threads_available = ["1", "2", "3", "4"]
-            self.delegate = "/usr/lib/libvx_delegate.so"
-        elif os.path.exists("/usr/lib/libethosu_delegate.so"):
-            self.platform = "i.MX93"
+        elif self.platform == "i.MX93":
             self.threads_available = ["1", "2"]
             self.delegate = "/usr/lib/libethosu_delegate.so"
+        elif self.platform == "i.MX95":
+            self.threads_available = ["1", "2", "3", "4", "5", "6"]
+            self.delegate = "/usr/lib/libneutron_delegate.so"
         else:
-            print("Target is not supported!")
+            print("Target != supported!")
             sys.exit()
 
         # Populate threads in button list
@@ -144,7 +152,8 @@ class MLBenchmark:
             )
             self.run_button.set_sensitive(True)
             self.number_threads.set_sensitive(True)
-            self.file_chooser.set_sensitive(True)
+            if self.platform != "i.MX95":
+                self.file_chooser.set_sensitive(True)
             return False
 
         if self.platform == "i.MX93":
@@ -159,7 +168,8 @@ class MLBenchmark:
             GLib.idle_add(self.status_bar.set_text, "Missing benchmarking tool!")
             self.run_button.set_sensitive(True)
             self.number_threads.set_sensitive(True)
-            self.file_chooser.set_sensitive(True)
+            if self.platform != "i.MX95":
+                self.file_chooser.set_sensitive(True)
             time.sleep(1)
             return False
 
@@ -223,7 +233,8 @@ class MLBenchmark:
         GLib.idle_add(self.text_box.set_text, out)
         self.run_button.set_sensitive(True)
         self.number_threads.set_sensitive(True)
-        self.file_chooser.set_sensitive(True)
+        if self.platform != "i.MX95":
+            self.file_chooser.set_sensitive(True)
 
         return True
 
@@ -247,21 +258,24 @@ class MLBenchmark:
             self.pulsing = False
             self.run_button.set_sensitive(True)
             self.number_threads.set_sensitive(True)
-            self.file_chooser.set_sensitive(True)
+            if self.platform != "i.MX95":
+                self.file_chooser.set_sensitive(True)
             return
         if self.cpu_model == -2:
             GLib.idle_add(self.status_bar.set_text, "Download failed!")
             self.pulsing = False
             self.run_button.set_sensitive(True)
             self.number_threads.set_sensitive(True)
-            self.file_chooser.set_sensitive(True)
+            if self.platform != "i.MX95":
+                self.file_chooser.set_sensitive(True)
             return
         if self.cpu_model == -3:
             GLib.idle_add(self.status_bar.set_text, "Corrupted file!")
             self.pulsing = False
             self.run_button.set_sensitive(True)
             self.number_threads.set_sensitive(True)
-            self.file_chooser.set_sensitive(True)
+            if self.platform != "i.MX95":
+                self.file_chooser.set_sensitive(True)
             return
 
         GLib.idle_add(self.status_bar.set_text, "Model successfully downloaded!")
@@ -281,7 +295,8 @@ class MLBenchmark:
 
         self.run_button.set_sensitive(True)
         self.number_threads.set_sensitive(True)
-        self.file_chooser.set_sensitive(True)
+        if self.platform != "i.MX95":
+            self.file_chooser.set_sensitive(True)
         self.pulsing = False
 
     def compile_vela(self):

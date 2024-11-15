@@ -3,26 +3,26 @@
         "NNStreamer":[{
              "name": "Image Classification",
              "id": "obj_class_nn",
-             "executable": "python3 /opt/gopoint-apps/scripts/machine_learning/nnstreamer/ml_demo_launcher.py id",
+             "executable": "python3 /opt/gopoint-apps/scripts/machine_learning/nnstreamer/classification/image_classification.py",
              "compatible": "imx8mp, imx93, imx8mm, imx8qmmek, imx95",
              "screenshot": "image_classification.jpg",
-             "icon": "photo-video-solid.svg",
+             "icon": "ml-icon.svg",
              "description": "Image classification example using NNStreamer. Image classification is an ML task that attempts to comprehend an entire image as a whole. The goal is to classify the image by assigning it to a specific label. Typically, it refers to images in which only one object appears and is analyzed. An internet connection may be required."
          },{
              "name": "Object Detection",
              "id": "obj_detect_nn",
-             "executable": "python3 /opt/gopoint-apps/scripts/machine_learning/nnstreamer/ml_demo_launcher.py detect",
+             "executable": "python3 /opt/gopoint-apps/scripts/machine_learning/nnstreamer/detection/object_detection.py",
              "compatible": "imx8mp, imx93, imx8mm, imx8qmmek, imx95",
-             "screenshot": "ml_detect.png",
-             "icon": "photo-video-solid.svg",
+             "screenshot": "ml_detect.jpg",
+             "icon": "ml-icon.svg",
              "description": "Object detection example using NNStreamer. Object detection is the ML task that detects instances of objects of a certain class within an image. A bounding box and a class label are found for each detected object. An internet connection may be required."
          },{
              "name": "Pose Estimation",
              "id": "pose_detect_nn",
-             "executable": "python3 /opt/gopoint-apps/scripts/machine_learning/nnstreamer/ml_demo_launcher.py pose",
-             "compatible": "imx8mp, imx8qmmek, imx95",
+             "executable": "python3 /opt/gopoint-apps/scripts/machine_learning/nnstreamer/pose/pose_estimation.py",
+             "compatible": "imx8mp, imx8mm, imx8qmmek, imx93, imx95",
              "screenshot": "pose-estimation.jpg",
-             "icon": "photo-video-solid.svg",
+             "icon": "ml-icon.svg",
              "description": "Pose estimation example using NNStreamer. The goal of pose estimation is to detect the position and orientation of a person or object. In human pose estimation, this is usually done with specific keypoints such as hands, head, legs, etc. An internet connection may be required."
          },{
              "name": "ML Gateway",
@@ -30,7 +30,7 @@
              "executable": "python3 /opt/gopoint-apps/scripts/machine_learning/ml_gateway/ml_gateway.py",
              "compatible": "imx8mp, imx8mm, imx93",
              "screenshot": "ml_gateway.jpg",
-             "icon": "photo-video-solid.svg",
+             "icon": "ml-icon.svg",
              "description": "ML Gateway easily configures the i.MX 8M Plus and i.MX 93 EVKs as machine learning accelerator servers and allows resource-constrained MPU systems (clients) without NPUs to connect and run ML inference. This is currently enabled for i.MX 8M Mini on the client side."
          },{
              "name": "Selfie Segmenter",
@@ -38,7 +38,7 @@
              "executable": "python3 /opt/gopoint-apps/scripts/machine_learning/selfie_segmenter/selfie_segmenter.py",
              "compatible": "imx8mp, imx93",
              "screenshot": "selfie_segmenter.jpg",
-             "icon": "photo-video-solid.svg",
+             "icon": "ml-icon.svg",
              "description": "Selfie Segmenter showcases the ML capabilities of i.MX 8M Plus and i.MX 93 by using the NPU to accelerate an instance segmentation model. This model lets you segment the portrait of a person and can be used to replace or modify the background of an image. An internet connection is required."
          },{
               "name": "i.MX Smart Fitness",
@@ -46,15 +46,15 @@
               "executable": "python3 /opt/gopoint-apps/scripts/machine_learning/imx_smart_fitness/imx_smart_fitness.py",
               "compatible": "imx8mp, imx93",
               "screenshot": "imx-smart-fitness.jpg",
-              "icon": "photo-video-solid.svg",
+              "icon": "ml-icon.svg",
               "description": "i.MX Smart Fitness showcases the i.MX' Machine Learning capabilities by using an NPU to accelerate two Deep Learning vision-based models. Together, these models detect a person present in the scene and predict 33 3D-keypoints to generate a complete body landmark, known as pose estimation. From the pose estimation, a K-NN pose classifier classifies two different body poses: 'Squat-Down' and 'Squat-Up'. The application tracks the 'squats' fitness exercise and the repetition counter is set to 12 repetitions in an infinite loop."
         }],
         "TFLite":[{
             "name": "ML Benchmark",
             "executable": "python3 /opt/gopoint-apps/scripts/machine_learning/ml_benchmark/ml_benchmark.py",
-            "compatible": "imx8mp, imx93",
+            "compatible": "imx8mp, imx93, imx95",
             "screenshot": "ml_benchmark.jpg",
-            "icon": "cogs-solid.svg",
+            "icon": "speedometer.svg",
             "description": "This tool allows to easily compare the performance of TensorFlow Lite models running on CPU (Cortex-A) and NPU. The tool works on i.MX 93 and i.MX 8M Plus."
         }],
         "OpenCV":[{
@@ -63,7 +63,7 @@
             "executable": "python3 /opt/gopoint-apps/scripts/machine_learning/face_recognition.py",
             "compatible": "imx8mp",
             "screenshot": "face_recognition.jpg",
-            "icon": "photo-video-solid.svg",
+            "icon": "ml-icon.svg",
             "description": "An OpenCV application example of how to use machine learning to recognize faces. The user can save multiple profiles and the application will recognize the identity of each person by their names. An internet connection is required."
         },{
             "name": "DMS",
@@ -71,7 +71,7 @@
             "executable": "python3 /opt/gopoint-apps/scripts/machine_learning/dms/launcher.py",
             "compatible": "imx8mp, imx93",
             "screenshot": "dms.jpg",
-            "icon": "photo-video-solid.svg",
+            "icon": "ml-icon.svg",
             "description": "An example over how to implement a Driver Monitoring System (DMS) using the NPU. An internet connection is required."
         }],
         "Low Power":[{
@@ -80,7 +80,7 @@
             "executable": "python3 /opt/gopoint-apps/scripts/machine_learning/low_power_ml/lp_baby_cry_detection.py",
             "compatible": "imx93",
             "screenshot": "LP-baby-cry-detection.jpg",
-            "icon": "photo-video-solid.svg",
+            "icon": "ml-icon.svg",
             "description": "Note: To run this example, append 'clk_ignore_unused' in u-boot 'mmcargs' env, before booting linux. An application example showing how to implement baby crying and glass breaking detection in Cortex-M33 core when Linux is in suspend mode. When the application is started, Linux enters suspend mode, and users must enter the timeout value in Cortex-M33 console. Then Cortex-M33 records one second audio input from MIC array on the i.MX 93 EVK board, and try to identify whether there is baby crying or glass breaking sound in the audio by running ML model inference. If baby crying or glass breaking sound is detected, it will wake up Cortex-A55 core and send the result to Linux through rpmsg-tty. If baby crying or glass breaking sound is not detected, it will suspend Cortex-M33 core for the configured timeout and wake up Cortex-M33 core to record one second audio again, and run the same process in an infinite loop until a baby crying or glass breaking sound is detected. An internet connection is required."
         },{
             "name": "LP KWS Detection",
@@ -88,7 +88,7 @@
             "executable": "python3 /opt/gopoint-apps/scripts/machine_learning/low_power_ml/lp_kws_detection.py",
             "compatible": "imx93",
             "screenshot": "LP-kws-detection.jpg",
-            "icon": "photo-video-solid.svg",
+            "icon": "ml-icon.svg",
             "description": "Note: To run this example, append 'clk_ignore_unused' in u-boot 'mmcargs' env, before booting linux. An application example showing how to implement key word detection in Cortex-M33 core when Linux is in suspend mode. When the application is started, Linux enters suspend mode. Cortex-M33 will record one second audio input from MIC array on the i.MX 93 EVK board, and try to identify whether there is key word UP in the audio by running ML model inference. If key word is detected, it will wake up Cortex-A55 core and stop. If no key word is detected, it will record one second audio again, and run the same process in an infinite loop until a key word is detected. An internet connection is required."
         }]
      }]
@@ -99,7 +99,7 @@
             "id": "video_test",
             "executable": "python3 /opt/gopoint-apps/scripts/multimedia/gstreamer/video_test/video_test.py",
             "source": "",
-            "icon": "photo-video-solid.svg",
+            "icon": "multimedia-icon.svg",
             "screenshot": "gst_test_src_screenshot.jpg",
             "compatible": "imx7ulp, imx8ulp, imx8qxpc0mek, imx8qmmek, imx8mq, imx8mm, imx8mn, imx8mp, imx93",
             "description": "This is a simple demo utility that allows users to play back video captured on a camera or a test source."
@@ -108,16 +108,25 @@
             "id": "video_test_vpu",
             "executable": "python3 /opt/gopoint-apps/scripts/multimedia/gstreamer/vpu/imx8mp_camera_demo.py --vpu_enc=True",
             "source": "",
-            "icon": "photo-video-solid.svg",
+            "icon": "multimedia-icon.svg",
             "screenshot": "camera-vpu.jpg",
             "compatible": "imx8mp",
             "description": "This is a GStreamer pipeline able to create a camera preview example using VPU to encode and decode the image."
+        },{
+            "name": "Video To Texture Demo",
+            "id": "video_to_texture",
+            "executable": "/opt/gopoint-apps/scripts/multimedia/imx_video_to_texture/imx-video-to-texture",
+            "source": "",
+            "icon": "photo-video-solid.svg",
+            "screenshot": "video_to_texture.png",
+            "compatible": "imx95, imx8qmmek",
+            "description": "Demonstrates Video to texturing functionality of gstreamer within a QT video player application"
         },{
             "name": "2Way Video Streaming",
             "id": "video_streaming",
             "executable": "python3 /opt/gopoint-apps/scripts/multimedia/gstreamer/two_way_video_streaming.py",
             "source": "",
-            "icon": "photo-video-solid.svg",
+            "icon": "multimedia-icon.svg",
             "screenshot": "two-way-video-streaming.jpg",
             "compatible": "imx8mp, imx8mm",
             "description": "Allows user to implement a two way video streaming demo that displays video encode and decode capabilities between i.MX devices in local network."
@@ -126,7 +135,7 @@
             "id": "video_test_multi",
             "executable": "python3 /opt/gopoint-apps/scripts/multimedia/gstreamer/multi_cameras/imx8mp_camera_demo.py --multi_cam=True",
             "source": "",
-            "icon": "photo-video-solid.svg",
+            "icon": "multimedia-icon.svg",
             "screenshot": "multi_cameras.jpg",
             "compatible": "imx8mp",
             "description": "This is a GStreamer pipeline able to create a camera preview example using a Basler/OS08A20 camera and an OV5640 camera simultaneously."
@@ -136,7 +145,7 @@
             "id": "isp_control",
             "executable": "python3 /opt/gopoint-apps/scripts/multimedia/gstreamer/isp/imx8mp_isp_demo.py",
             "source": "",
-            "icon": "photo-video-solid.svg",
+            "icon": "multimedia-icon.svg",
             "screenshot": "isp_demo.png",
             "compatible": "imx8mp",
             "description": "This program opens a GStreamer pipeline and allows the user to change various parameters of the ISP in real time. This example application works with Basler and OS08A20 cameras."
@@ -145,7 +154,7 @@
             "id": "video_dump",
             "executable": "python3 /opt/gopoint-apps/scripts/multimedia/gstreamer/imx8mp_isp_dump.py",
             "source": "",
-            "icon": "photo-video-solid.svg",
+            "icon": "multimedia-icon.svg",
             "screenshot": "video-dump.jpg",
             "compatible": "imx8mp",
             "description": "This program allows users to dump the raw frame data from a camera onto a connected drive. This demo will only work with a compatible Basler camera."
@@ -175,7 +184,7 @@
             "id": "voice",
             "executable": "python3 /opt/gopoint-apps/scripts/audio/voice/voice_demo.py",
             "source": "",
-            "icon": "volume-up-solid.svg",
+            "icon": "voice-control.svg",
             "screenshot": "voice-control.jpg",
             "compatible": "imx8mp, imx8mm",
             "description": "See NXP's Voice Technology in action! Use your voice to open and close various applications. This requires 8-MIC Array Board (8MIC-RPI-MX8) installed on the i.MX hardware (Visit NXP.com for help). Please note that this will override '/etc/asound.conf' file. It will be restored if this application is gracefully terminated."
@@ -185,7 +194,7 @@
             "id": "voiceplayer",
             "executable": "/opt/gopoint-apps/scripts/multimedia/imx-voiceplayer/init.sh",
             "source": "",
-            "icon": "bluetooth.svg",
+            "icon": "voice-control.svg",
             "screenshot": "multimedia-player.jpg",
             "compatible": "imx8mm, imx8mp, imx93",
             "description": "This is an application for controlling an audio player using the Bluetooth communication protocol by the use of voice commands. WakeWord supported:'HEY NXP'. Voice commands supported : PLAY MUSIC, PAUSE, PREVIOUS SONG, NEXT SONG, VOLUME UP, VOLUME DOWN, MUTE, STOP, STOP PLAYER. This application requires 8-MIC Array Board (8MIC-RPI-MX8) installed on the i.MX hardware (Visit NXP.com for help)."
@@ -195,7 +204,7 @@
             "id": "smart-kitchen",
             "executable": "/opt/gopoint-apps/scripts/multimedia/smart-kitchen/run.sh",
             "source": "",
-            "icon": "smart-kitchen-icon.svg",
+            "icon": "voice-control.svg",
             "screenshot": "smart-kitchen-screenshot.jpg",
             "compatible": "imx8mm, imx8mp, imx93",
             "description": "This application simulates a smart kitchen controlled by voice commands using NXP's Voice Intelligent Technology (VIT). How to use: First say a wakeword to select a kitchen's item (hood, oven or aircon) and then say one of the item's available commands (e.g. \"Hey hood, light on\"). WakeWords supported are HEY HOOD, HEY OVEN, HEY AIRCON. Global Commands are ENTER, EXIT, RUN DEMO, STOP DEMO. Hood commands are FAN OFF, FAN ON, FAN LOW, FAN HIGH, LIGHT OFF, LIGHT ON. Aircon commands are DRY MODE, COOL MODE, FAN MODE SWING OFF, SWING ON, FAN LOW, FAN HIGH. Oven commands are CLOSE DOOR, OPEN DOOR. The item's functions can also be activated by clicking on the item's controls using a mouse or touchscreen."
@@ -218,7 +227,7 @@
             "id": "qbv_demo",
             "executable": "python3 /opt/gopoint-apps/scripts/TSN/qbv/start_demo.py",
             "source": "",
-            "icon": "photo-video-solid.svg",
+            "icon": "tsn.svg",
             "screenshot": "tsn.jpg",
             "compatible": "imx8mm, imx8mp",
             "description": "Enhancements to Traffic Scheduling: Time-Aware Shaper. It separates communication on the Ethernet network into configurable length, repeating time cycles, thereby contributing to the delivery of time-critical traffic. Each network node's egress ports have per-queue traffic windows which may be opened/closed at specified times.The talker-to-listener path across the network may be dedicated to this priority traffic alone, at real-time (T), causing the talker's traffic to be delivered reliably and deterministically across the network."
@@ -244,7 +253,7 @@
             "id": "tiger",
             "executable": "/opt/viv_samples/tiger/tiger",
             "source": "",
-            "icon": "cube-solid.svg",
+            "icon": "graphics-icon.svg",
             "screenshot": "tiger_2d.jpg",
             "compatible": "imx7ulp, imx8mq, imx8mm, imx8mn, imx8qxpc0mek, imx8qmmek, imx8mp, imx8ulp",
             "description": "Vivante Tiger G2D, this demo shows a vector image being rotated and scaled using OpenVG."
@@ -254,7 +263,7 @@
             "id": "vivante_launch",
             "executable": "/opt/viv_samples/es20/vv_launcher/vv_launcher",
             "source": "",
-            "icon": "object-group-regular.svg",
+            "icon": "graphics-icon.svg",
             "screenshot": "vivante_vv_laucher.jpg",
             "compatible": "imx7ulp, imx8qxpc0mek, imx8qmmek, imx8mp, imx8ulp",
             "description": "Vivante launcher demo."
@@ -264,7 +273,7 @@
             "id": "cover",
             "executable": "/opt/gopoint-apps/scripts/opengl/vivante_cover_flow.sh",
             "source": "",
-            "icon": "object-group-regular.svg",
+            "icon": "graphics-icon.svg",
             "screenshot": "cover-flow.jpg",
             "compatible": "imx7ulp, imx8ulp",
             "description": "Vivante Cover Flow demo."
@@ -274,7 +283,7 @@
             "id": "vivante_tut",
             "executable": "/opt/gopoint-apps/scripts/opengl/vivante_tutorial7.sh",
             "source": "",
-            "icon": "object-group-regular.svg",
+            "icon": "graphics-icon.svg",
             "screenshot": "vivante-tutorial.jpg",
             "compatible": "imx7ulp, imx8ulp",
             "description": "Vivante OpenGL tutorial"
@@ -284,7 +293,7 @@
             "id": "bloom",
             "executable": "/opt/imx-gpu-sdk/GLES2/Bloom___Wayland/GLES2.Bloom___Wayland --Window [0,0,1280,720]",
             "source": "",
-            "icon": "object-group-regular.svg",
+            "icon": "graphics-icon.svg",
             "screenshot": "bloom.jpg",
             "compatible": "imx8mq, imx8mm, imx8mn, imx8qxpc0mek, imx8qmmek, imx8mp, imx95",
             "description": "An example of how to create a bloom effect. The idea is not to create the most accurate bloom, but something that is fairly fast to render. Instead of increasing the kernal size to get a good blur we do a fairly fast approximation by downscaling the original image to multiple smaller render-targets and then blurring these using a relative small kernel and then finally rescaling the result to the original size."
@@ -294,7 +303,7 @@
             "id": "bloom_small",
             "executable": "/opt/imx-gpu-sdk/GLES2/Bloom___Wayland/GLES2.Bloom___Wayland --Window [0,0,480,360]",
             "source": "",
-            "icon": "object-group-regular.svg",
+            "icon": "graphics-icon.svg",
             "screenshot": "bloom.jpg",
             "compatible": "imx7ulp",
             "description": "An example of how to create a bloom effect. The idea is not to create the most accurate bloom, but something that is fairly fast to render. Instead of increasing the kernal size to get a good blur we do a fairly fast approximation by downscaling the original image to multiple smaller render-targets and then blurring these using a relative small kernel and then finally rescaling the result to the original size."
@@ -304,7 +313,7 @@
             "id": "blur",
             "executable": "/opt/imx-gpu-sdk/GLES2/Blur___Wayland/GLES2.Blur___Wayland --Window [0,0,1280,720]",
             "source": "",
-            "icon": "object-group-regular.svg",
+            "icon": "graphics-icon.svg",
             "screenshot": "blur.jpg",
             "compatible": "imx8mq, imx8mm, imx8mn, imx8qxpc0mek, imx8qmmek, imx8mp, imx95",
             "description": "Uses the two pass linear technique and further reduces the bandwidth requirement by downscaling the 'source image' to 1/4 its size (1/2w x 1/2h) before applying the blur and and then upscaling the blurred image to provide the final image. This works well for large kernel sizes and relatively high sigma's but the downscaling produces visible artifacts with low sigma's."
@@ -314,7 +323,7 @@
             "id": "blur_small",
             "executable": "/opt/imx-gpu-sdk/GLES2/Blur___Wayland/GLES2.Blur___Wayland --Window [0,0,480,360]",
             "source": "",
-            "icon": "object-group-regular.svg",
+            "icon": "graphics-icon.svg",
             "screenshot": "blur.jpg",
             "compatible": "imx7ulp, imx8ulp",
             "description": "Uses the two pass linear technique and further reduces the bandwidth requirement by downscaling the 'source image' to 1/4 its size (1/2w x 1/2h) before applying the blur and and then upscaling the blurred image to provide the final image. This works well for large kernel sizes and relatively high sigma's but the downscaling produces visible artifacts with low sigma's."
@@ -324,7 +333,7 @@
             "id": "eight_layer",
             "executable": "/opt/imx-gpu-sdk/GLES2/EightLayerBlend___Wayland/GLES2.EightLayerBlend___Wayland --Window [0,0,1280,720]",
             "source": "",
-            "icon": "object-group-regular.svg",
+            "icon": "graphics-icon.svg",
             "screenshot": "eightlayerblend.jpg",
             "compatible": "imx8mq, imx8mm, imx8mn, imx8qxpc0mek, imx8qmmek, imx8mp, imx95",
             "description": "Creates a simple parallax scrolling effect by blending eight 32 bit per pixel 1080p layers on top of each other. This is not the most optimal way to do it as it uses eight passes. But it does provide a good example of the worst case bandwidth use for the operation. The demo was created to compare GLES to the G2D eight blend blit functionality."
@@ -334,7 +343,7 @@
             "id": "eight_layer_small",
             "executable": "/opt/imx-gpu-sdk/GLES2/EightLayerBlend___Wayland/GLES2.EightLayerBlend___Wayland --Window [0,0,480,360]",
             "source": "",
-            "icon": "object-group-regular.svg",
+            "icon": "graphics-icon.svg",
             "screenshot": "eightlayerblend.jpg",
             "compatible": "imx7ulp, imx8ulp",
             "description": "Creates a simple parallax scrolling effect by blending eight 32 bit per pixel 1080p layers on top of each other. This is not the most optimal way to do it as it uses eight passes. But it does provide a good example of the worst case bandwidth use for the operation. The demo was created to compare GLES to the G2D eight blend blit functionality."
@@ -344,7 +353,7 @@
             "id": "fract_shader",
             "executable": "/opt/imx-gpu-sdk/GLES2/FractalShader___Wayland/GLES2.FractalShader___Wayland --Window [0,0,1280,720]",
             "source": "",
-            "icon": "object-group-regular.svg",
+            "icon": "graphics-icon.svg",
             "screenshot": "fractalshader.jpg",
             "compatible": "imx8mq, imx8mm, imx8mn, imx8qxpc0mek, imx8qmmek, imx8mp, imx95",
             "description": "Can render both the julia and mandelbrot set using a fragment shader. This demo was used to demonstrates GPU shader performance by using up roughly 515 instructions to render each fragment while generating the julia set. It uses no textures, has no overdraw and has a minimal bandwidth requirement."
@@ -354,7 +363,7 @@
             "id": "fract_shader_small",
             "executable": "/opt/imx-gpu-sdk/GLES2/FractalShader___Wayland/GLES2.FractalShader___Wayland --Window [0,0,480,360]",
             "source": "",
-            "icon": "object-group-regular.svg",
+            "icon": "graphics-icon.svg",
             "screenshot": "fractalshader.jpg",
             "compatible": "imx7ulp",
             "description": "Can render both the julia and mandelbrot set using a fragment shader. This demo was used to demonstrates GPU shader performance by using up roughly 515 instructions to render each fragment while generating the julia set. It uses no textures, has no overdraw and has a minimal bandwidth requirement."
@@ -364,7 +373,7 @@
             "id": "fract_shader_small2",
             "executable": "/opt/imx-gpu-sdk/GLES2/FractalShader___Wayland/GLES2.FractalShader___Wayland --Window [0,0,650,400]",
             "source": "",
-            "icon": "object-group-regular.svg",
+            "icon": "graphics-icon.svg",
             "screenshot": "fractalshader.jpg",
             "compatible": "imx8ulp",
             "description": "Can render both the julia and mandelbrot set using a fragment shader. This demo was used to demonstrates GPU shader performance by using up roughly 515 instructions to render each fragment while generating the julia set. It uses no textures, has no overdraw and has a minimal bandwidth requirement."
@@ -374,7 +383,7 @@
             "id": "line_build",
             "executable": "/opt/imx-gpu-sdk/GLES2/LineBuilder101___Wayland/GLES2.LineBuilder101___Wayland --Window [0,0,1280,720]",
             "source": "",
-            "icon": "object-group-regular.svg",
+            "icon": "graphics-icon.svg",
             "screenshot": "linebuilder101.jpg",
             "compatible": "imx8mq, imx8mm, imx8mn, imx8qxpc0mek, imx8qmmek, imx8mp, imx95",
             "description": "A simple example of dynamic line rendering using the LineBuilder helper class. The line builder has 'Add' methods for most FslBase.Math classes like BoundingBox, BoundingSphere, BoundingFrustrum, Ray, etc."
@@ -384,7 +393,7 @@
             "id": "line_build_small",
             "executable": "/opt/imx-gpu-sdk/GLES2/LineBuilder101___Wayland/GLES2.LineBuilder101___Wayland --Window [0,0,480,360]",
             "source": "",
-            "icon": "object-group-regular.svg",
+            "icon": "graphics-icon.svg",
             "screenshot": "linebuilder101.jpg",
             "compatible": "imx7ulp, imx8ulp",
             "description": "A simple example of dynamic line rendering using the LineBuilder helper class. The line builder has 'Add' methods for most FslBase.Math classes like BoundingBox, BoundingSphere, BoundingFrustrum, Ray, etc."
@@ -394,7 +403,7 @@
             "id": "model_loader",
             "executable": "/opt/imx-gpu-sdk/GLES2/ModelLoaderBasics___Wayland/GLES2.ModelLoaderBasics___Wayland --Window [0,0,1280,720]",
             "source": "",
-            "icon": "object-group-regular.svg",
+            "icon": "graphics-icon.svg",
             "screenshot": "modelloaderbasics.jpg",
             "compatible": "imx8mq, imx8mm, imx8mn, imx8qxpc0mek, imx8qmmek, imx8mp, imx95",
             "description": "Demonstrates how to use the FslSceneImporter and Assimp to load a scene and render it using OpenGLES2. The model is rendered using a simple per pixel directional light shader."
@@ -404,7 +413,7 @@
             "id": "model_loader_small",
             "executable": "/opt/imx-gpu-sdk/GLES2/ModelLoaderBasics___Wayland/GLES2.ModelLoaderBasics___Wayland --Window [0,0,480,360]",
             "source": "",
-            "icon": "object-group-regular.svg",
+            "icon": "graphics-icon.svg",
             "screenshot": "modelloaderbasics.jpg",
             "compatible": "imx7ulp, imx8ulp",
             "description": "Demonstrates how to use the FslSceneImporter and Assimp to load a scene and render it using OpenGLES2. The model is rendered using a simple per pixel directional light shader."
@@ -414,7 +423,7 @@
             "id": "transform",
             "executable": "/opt/imx-gpu-sdk/GLES2/S03_Transform___Wayland/GLES2.S03_Transform___Wayland --Window [0,0,1280,720]",
             "source": "",
-            "icon": "cubes-solid.svg",
+            "icon": "graphics-icon.svg",
             "screenshot": "s03_transform.jpg",
             "compatible": "imx8mq, imx8mm, imx8mn, imx8qxpc0mek, imx8qmmek, imx8mp, imx95",
             "description": "Renders a animated vertex colored triangle. This shows how to modify the model matrix to rotate a triangle and how to utilize demoTime.DeltaTime to do frame rate independent animation."
@@ -424,7 +433,7 @@
             "id": "transform_small",
             "executable": "/opt/imx-gpu-sdk/GLES2/S03_Transform___Wayland/GLES2.S03_Transform___Wayland --Window [0,0,480,360]",
             "source": "",
-            "icon": "cubes-solid.svg",
+            "icon": "graphics-icon.svg",
             "screenshot": "s03_transform.jpg",
             "compatible": "imx7ulp, imx8ulp",
             "description": "Renders a animated vertex colored triangle. This shows how to modify the model matrix to rotate a triangle and how to utilize demoTime.DeltaTime to do frame rate independent animation."
@@ -434,7 +443,7 @@
             "id": "projection",
             "executable": "/opt/imx-gpu-sdk/GLES2/S04_Projection___Wayland/GLES2.S04_Projection___Wayland --Window [0,0,1280,720]",
             "source": "",
-            "icon": "cubes-solid.svg",
+            "icon": "graphics-icon.svg",
             "screenshot": "s04_projection.jpg",
             "compatible": "imx8mq, imx8mm, imx8mn, imx8qxpc0mek, imx8qmmek, imx8mp, imx95",
             "description": "This example shows how to: - Build a perspective projection matrix - Render two simple 3d models using frame rate independent animation."
@@ -444,7 +453,7 @@
             "id": "projection_small",
             "executable": "/opt/imx-gpu-sdk/GLES2/S04_Projection___Wayland/GLES2.S04_Projection___Wayland --Window [0,0,480,360]",
             "source": "",
-            "icon": "cubes-solid.svg",
+            "icon": "graphics-icon.svg",
             "screenshot": "s04_projection.jpg",
             "compatible": "imx7ulp, imx8ulp",
             "description": "This example shows how to: - Build a perspective projection matrix - Render two simple 3d models using frame rate independent animation."
@@ -454,7 +463,7 @@
             "id": "texturing",
             "executable": "/opt/imx-gpu-sdk/GLES2/S06_Texturing___Wayland/GLES2.S06_Texturing___Wayland --Window [0,0,1280,720]",
             "source": "",
-            "icon": "cubes-solid.svg",
+            "icon": "graphics-icon.svg",
             "screenshot": "s06_texturing.jpg",
             "compatible": "imx8mq, imx8mm, imx8mn, imx8qxpc0mek, imx8qmmek, imx8mp, imx95",
             "description": "This example shows how to use the Texture class to use a texture in a cube. It also shows you how to use the ContentManager service to load a 'png' file from the Content directory into a bitmap utility class which is then used to create an OpenGL ES texture."
@@ -464,7 +473,7 @@
             "id": "texturing_small",
             "executable": "/opt/imx-gpu-sdk/GLES2/S06_Texturing___Wayland/GLES2.S06_Texturing___Wayland --Window [0,0,480,360]",
             "source": "",
-            "icon": "cubes-solid.svg",
+            "icon": "graphics-icon.svg",
             "screenshot": "s06_texturing.jpg",
             "compatible": "imx7ulp, imx8ulp",
             "description": "This example shows how to use the Texture class to use a texture in a cube. It also shows you how to use the ContentManager service to load a 'png' file from the Content directory into a bitmap utility class which is then used to create an OpenGL ES texture."
@@ -474,7 +483,7 @@
             "id": "map",
             "executable": "/opt/imx-gpu-sdk/GLES2/S07_EnvMapping___Wayland/GLES2.S07_EnvMapping___Wayland --Window [0,0,1280,720]",
             "source": "",
-            "icon": "cubes-solid.svg",
+            "icon": "graphics-icon.svg",
             "screenshot": "s07_environmentmapping.jpg",
             "compatible": "imx8mq, imx8mm, imx8mn, imx8qxpc0mek, imx8qmmek, imx8mp, imx95",
             "description": "This sample shows how to use a cubemap texture to simulate a reflective material. It also shows you how to use the ContentManager service to load a 'dds' file from the Content directory into a Texture utility class which is then used to create an OpenGL ES cubemap texture."
@@ -484,7 +493,7 @@
             "id": "map_small",
             "executable": "/opt/imx-gpu-sdk/GLES2/S07_EnvMapping___Wayland/GLES2.S07_EnvMapping___Wayland --Window [0,0,480,360]",
             "source": "",
-            "icon": "cubes-solid.svg",
+            "icon": "graphics-icon.svg",
             "screenshot": "s07_environmentmapping.jpg",
             "compatible": "imx7ulp, imx8ulp",
             "description": "This sample shows how to use a cubemap texture to simulate a reflective material. It also shows you how to use the ContentManager service to load a 'dds' file from the Content directory into a Texture utility class which is then used to create an OpenGL ES cubemap texture."
@@ -494,7 +503,7 @@
             "id": "refract",
             "executable": "/opt/imx-gpu-sdk/GLES2/S08_EnvMappingRefraction___Wayland/GLES2.S08_EnvMappingRefraction___Wayland --Window [0,0,1280,720]",
             "source": "",
-            "icon": "cubes-solid.svg",
+            "icon": "graphics-icon.svg",
             "screenshot": "s08_environmentmappingrefraction.jpg",
             "compatible": "imx8mq, imx8mm, imx8mn, imx8qxpc0mek, imx8qmmek, imx8mp, imx95",
             "description": "This sample is a variation from the previous sample, again, a cubemap texture is used, but this time instead of simulating a reflective material a refractive material is simulated. It also shows you how to use the ContentManager service to load a 'dds' file from the Content directory into a Texture utility class which is then used to create an OpenGL ES cubemap texture."
@@ -504,7 +513,7 @@
             "id": "refract_small",
             "executable": "/opt/imx-gpu-sdk/GLES2/S08_EnvMappingRefraction___Wayland/GLES2.S08_EnvMappingRefraction___Wayland --Window [0,0,480,360]",
             "source": "",
-            "icon": "cubes-solid.svg",
+            "icon": "graphics-icon.svg",
             "screenshot": "s08_environmentmappingrefraction.jpg",
             "compatible": "imx7ulp, imx8ulp",
             "description": "This sample is a variation from the previous sample, again, a cubemap texture is used, but this time instead of simulating a reflective material a refractive material is simulated. It also shows you how to use the ContentManager service to load a 'dds' file from the Content directory into a Texture utility class which is then used to create an OpenGL ES cubemap texture."

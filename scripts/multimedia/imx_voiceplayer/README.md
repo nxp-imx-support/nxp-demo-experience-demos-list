@@ -13,7 +13,7 @@ NXP's *GoPoint for i.MX Applications Processors* unlocks a world of possibilitie
 pre-built applications packed with the Linux BSP, giving you hands-on experience with your i.MX SoC's capabilities.
 Using the i.MX8MM, i.MX 8M Plus or i.MX 93 EVKs you can run the included *i.MX Voice PLayer* application available on GoPoint
 launcher as apart of the BSP flashed on to the board. For more information about GoPoint, please refer to
-[GoPoint for i.MX Applications Processors User's Guide](https://www.nxp.com/docs/en/user-guide/GPNTUG.pdf?_gl=1*gz87wm*_ga*ODQxOTk0OTQwLjE3MDQ5ODk3NzA.*_ga_WM5LE0KMSH*MTcwNDk4OTc2OS4xLjEuMTcwNDk4OTgyOS4wLjAuMA..).
+[GoPoint for i.MX Applications Processors User's Guide](https://www.nxp.com/IMXLINUX).
 
 [*i.MX Voice Player*](https://github.com/nxp-imx-support/imx-voiceplayer.git) demo application  is a  Bluetooth Media Player controlled by Voice, it is based on NXP's Voice Intelligent Technology (VIT), a free library that provides a low power voice recognition technology, integrating a complete audio front-end / wake word engine / voice commands solution to control IoT devices.
 

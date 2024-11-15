@@ -8,6 +8,7 @@ This demo is meant for users to try out cameras and displays connected to a
 board. This simple UI allows for different cameras to be selected, or if no
 camera is selected, users can use a test source.
 """
+
 import glob
 import threading
 import subprocess

@@ -1,0 +1,25 @@
+<data:item xmlns:data="data" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="data ../../xsd/alp.xsd" type="demo" format="python_linux" versionSchema="1.0.0" name="ML Benchmark" uuid="034aa153-76cf-4d37-ad64-67844436536a">
+    <display_title>
+        Machine Learning Benchmark
+    </display_title>
+    <overview>
+        <![CDATA[ML Benchmark tool allows to easily compare the performance of TensorFlow Lite models running on CPU (Cortex-A) and NPU, without the need to type in any command.]]>
+    </overview>
+    <toolchains>
+        <toolchain name="vscode"></toolchain>
+    </toolchains>
+    <families>
+        <family name="imx"></family>
+    </families>
+    <nxp_compatible_hw>
+        <hw id="EVK-MIMX8MP"></hw>
+        <hw id="MCIMX93-EVK"></hw>
+        <hw id="IMX95LPD5EVK-19"></hw>
+    </nxp_compatible_hw>
+    <peripherals>
+        <peripheral name="display"></peripheral>
+    </peripherals>
+    <categories>
+        <category name="aiml"></category>
+    </categories>
+</data:item>

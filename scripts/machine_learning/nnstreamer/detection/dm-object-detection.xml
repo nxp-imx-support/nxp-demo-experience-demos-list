@@ -1,0 +1,31 @@
+<data:item xmlns:data="data" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="data ../../xsd/alp.xsd" type="demo" format="python_linux" versionSchema="1.0.0" name="Object Detection" uuid="5ee343e6-5221-4a11-a15f-8d2851e6d2db">
+    <display_title>
+        NNStreamer Object Detection
+    </display_title>
+    <overview>
+        <![CDATA[Object Detection showcases the Machine Learning (ML) capabilities ofi.MX SoCs by using a Neural Processing Unit (NPU). Object detection is the ML task that detects instances of objects of a certain class within an image. A bounding box and a class label are found for each detected object.]]>
+    </overview>
+    <toolchains>
+        <toolchain name="vscode"></toolchain>
+    </toolchains>
+    <families>
+        <family name="imx"></family>
+    </families>
+    <nxp_compatible_hw>
+        <hw id="EVK-MIMX8MP"></hw>
+        <hw id="MCIMX93-EVK"></hw>
+        <hw id="EVK-MIMX8MM"></hw>
+        <hw id="MEK-MIMX8QM"></hw>
+        <hw id="IMX95LPD5EVK-19"></hw>
+    </nxp_compatible_hw>
+    <peripherals>
+        <peripheral name="mipi_csi"></peripheral>
+        <peripheral name="display"></peripheral>
+        <peripheral name="usb"></peripheral>
+        <peripheral name="video"></peripheral>
+    </peripherals>
+    <categories>
+        <category name="aiml"></category>
+        <category name="vision"></category>
+    </categories>
+</data:item>

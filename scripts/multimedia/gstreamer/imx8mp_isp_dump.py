@@ -1,6 +1,6 @@
 """
 Copyright 2021-2024 NXP
-SPDX-License-Identifier: BSD-2-Clause
+SPDX-License-Identifier: BSD-3-Clause
 
 This script provides a user interface for the “video_test” tool that is used
 to dump the raw data from a camera into a file. Through the GUI, users are

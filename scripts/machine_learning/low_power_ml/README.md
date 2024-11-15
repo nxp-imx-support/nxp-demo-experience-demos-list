@@ -13,7 +13,7 @@ NXP's *GoPoint for i.MX Applications Processors* unlocks a world of possibilitie
 pre-built applications packed with the Linux BSP, giving you hands-on experience with your i.MX SoC's capabilities.
 Using the i.MX 93 EVKs you can run the included *Low Power Baby Crying/Glass Breaking Detection* and *Low Power Key Word Spot (KWS) Detection* application available on GoPoint
 launcher as apart of the BSP flashed on to the board. For more information about GoPoint, please refer to
-[GoPoint for i.MX Applications Processors User's Guide](https://www.nxp.com/docs/en/user-guide/GPNTUG.pdf).
+[GoPoint for i.MX Applications Processors User's Guide](https://www.nxp.com/IMXLINUX).
 
 This Low Power Machine Learning (ML) application showcases the i.MX 93's machine learning capabilities in low power use
 case by using Cortex-M33 core to run ML model inference with tflite-micro framework. When running the application, the
