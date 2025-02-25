@@ -127,7 +127,7 @@ RIGHT_EYE_STATUS = np.zeros(RIGHT_W)
 class DMSDemo:
     """The class to run the DMS demo"""
 
-    def __init__(self, video_device, inf_device, model_path):
+    def __init__(self, video_device, inf_device, model_path, resolution):
         """
         Creates an instance of the DMSDemo
 
@@ -135,6 +135,7 @@ class DMSDemo:
         video_device -- the device node of input camera
         inf_device -- the inference device, CPU or NPU
         model_path -- the path to all models and image
+        resolution -- the display resolution
         """
 
         self.inited = False
@@ -169,14 +170,13 @@ class DMSDemo:
             info_image = "/imx93_dms_info.jpeg"
             compositor = "imxcompositor_pxp "
 
+        display_resolution = resolution.split("x")
         cam_pipeline = (
             "v4l2src device="
             + video_device
             + " ! video/x-raw,framerate=30/1,"
             + "height=480,width=640,format=YUY2 ! "
             + videocrop
-            + videoconvert
-            + "video/x-raw,height=1072,width=1072,format=RGB16 ! "
             + "tee name=cam !  queue max-size-buffers=2 leaky=2 ! comp.sink_0  filesrc "
             + "location="
             + model_path
@@ -185,10 +185,12 @@ class DMSDemo:
             + "height=1080,width=840 ! imagefreeze ! comp.sink_1 "
             + compositor
             + "name=comp sink_1::xpos=0 sink_1::ypos=0 "
-            + "sink_0::xpos=840 sink_0::ypos=4 ! cairooverlay name=drawer ! "
+            + "sink_0::xpos=840 sink_0::ypos=0 sink_0::height=1080 sink_0::width=1080 ! "
+            + "cairooverlay name=drawer ! "
             + "queue max-size-buffers=2 leaky=2 ! waylandsink "
-            + "window_width=1920 window-height=1080 "
-            + "cam. ! queue max-size-buffers=2 leaky=2 ! "
+            + "window-width=" + display_resolution[0]
+            + " window-height=" + display_resolution[1]
+            + " cam. ! queue max-size-buffers=2 leaky=2 ! "
             + videoconvert
             + "video/x-raw,height="
             + str(FRAME_HEIGHT)
@@ -254,7 +256,8 @@ class DMSDemo:
         width = caps.get_structure(0).get_value("width")
         frame = np.ndarray(
             shape=(height, width, 3), dtype=np.uint8, buffer=mem_buf.data
-        )[..., ::-1]
+        )[..., ::-1].copy()
+        buffer.unmap(mem_buf)
 
         boxes = self.face_detector.detect(frame)
 
@@ -393,7 +396,6 @@ class DMSDemo:
         if attention and sleep and yawn and smk and call and face_cords:
             self.safe_value = max(self.safe_value + RESTORE_CREDIT, 0.00)
 
-        buffer.unmap(mem_buf)
         return 0
 
     def transform_to_square(self, boxes, scale=1.0, offset=(0, 0)):
@@ -567,9 +569,12 @@ if __name__ == "__main__":
     parser.add_argument(
         "--model_path", type=str, default=cur_path, help="Path for models and image"
     )
+    parser.add_argument(
+        "--resolution", type=str, default="1920x1080", help="Resolution of display"
+    )
     args = parser.parse_args()
     Gst.init(None)
-    window = DMSDemo(args.device, args.backend, args.model_path)
+    window = DMSDemo(args.device, args.backend, args.model_path, args.resolution)
     while True:
         quit_demo = input("Enter q to exit:")
         if quit_demo == "q":

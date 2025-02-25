@@ -1,13 +1,11 @@
 NXP Software Content Register
 
 Package:                    nxp-demo-experience-demos-list
-Version:                    v4.11
-Outgoing License:           LA_OPT_Online Code Hosting NXP_Software_License - v1.2 October 2023
+Version:                    v4.12
+Outgoing License:           LA_OPT_Online Code Hosting NXP_Software_License - v1.3 December 2024
 License File:               LICENSE.txt
 Type of content:            Scripts, source code, graphics images and data files
 Description and comments:   GoPoint for i.MX Application Processors configuration and launchers
 Release Location:           https://github.com/nxp-imx-support/nxp-demo-experience-demos-list
-Origin:                     NXP (Proprietary, BSD-3-Clause, Apache-2.0, LGPL-2.1)
+Origin:                     NXP (Proprietary, BSD-3-Clause, Apache-2.0)
                             Patrick Levin (MIT) https://github.com/patlevin/face-detection-tflite
-                            GStreamer (LGPL-2.1-or-later) - http://gstreamer.freedesktop.org/src/gstreamer/
-                            NNStreamer (LGPL-2.1) - https://github.com/nnstreamer/nnstreamer/

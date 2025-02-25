@@ -54,6 +54,7 @@ class ImxDMSLauncher:
         # Create instances of widgets
         self.sources_list = self.builder.get_object("sources-list")
         self.backend_list = self.builder.get_object("backend-list")
+        self.resolution_list = self.builder.get_object("resolution-list")
         self.run_button = self.builder.get_object("run-button")
         self.status_bar = self.builder.get_object("status-bar")
         self.about_button = self.builder.get_object("about-button")
@@ -114,6 +115,18 @@ class ImxDMSLauncher:
         self.backend_list.append_text("CPU")
         self.backend_list.set_active(0)
 
+        # Obtian display resolution
+        resolutions = [
+            "1920x1080",
+            "1280x720",
+            "800x600",
+            "720x480",
+        ]
+
+        for resolution in resolutions:
+            self.resolution_list.append_text(resolution)
+        self.resolution_list.set_active(0)
+
         self.run_button.connect("clicked", self.start)
 
         window.connect("delete-event", gtk.main_quit)
@@ -148,8 +161,10 @@ class ImxDMSLauncher:
         self.run_button.set_sensitive(False)
         self.sources_list.set_sensitive(False)
         self.backend_list.set_sensitive(False)
+        self.resolution_list.set_sensitive(False)
         device = self.sources_list.get_active_text()
         backend = self.backend_list.get_active_text()
+        resolution = self.resolution_list.get_active_text()
 
         self.pulsing = True
         self.timeout_id = GLib.timeout_add(50, self.on_timeout)
@@ -180,6 +195,7 @@ class ImxDMSLauncher:
             self.run_button.set_sensitive(True)
             self.sources_list.set_sensitive(True)
             self.backend_list.set_sensitive(True)
+            self.resolution_list.set_sensitive(True)
             return False
         if (
             model_face_detection == -2
@@ -197,6 +213,7 @@ class ImxDMSLauncher:
             self.run_button.set_sensitive(True)
             self.sources_list.set_sensitive(True)
             self.backend_list.set_sensitive(True)
+            self.resolution_list.set_sensitive(True)
             return False
 
         if (
@@ -215,6 +232,7 @@ class ImxDMSLauncher:
             self.run_button.set_sensitive(True)
             self.sources_list.set_sensitive(True)
             self.backend_list.set_sensitive(True)
+            self.resolution_list.set_sensitive(True)
             return False
 
         GLib.idle_add(self.status_bar.set_text, "Loading models to cache...")
@@ -369,7 +387,9 @@ class ImxDMSLauncher:
             + device
             + " --backend="
             + backend
-            + " --model_path=/opt/gopoint-apps/downloads",
+            + " --model_path=/opt/gopoint-apps/downloads"
+            + " --resolution="
+            + resolution,
             shell=True,
             check=True,
             capture_output=True,
@@ -378,6 +398,7 @@ class ImxDMSLauncher:
         self.run_button.set_sensitive(True)
         self.sources_list.set_sensitive(True)
         self.backend_list.set_sensitive(True)
+        self.resolution_list.set_sensitive(True)
 
         return True
 
