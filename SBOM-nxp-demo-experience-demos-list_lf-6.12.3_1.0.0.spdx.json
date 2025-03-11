@@ -2,29 +2,29 @@
   "SPDXID": "SPDXRef-DOCUMENT",
   "spdxVersion": "SPDX-2.3",
   "creationInfo": {
-    "created": "2024-11-27T08:43:56Z",
+    "created": "2025-03-04T09:22:53Z",
     "creators": [
       "Organization: NXP"
     ],
     "licenseListVersion": "3.20"
   },
-  "name": "nxp-demo-experience-demos-list-lf-6.6.52_2.2.0",
+  "name": "nxp-demo-experience-demos-list-lf-6.12.3_1.0.0",
   "dataLicense": "CC0-1.0",
   "hasExtractedLicensingInfos": [
     {
-      "licenseId": "LicenseRef-bf9973bb-8090-4f76-adea-710fd5e3efbc",
+      "licenseId": "LicenseRef-3189476f-5b70-4a90-9c18-5da934503c05",
       "extractedText": "NONE",
-      "name": "LA_OPT_Online Code Hosting NXP_Software_License - v1.2 October 2023"
+      "name": "LA_OPT_Online Code Hosting NXP_Software_License - v1.3 December 2024"
     }
   ],
-  "documentNamespace": "https://nxp.com/spdx/874e1435-e532-4457-9346-e8095b4d106d",
+  "documentNamespace": "https://nxp.com/spdx/fbe9dc67-0bb8-4426-a766-0a3aad0437e5",
   "packages": [
     {
-      "SPDXID": "SPDXRef-package-874e1435-e532-4457-9346-e8095b4d106d",
+      "SPDXID": "SPDXRef-package-fbe9dc67-0bb8-4426-a766-0a3aad0437e5",
       "name": "nxp-demo-experience-demos-list",
-      "versionInfo": "lf-6.6.52_2.2.0",
-      "licenseConcluded": "(LicenseRef-bf9973bb-8090-4f76-adea-710fd5e3efbc)",
-      "licenseDeclared": "(LicenseRef-bf9973bb-8090-4f76-adea-710fd5e3efbc)",
+      "versionInfo": "lf-6.12.3_1.0.0",
+      "licenseConcluded": "(LicenseRef-3189476f-5b70-4a90-9c18-5da934503c05)",
+      "licenseDeclared": "(LicenseRef-3189476f-5b70-4a90-9c18-5da934503c05)",
       "downloadLocation": "https://github.com/nxp-imx-support/nxp-demo-experience-demos-list",
       "originator": "Organization: NXP",
       "supplier": "NOASSERTION",
@@ -60,10 +60,10 @@
     {
       "spdxElementId": "SPDXRef-DOCUMENT",
       "relationshipType": "DESCRIBES",
-      "relatedSpdxElement": "SPDXRef-package-874e1435-e532-4457-9346-e8095b4d106d"
+      "relatedSpdxElement": "SPDXRef-package-fbe9dc67-0bb8-4426-a766-0a3aad0437e5"
     },
     {
-      "spdxElementId": "SPDXRef-package-874e1435-e532-4457-9346-e8095b4d106d",
+      "spdxElementId": "SPDXRef-package-fbe9dc67-0bb8-4426-a766-0a3aad0437e5",
       "relationshipType": "CONTAINS",
       "relatedSpdxElement": "SPDXRef-package-b007fa21-84cc-4b85-b1dd-437b8298ac70"
     }
