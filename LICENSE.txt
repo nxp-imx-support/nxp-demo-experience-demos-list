@@ -1,4 +1,4 @@
-LA_OPT_Online Code Hosting NXP_Software_License - v1.3 December 2024 
+LA_OPT_Online Code Hosting NXP_Software_License - v1.4 May 2025 
 IMPORTANT.  Read the following NXP Online Code Hosting Software License Agreement (“Agreement”) completely. By selecting the “I Accept” button at the end of this page, or by downloading, installing, or using the Licensed Software, including via GitHub or similar platform, you indicate that you accept the terms of the Agreement, and you acknowledge that you have the authority, for yourself or on behalf of your company, to bind your company to these terms. You may then download or install the software or obtain it via GitHub or similar platform. In the event of a conflict between the terms of this Agreement and any license terms and conditions for NXP’s proprietary software embedded anywhere in the Licensed Software file, the terms of this Agreement shall control.  If a separate license agreement for the Licensed Software has been signed by you and NXP, then that agreement shall govern your use of the Licensed Software and shall supersede this Agreement. 
 
 NXP ONLINE CODE HOSTING SOFTWARE LICENSE AGREEMENT
@@ -25,7 +25,7 @@ This is a legal agreement between your employer, of which you are an authorized 
 
 (b)	to prepare Derivative Works of the Licensed Software solely for use in combination with a NXP Product;
 
-(c)	to manufacture (or have manufactured), distribute, and market object code of the Licensed Software (and its Derivative Works prepared under the license in 2.2(b)) only as part of, or embedded within, Authorized Systems and not on a standalone basis;
+(c)	to manufacture (or have manufactured), distribute, and market object code of the Licensed Software (and its Derivative Works prepared under the license in 2.1(b)) only as part of, or embedded within, Authorized Systems and not on a standalone basis;
 
 (d)	to copy and distribute as needed, solely in connection with an Authorized System, NXP information provided as part of the Licensed Software for the purpose of maintaining and supporting Authorized Systems which use the Licensed Software; and
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 """
-Copyright 2024 NXP
+Copyright 2024-2025 NXP
 
 SPDX-License-Identifier: BSD-3-Clause
 
@@ -68,10 +68,16 @@ class NNStreamerLauncher:
         self.progress_bar = self.builder.get_object("progress-bar")
         self.close_button = self.builder.get_object("close-button")
 
+        # Get platform
+        self.platform = subprocess.check_output(
+            ["cat", "/sys/devices/soc0/soc_id"]
+        ).decode("utf-8")[:-1]
+
         # General variables
         self.labels = "labels_mobilenet_quant_v1_224.txt"
         self.tflite_model = "mobilenet_v1_1.0_224.tflite"
         self.npu_tflite_model = "mobilenet_v1_1.0_224_quant_uint8_float32.tflite"
+        self.neutron_tflite_model = "mobilenet_v1_1.0_224_quant_uint8_float32_neutron.tflite"
         self.vela_tflite_model = (
             MODELS_PATH + "mobilenet_v1_1.0_224_quant_uint8_float32_vela.tflite"
         )
@@ -86,11 +92,6 @@ class NNStreamerLauncher:
 
         # Main process for nnstreamer example
         self.output_process = None
-
-        # Get platform
-        self.platform = subprocess.check_output(
-            ["cat", "/sys/devices/soc0/soc_id"]
-        ).decode("utf-8")[:-1]
 
         # OpenVX graph caching is not available on i.MX 8QuadMax platform.
         if self.platform == "i.MX8MP":
@@ -119,7 +120,7 @@ class NNStreamerLauncher:
         for backend in backends:
             self.backend_list.append_text(backend)
         # Add GPU option for i.MX8
-        if self.platform in ("i.MX8MP", "i.MX8MN", "i.MX8QM"):
+        if self.platform in ("i.MX8MP", "i.MX8MN", "i.MX8QM", "i.MX95"):
             self.backend_list.append_text("GPU")
         self.backend_list.set_active(0)
 
@@ -226,8 +227,8 @@ class NNStreamerLauncher:
             return
 
         GLib.idle_add(self.status_bar.set_text, "CPU model successfully downloaded!")
-
         GLib.idle_add(self.status_bar.set_text, "Downloading NPU model...")
+
         self.npu_tflite_model = utils.download_file(self.npu_tflite_model)
 
         # Verify if download is successfull
@@ -260,6 +261,42 @@ class NNStreamerLauncher:
             return
 
         GLib.idle_add(self.status_bar.set_text, "NPU model successfully downloaded!")
+
+        if self.platform == "i.MX95":
+            GLib.idle_add(self.status_bar.set_text, "Downloading NPU model...")
+
+            self.neutron_tflite_model = utils.download_file(self.neutron_tflite_model)
+
+            # Verify if download is successfull
+            if self.neutron_tflite_model == -1:
+                GLib.idle_add(
+                    self.status_bar.set_text,
+                    "Cannot find files!\n"
+                    "Make sure required files are available in downloads database!",
+                )
+                self.pulsing = False
+                self.unblock_buttons(True)
+                return
+            if self.neutron_tflite_model == -2:
+                GLib.idle_add(
+                    self.status_bar.set_text,
+                    "Download failed!\n"
+                    "Please make sure you have internet connection on the target and try again.",
+                )
+                self.pulsing = False
+                self.unblock_buttons(True)
+                return
+            if self.neutron_tflite_model == -3:
+                GLib.idle_add(
+                    self.status_bar.set_text,
+                    "Downloaded corrupted file!\n"
+                    "Please clean /opt/gopoint-apps/downloads and try to download again.",
+                )
+                self.pulsing = False
+                self.unblock_buttons(True)
+                return
+
+            GLib.idle_add(self.status_bar.set_text, "NPU model successfully downloaded!")
 
         GLib.idle_add(self.status_bar.set_text, "Downloading labels...")
         self.labels = utils.download_file(self.labels)
@@ -353,7 +390,9 @@ class NNStreamerLauncher:
         if backend in ("GPU"):
             normalization = " -n centeredReduced"
             model = self.tflite_model
-        elif backend == "NPU" and self.platform == "i.MX93":
+        if self.platform == "i.MX95" and backend == "NPU":
+            model = self.neutron_tflite_model
+        if backend == "NPU" and self.platform == "i.MX93":
             model = self.vela_tflite_model
         if performance_display:
             display = " -d "

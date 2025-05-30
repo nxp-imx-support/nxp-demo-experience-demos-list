@@ -11,20 +11,68 @@
          },{
              "name": "Object Detection",
              "id": "obj_detect_nn",
-             "executable": "python3 /opt/gopoint-apps/scripts/machine_learning/nnstreamer/detection/object_detection.py",
+             "executable": "python3 /opt/gopoint-apps/scripts/machine_learning/nnstreamer/object_detection/object_detection.py",
              "compatible": "imx8mp, imx93, imx8mm, imx8qmmek, imx95",
              "screenshot": "ml_detect.jpg",
              "icon": "ml-icon.svg",
              "description": "Object detection example using NNStreamer. Object detection is the ML task that detects instances of objects of a certain class within an image. A bounding box and a class label are found for each detected object. An internet connection may be required."
          },{
+            "name": "Face Detection",
+            "id": "face_detect_nn",
+            "executable": "python3 /opt/gopoint-apps/scripts/machine_learning/nnstreamer/face_detection/face_detection.py",
+            "compatible": "imx8mp, imx93, imx95",
+            "screenshot": "",
+            "icon": "ml-icon.svg",
+            "description": "Face detection example using NNStreamer. Face detection is the ML task that detects instances of faces within an image. A bounding box is found for each detected face. An internet connection may be required."
+        },{
+            "name": "Classification/Detection",
+            "id": "class_detect_nn",
+            "executable": "python3 /opt/gopoint-apps/scripts/machine_learning/nnstreamer/classification_detection/classification_detection.py",
+            "compatible": "imx8mp, imx93, imx95",
+            "screenshot": "",
+            "icon": "ml-icon.svg",
+            "description": "Classification and Detection example using NNStreamer. A bounding box is found for each detected object and text for overall classification. An internet connection may be required."
+        },{
+            "name": "Pose/Face",
+            "id": "class_detect_nn",
+            "executable": "python3 /opt/gopoint-apps/scripts/machine_learning/nnstreamer/pose_face/pose_face.py",
+            "compatible": "imx8mp, imx93",
+            "screenshot": "",
+            "icon": "ml-icon.svg",
+            "description": "Pose and Face example using NNStreamer. This will detect the position and orientation of a person or object and face. A bounding box is found for each detected object and text for overall classification. An internet connection may be required."
+        },{
+            "name": "Dual Classification",
+            "id": "dual_class_nn",
+            "executable": "python3 /opt/gopoint-apps/scripts/machine_learning/nnstreamer/dual_classification/dual_classification.py",
+            "compatible": "imx8mp, imx93, imx95",
+            "screenshot": "",
+            "icon": "ml-icon.svg",
+            "description": "Dual Classification example using NNStreamer. Text for overall classification is shown for two cameras. An internet connection may be required."
+        },{
+            "name": "Emotion Detection",
+            "id": "emote_detect_nn",
+            "executable": "python3 /opt/gopoint-apps/scripts/machine_learning/nnstreamer/emotion_detection/emotion_detection.py",
+            "compatible": "imx8mp, imx93, imx95",
+            "screenshot": "",
+            "icon": "ml-icon.svg",
+            "description": "Emotion example using NNStreamer. A bounding box is found for each detected face and it will detect the current emotion. An internet connection may be required."
+        },{
              "name": "Pose Estimation",
              "id": "pose_detect_nn",
-             "executable": "python3 /opt/gopoint-apps/scripts/machine_learning/nnstreamer/pose/pose_estimation.py",
+             "executable": "python3 /opt/gopoint-apps/scripts/machine_learning/nnstreamer/pose_estimation/pose_estimation.py",
              "compatible": "imx8mp, imx8mm, imx8qmmek, imx93, imx95",
              "screenshot": "pose-estimation.jpg",
              "icon": "ml-icon.svg",
              "description": "Pose estimation example using NNStreamer. The goal of pose estimation is to detect the position and orientation of a person or object. In human pose estimation, this is usually done with specific keypoints such as hands, head, legs, etc. An internet connection may be required."
          },{
+            "name": "Semantic Segmantation",
+            "id": "emote_detect_nn",
+            "executable": "python3 /opt/gopoint-apps/scripts/machine_learning/nnstreamer/semantic_segmentation/semantic_segmentation.py",
+            "compatible": "imx8mp, imx93, imx95",
+            "screenshot": "",
+            "icon": "ml-icon.svg",
+            "description": "Emotion example using NNStreamer. A bounding box is found for each detected face and it will detect the current emotion. An internet connection may be required."
+        },{
              "name": "ML Gateway",
              "id": "ml_gate_nn",
              "executable": "python3 /opt/gopoint-apps/scripts/machine_learning/ml_gateway/ml_gateway.py",
@@ -73,6 +121,14 @@
             "screenshot": "dms.jpg",
             "icon": "ml-icon.svg",
             "description": "An example over how to implement a Driver Monitoring System (DMS) using the NPU. An internet connection is required."
+        },{
+            "name": "i.MX Gesture Recognition",
+            "id": "imx-gesture-recognition",
+            "executable": "python3 /opt/gopoint-apps/scripts/machine_learning/imx_gesture_recognition/imx_gesture_recognition.py",
+            "compatible": "imx8mp, imx93",
+            "screenshot": "imx-gesture-recognition.jpg",
+            "icon": "ml-icon.svg",
+            "description": "i.MX Gesture Recognition showcases the Machine Learning (ML) capabilities of the i.MX SoCs (i.MX 93 and i.MX 8M Plus) using the available Neural Processing Unit (NPU) to accelerate two Deep Learning vision-based models. Together, these models detect up to two hands present in the scene and predict 21 3D-keypoints that are used to recognize hand signs and finger gestures."
         }],
         "Low Power":[{
             "name": "LP Baby Cry Detection",
@@ -244,6 +300,19 @@
             "screenshot": "ele-demo-screenshot.jpg",
             "compatible": "imx93",
             "description": "The EdgeLock® Secure Enclave (ELE) is an independent security domain that provides security services, which include key management, random number generation, data storage, execution of cryptographic services, etc.This application is developed to make some of the ELE functionalities visible."
+        }]
+    }]
+    },
+    {"Communication":[{
+        "CAN Bus":[{
+            "name": "CAN Car Navigation",
+            "id": "car_navigation_demo",
+            "executable": "python3 /opt/gopoint-apps/scripts/communication/car_navigation/CarNav.py",
+            "source": "",
+            "icon": "communication.svg",
+            "screenshot": "car-navigation.jpg",
+            "compatible": "",
+            "description": "The demo consists of two parts: one simulates the parking sensors and the steering wheel position, and the other simulates the car's navigation panel when in reverse. Each part uses the CANOpen protocol in a slightly different way. The sensor simulation uses the canopend and cocomm utilities to send messages on the CAN interface, while the car navigation simulation functions as a genuine CANOpen device (e.g., stepper motor)."
         }]
     }]
     },
