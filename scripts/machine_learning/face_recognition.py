@@ -388,7 +388,7 @@ class FaceDemo:
         input_img = np.expand_dims(input_img, axis=0)
         if model.input_info[0]["dtype"] == np.float32:
             input_img = np.float32(input_img) / 255
-        model.interpreter.set_tensor(model.input_info[0]["index"], input_img)
+        model.interpreter.set_tensor(model.input_info[0]["index"], input_img[:, :, :, :3])
         start = time.perf_counter()
         model.interpreter.invoke()
         return time.perf_counter() - start

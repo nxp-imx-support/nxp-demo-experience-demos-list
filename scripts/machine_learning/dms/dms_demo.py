@@ -472,7 +472,7 @@ class DMSDemo:
         context.select_font_face(
             "Arial", cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD
         )
-        scale = 1072.00 / FRAME_HEIGHT
+        scale = 1080.00 / FRAME_HEIGHT
         offset = 840
         context.set_source_rgb(0, 1, 0)
         context.set_line_width(3)

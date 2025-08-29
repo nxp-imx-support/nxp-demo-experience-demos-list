@@ -146,7 +146,16 @@
             "screenshot": "LP-kws-detection.jpg",
             "icon": "ml-icon.svg",
             "description": "Note: To run this example, append 'clk_ignore_unused' in u-boot 'mmcargs' env, before booting linux. An application example showing how to implement key word detection in Cortex-M33 core when Linux is in suspend mode. When the application is started, Linux enters suspend mode. Cortex-M33 will record one second audio input from MIC array on the i.MX 93 EVK board, and try to identify whether there is key word UP in the audio by running ML model inference. If key word is detected, it will wake up Cortex-A55 core and stop. If no key word is detected, it will record one second audio again, and run the same process in an infinite loop until a key word is detected. An internet connection is required."
-        }]
+        }],
+	"Snoring Detection":[{
+            "name": "Snoring_detection",
+            "id": "snroing_detection",
+            "executable": "python3 /opt/gopoint-apps/scripts/machine_learning/snoring_detection/snoring_detection.py",
+            "compatible": "imx91",
+            "screenshot": "snoring_detection.jpg",
+            "icon": "ml-icon.svg",
+            "description": "This demo can detect the snoring and do the inference based on one second audio loop recording from microphone array. Users need to change the dtb into imx91-11x11-evk-tianma-wvga-panel.dtb to use the LCD display."
+	}]
      }]
      },
     {"Multimedia":[{
@@ -311,7 +320,7 @@
             "source": "",
             "icon": "communication.svg",
             "screenshot": "car-navigation.jpg",
-            "compatible": "",
+            "compatible": "imx8mp, imx93",
             "description": "The demo consists of two parts: one simulates the parking sensors and the steering wheel position, and the other simulates the car's navigation panel when in reverse. Each part uses the CANOpen protocol in a slightly different way. The sensor simulation uses the canopend and cocomm utilities to send messages on the CAN interface, while the car navigation simulation functions as a genuine CANOpen device (e.g., stepper motor)."
         }]
     }]

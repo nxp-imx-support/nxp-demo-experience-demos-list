@@ -191,6 +191,46 @@
       "sha": "94d959677b6f3d8cb1cd20ae97caa4f3955ef688"
     }
   ],
+  "snoring_detect.tflite": [
+    {
+      "name": "snoring_detect.tflite",
+      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.12.20_2.0.0/models/snoring_detect.tflite",
+      "alt_url": "",
+      "sha": "89c0ec6bec3419244977066147aabb035420c769"
+    }
+  ],
+  "no_snoring_0.wav": [
+    {
+      "name": "no_snoring_0.wav",
+      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.12.20_2.0.0/audios/no_snoring_0.wav",
+      "alt_url": "",
+      "sha": "64a7db4db5995c9aeaee195ab9588a04d0588acb"
+    }
+  ],
+  "no_snoring_1.wav": [
+    {
+      "name": "no_snoring_1.wav",
+      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.12.20_2.0.0/audios/no_snoring_1.wav",
+      "alt_url": "",
+      "sha": "4d2b0918448a2329416b0cf3559ef3fe96598101"
+    }
+  ],
+  "snoring_0.wav": [
+    {
+      "name": "snoring_0.wav",
+      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.12.20_2.0.0/audios/snoring_0.wav",
+      "alt_url": "",
+      "sha": "45b137f325625497dee61ae7a4e521b5a7425060"
+    }
+  ],
+  "snoring_1.wav": [
+    {
+      "name": "snoring_1.wav",
+      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.12.20_2.0.0/audios/snoring_1.wav",
+      "alt_url": "",
+      "sha": "9dae35cd028cd260ca7ba48b8e475b46eaf0e1a1"
+    }
+  ],
   "labels_mobilenet_quant_v1_224.txt": [
     {
       "name": "labels_mobilenet_quant_v1_224.txt",

@@ -397,7 +397,7 @@ class NNStreamerLauncher:
         graph_path = ""
         if backend in ("GPU"):
             normalization = " -n centeredReduced"
-            model = self.tflite_model
+            model = self.npu_tflite_model
         if self.platform == "i.MX95" and backend == "NPU":
             model = self.neutron_tflite_model
         if backend == "NPU" and self.platform == "i.MX93":
