@@ -1,0 +1,64 @@
+{
+  "SPDXID": "SPDXRef-DOCUMENT",
+  "spdxVersion": "SPDX-2.3",
+  "creationInfo": {
+    "created": "2025-09-09T23:52:52Z",
+    "creators": [
+      "Organization: NXP"
+    ],
+    "licenseListVersion": "3.20"
+  },
+  "name": "nxp-demo-experience-demos-list-lf-6.12.34_2.1.0",
+  "dataLicense": "CC0-1.0",
+  "documentNamespace": "https://nxp.com/spdx/e1e39d12-9396-4ef4-8c45-2d67fe16e531",
+  "packages": [
+    {
+      "SPDXID": "SPDXRef-package-e1e39d12-9396-4ef4-8c45-2d67fe16e531",
+      "name": "nxp-demo-experience-demos-list",
+      "versionInfo": "lf-6.12.34_2.1.0",
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "NOASSERTION",
+      "downloadLocation": "NOASSERTION",
+      "originator": "Organization: NXP",
+      "supplier": "NOASSERTION",
+      "externalRefs": [],
+      "filesAnalyzed": false
+    },
+    {
+      "SPDXID": "SPDXRef-package-b007fa21-84cc-4b85-b1dd-437b8298ac70",
+      "name": "face-detection-tflite",
+      "versionInfo": "0.1.0",
+      "licenseConcluded": "MIT",
+      "licenseDeclared": "MIT",
+      "homepage": "https://github.com/patlevin/face-detection-tflite",
+      "downloadLocation": "https://pypi.org/project/face-detection-tflite/0.1.0",
+      "originator": "Organization: pypi",
+      "supplier": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceLocator": "pkg:pypi/face-detection-tflite@0.1.0",
+          "referenceType": "purl"
+        },
+        {
+          "referenceCategory": "OTHER",
+          "referenceLocator": "beadcfb1-d080-4450-b071-d62a4f9d5805",
+          "referenceType": "BlackDuck-ComponentOrigin"
+        }
+      ],
+      "filesAnalyzed": false
+    }
+  ],
+  "relationships": [
+    {
+      "spdxElementId": "SPDXRef-DOCUMENT",
+      "relationshipType": "DESCRIBES",
+      "relatedSpdxElement": "SPDXRef-package-e1e39d12-9396-4ef4-8c45-2d67fe16e531"
+    },
+    {
+      "spdxElementId": "SPDXRef-package-e1e39d12-9396-4ef4-8c45-2d67fe16e531",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-package-b007fa21-84cc-4b85-b1dd-437b8298ac70"
+    }
+  ]
+}
