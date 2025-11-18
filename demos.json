@@ -76,7 +76,7 @@
              "name": "ML Gateway",
              "id": "ml_gate_nn",
              "executable": "python3 /opt/gopoint-apps/scripts/machine_learning/ml_gateway/ml_gateway.py",
-             "compatible": "imx8mp, imx8mm, imx93",
+             "compatible": "imx8mp, imx8mm, imx93, imx95",
              "screenshot": "ml_gateway.jpg",
              "icon": "ml-icon.svg",
              "description": "ML Gateway easily configures the i.MX 8M Plus and i.MX 93 EVKs as machine learning accelerator servers and allows resource-constrained MPU systems (clients) without NPUs to connect and run ML inference. This is currently enabled for i.MX 8M Mini on the client side."
@@ -117,7 +117,7 @@
             "name": "DMS",
             "id": "dms",
             "executable": "python3 /opt/gopoint-apps/scripts/machine_learning/dms/launcher.py",
-            "compatible": "imx8mp, imx93",
+            "compatible": "imx8mp, imx93, imx95",
             "screenshot": "dms.jpg",
             "icon": "ml-icon.svg",
             "description": "An example over how to implement a Driver Monitoring System (DMS) using the NPU. An internet connection is required."
@@ -204,6 +204,16 @@
             "screenshot": "multi_cameras.jpg",
             "compatible": "imx8mp",
             "description": "This is a GStreamer pipeline able to create a camera preview example using a Basler/OS08A20 camera and an OV5640 camera simultaneously."
+        }],
+        "Video Processing":[{
+            "name": "Video Rotation",
+            "id": "video_rotation",
+            "executable": "/opt/gopoint-apps/scripts/multimedia/imx-camera-rotation/camera_rotation",
+            "source": "",
+            "icon": "multimedia-icon.svg",
+            "screenshot": "camera_rotation.jpg",
+            "compatible": "imx8mm, imx8mp, imx8ulp, imx95",
+            "description": "This example application shows methods to accelerate video rotation on NXP i.MX platforms, enabling more stable and readable video streams from moving cameras—particularly useful in medical or industrial inspection scenarios where cameras are hand-held or rotating."
         }],
         "ISP":[{
             "name": "ISP Control",

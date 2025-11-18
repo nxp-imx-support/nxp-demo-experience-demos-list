@@ -81,6 +81,8 @@ class ImxDMSLauncher:
             )
         elif os.path.exists("/usr/lib/libethosu_delegate.so"):
             self.platform = "i.MX93"
+        elif os.path.exists("/usr/lib/libneutron_delegate.so"):
+            self.platform = "i.MX95"
         else:
             print("Target is not supported!")
             sys.exit()
@@ -90,6 +92,8 @@ class ImxDMSLauncher:
             self.info_image = "imx8mp_dms_info.jpeg"
         elif self.platform == "i.MX93":
             self.info_image = "imx93_dms_info.jpeg"
+        elif self.platform == "i.MX95":
+            self.info_image = "imx95_dms_info.jpeg"
         else:
             print("Target is not supported!")
             sys.exit()
@@ -153,15 +157,23 @@ class ImxDMSLauncher:
         self.progress_bar.set_fraction(0.0)
         return False
 
+    def set_widgets_sensitive(self, sensitive):
+        """
+        Helper function to set widget sensitivity from main thread
+        """
+        self.run_button.set_sensitive(sensitive)
+        self.sources_list.set_sensitive(sensitive)
+        self.backend_list.set_sensitive(sensitive)
+        self.resolution_list.set_sensitive(sensitive)
+
     @threaded
     def start(self, widget):
         """
         Function to start and run i.MX DMS demo
         """
-        self.run_button.set_sensitive(False)
-        self.sources_list.set_sensitive(False)
-        self.backend_list.set_sensitive(False)
-        self.resolution_list.set_sensitive(False)
+        # Disable widgets using GLib.idle_add to ensure main thread execution
+        GLib.idle_add(self.set_widgets_sensitive, False)
+        
         device = self.sources_list.get_active_text()
         backend = self.backend_list.get_active_text()
         resolution = self.resolution_list.get_active_text()
@@ -171,68 +183,60 @@ class ImxDMSLauncher:
 
         GLib.idle_add(self.status_bar.set_text, "Downloading models...")
 
+        # Download result in a list
+        download_result = []
+
         # Download assets
         model_face_detection = utils.download_file(self.face_detection_model)
+        download_result.append(model_face_detection)
         model_face_landmark = utils.download_file(self.face_landmark_model)
+        download_result.append(model_face_landmark)
         model_iris_landmark = utils.download_file(self.iris_landmark_model)
+        download_result.append(model_iris_landmark)
         model_smk_call_detection = utils.download_file(self.smk_call_detection_model)
+        download_result.append(model_smk_call_detection)
         info_image_s = utils.download_file(self.info_image)
+        download_result.append(info_image_s)
+
+        # Download neutron converted models for i.MX95
+        if self.platform == "i.MX95":
+            face_detection_neutron_model = utils.download_file("face_detection_ptq_neutron.tflite")
+            download_result.append(face_detection_neutron_model)
+            face_landmark_neutron_model = utils.download_file("face_landmark_ptq_neutron.tflite")
+            download_result.append(face_landmark_neutron_model)
+            iris_landmark_neutron_model = utils.download_file("iris_landmark_ptq_neutron.tflite")
+            download_result.append(iris_landmark_neutron_model)
+            smk_call_detection_neutron_model = utils.download_file("yolov4_tiny_smk_call_neutron.tflite")
+            download_result.append(smk_call_detection_neutron_model)
 
         # Handle errors during download if present
-        if (
-            model_face_detection == -1
-            or model_face_landmark == -1
-            or model_iris_landmark == -1
-            or model_smk_call_detection == -1
-            or info_image_s == -1
-        ):
+        if -1 in download_result:
             self.pulsing = False
             GLib.idle_add(
                 self.status_bar.set_text,
                 "Cannot find files!\n"
                 "Make sure required files are available in downloads database!",
             )
-            self.run_button.set_sensitive(True)
-            self.sources_list.set_sensitive(True)
-            self.backend_list.set_sensitive(True)
-            self.resolution_list.set_sensitive(True)
+            GLib.idle_add(self.set_widgets_sensitive, True)
             return False
-        if (
-            model_face_detection == -2
-            or model_face_landmark == -2
-            or model_iris_landmark == -2
-            or model_smk_call_detection == -2
-            or info_image_s == -2
-        ):
+        if -2 in download_result:
             self.pulsing = False
             GLib.idle_add(
                 self.status_bar.set_text,
                 "Download failed!\n"
                 "Please make sure you have internet connection on the target and try again.",
             )
-            self.run_button.set_sensitive(True)
-            self.sources_list.set_sensitive(True)
-            self.backend_list.set_sensitive(True)
-            self.resolution_list.set_sensitive(True)
+            GLib.idle_add(self.set_widgets_sensitive, True)
             return False
 
-        if (
-            model_face_detection == -3
-            or model_face_landmark == -3
-            or model_iris_landmark == -3
-            or model_smk_call_detection == -3
-            or info_image_s == -3
-        ):
+        if -3 in download_result:
             self.pulsing = False
             GLib.idle_add(
                 self.status_bar.set_text,
                 "Downloaded corrupted file!\n"
                 "Please clean /opt/gopoint-apps/downloads and try to download again.",
             )
-            self.run_button.set_sensitive(True)
-            self.sources_list.set_sensitive(True)
-            self.backend_list.set_sensitive(True)
-            self.resolution_list.set_sensitive(True)
+            GLib.idle_add(self.set_widgets_sensitive, True)
             return False
 
         GLib.idle_add(self.status_bar.set_text, "Loading models to cache...")
@@ -244,60 +248,80 @@ class ImxDMSLauncher:
                 "Warming up face detection model and save to cache...",
             )
 
-            subprocess.run(
-                self.cache_enable
-                + " /usr/bin/tensorflow-lite-*/examples/benchmark_model "
-                "--graph=/opt/gopoint-apps/downloads/"
-                + self.face_detection_model
-                + " --external_delegate_path=/usr/lib/libvx_delegate.so",
-                shell=True,
-                check=True,
-            )
+            try:
+                subprocess.run(
+                    self.cache_enable
+                    + " /usr/bin/tensorflow-lite-*/examples/benchmark_model "
+                    "--graph=/opt/gopoint-apps/downloads/"
+                    + self.face_detection_model
+                    + " --external_delegate_path=/usr/lib/libvx_delegate.so",
+                    shell=True,
+                    check=True,
+                )
+            except subprocess.CalledProcessError as e:
+                print(f"Error running face detection benchmark: {e}")
+                GLib.idle_add(self.set_widgets_sensitive, True)
+                return False
 
             GLib.idle_add(
                 self.status_bar.set_text,
                 "Warming up face landmark model and save to cache...",
             )
 
-            subprocess.run(
-                self.cache_enable
-                + " /usr/bin/tensorflow-lite-*/examples/benchmark_model "
-                "--graph=/opt/gopoint-apps/downloads/"
-                + self.face_landmark_model
-                + " --external_delegate_path=/usr/lib/libvx_delegate.so",
-                shell=True,
-                check=True,
-            )
+            try:
+                subprocess.run(
+                    self.cache_enable
+                    + " /usr/bin/tensorflow-lite-*/examples/benchmark_model "
+                    "--graph=/opt/gopoint-apps/downloads/"
+                    + self.face_landmark_model
+                    + " --external_delegate_path=/usr/lib/libvx_delegate.so",
+                    shell=True,
+                    check=True,
+                )
+            except subprocess.CalledProcessError as e:
+                print(f"Error running face landmark benchmark: {e}")
+                GLib.idle_add(self.set_widgets_sensitive, True)
+                return False
 
             GLib.idle_add(
                 self.status_bar.set_text,
                 "Warming up iris landmark model and save to cache...",
             )
 
-            subprocess.run(
-                self.cache_enable
-                + " /usr/bin/tensorflow-lite-*/examples/benchmark_model "
-                "--graph=/opt/gopoint-apps/downloads/"
-                + self.iris_landmark_model
-                + " --external_delegate_path=/usr/lib/libvx_delegate.so",
-                shell=True,
-                check=True,
-            )
+            try:
+                subprocess.run(
+                    self.cache_enable
+                    + " /usr/bin/tensorflow-lite-*/examples/benchmark_model "
+                    "--graph=/opt/gopoint-apps/downloads/"
+                    + self.iris_landmark_model
+                    + " --external_delegate_path=/usr/lib/libvx_delegate.so",
+                    shell=True,
+                    check=True,
+                )
+            except subprocess.CalledProcessError as e:
+                print(f"Error running iris landmark benchmark: {e}")
+                GLib.idle_add(self.set_widgets_sensitive, True)
+                return False
 
             GLib.idle_add(
                 self.status_bar.set_text,
                 "Warming up smk/call detection model and save to cache...",
             )
 
-            subprocess.run(
-                self.cache_enable
-                + " /usr/bin/tensorflow-lite-*/examples/benchmark_model "
-                "--graph=/opt/gopoint-apps/downloads/"
-                + self.smk_call_detection_model
-                + " --external_delegate_path=/usr/lib/libvx_delegate.so",
-                shell=True,
-                check=True,
-            )
+            try:
+                subprocess.run(
+                    self.cache_enable
+                    + " /usr/bin/tensorflow-lite-*/examples/benchmark_model "
+                    "--graph=/opt/gopoint-apps/downloads/"
+                    + self.smk_call_detection_model
+                    + " --external_delegate_path=/usr/lib/libvx_delegate.so",
+                    shell=True,
+                    check=True,
+                )
+            except subprocess.CalledProcessError as e:
+                print(f"Error running smk/call detection benchmark: {e}")
+                GLib.idle_add(self.set_widgets_sensitive, True)
+                return False
 
         if self.platform == "i.MX93" and backend == "NPU":
             # overwrite models name if backend is NPU for imx93
@@ -314,13 +338,18 @@ class ImxDMSLauncher:
                     "Compiling and saving face detection model to cache...",
                 )
 
-                subprocess.run(
-                    "vela /opt/gopoint-apps/downloads/"
-                    + self.face_detection_model
-                    + " --output-dir=/opt/gopoint-apps/downloads/",
-                    shell=True,
-                    check=True,
-                )
+                try:
+                    subprocess.run(
+                        "vela /opt/gopoint-apps/downloads/"
+                        + self.face_detection_model
+                        + " --output-dir=/opt/gopoint-apps/downloads/",
+                        shell=True,
+                        check=True,
+                    )
+                except subprocess.CalledProcessError as e:
+                    print(f"Error compiling face detection model: {e}")
+                    GLib.idle_add(self.set_widgets_sensitive, True)
+                    return False
 
             if not os.path.exists(
                 "/opt/gopoint-apps/downloads/" + face_landmark_vela_model
@@ -330,13 +359,18 @@ class ImxDMSLauncher:
                     "Compiling and saving face landmark model to cache...",
                 )
 
-                subprocess.run(
-                    "vela /opt/gopoint-apps/downloads/"
-                    + self.face_landmark_model
-                    + " --output-dir=/opt/gopoint-apps/downloads/",
-                    shell=True,
-                    check=True,
-                )
+                try:
+                    subprocess.run(
+                        "vela /opt/gopoint-apps/downloads/"
+                        + self.face_landmark_model
+                        + " --output-dir=/opt/gopoint-apps/downloads/",
+                        shell=True,
+                        check=True,
+                    )
+                except subprocess.CalledProcessError as e:
+                    print(f"Error compiling face landmark model: {e}")
+                    GLib.idle_add(self.set_widgets_sensitive, True)
+                    return False
 
             if not os.path.exists(
                 "/opt/gopoint-apps/downloads/" + iris_landmark_vela_model
@@ -346,13 +380,18 @@ class ImxDMSLauncher:
                     "Compiling and saving iris landmark model to cache...",
                 )
 
-                subprocess.run(
-                    "vela /opt/gopoint-apps/downloads/"
-                    + self.iris_landmark_model
-                    + " --output-dir=/opt/gopoint-apps/downloads/",
-                    shell=True,
-                    check=True,
-                )
+                try:
+                    subprocess.run(
+                        "vela /opt/gopoint-apps/downloads/"
+                        + self.iris_landmark_model
+                        + " --output-dir=/opt/gopoint-apps/downloads/",
+                        shell=True,
+                        check=True,
+                    )
+                except subprocess.CalledProcessError as e:
+                    print(f"Error compiling iris landmark model: {e}")
+                    GLib.idle_add(self.set_widgets_sensitive, True)
+                    return False
 
             if not os.path.exists(
                 "/opt/gopoint-apps/downloads/" + smk_call_detection_vela_model
@@ -362,13 +401,18 @@ class ImxDMSLauncher:
                     "Compiling and saving smk/call detection model to cache...",
                 )
 
-                subprocess.run(
-                    "vela /opt/gopoint-apps/downloads/"
-                    + self.smk_call_detection_model
-                    + " --output-dir=/opt/gopoint-apps/downloads/",
-                    shell=True,
-                    check=True,
-                )
+                try:
+                    subprocess.run(
+                        "vela /opt/gopoint-apps/downloads/"
+                        + self.smk_call_detection_model
+                        + " --output-dir=/opt/gopoint-apps/downloads/",
+                        shell=True,
+                        check=True,
+                    )
+                except subprocess.CalledProcessError as e:
+                    print(f"Error compiling smk/call detection model: {e}")
+                    GLib.idle_add(self.set_widgets_sensitive, True)
+                    return False
 
         GLib.idle_add(self.status_bar.set_text, "Models are ready!")
         self.pulsing = False
@@ -378,27 +422,29 @@ class ImxDMSLauncher:
             "Running i.MX DMS",
         )
 
-        subprocess.run(
-            self.cache_enable
-            + "python3 "
-            + cur_path
-            + "/dms_demo.py"
-            + " --device="
-            + device
-            + " --backend="
-            + backend
-            + " --model_path=/opt/gopoint-apps/downloads"
-            + " --resolution="
-            + resolution,
-            shell=True,
-            check=True,
-            capture_output=True,
-        )
-
-        self.run_button.set_sensitive(True)
-        self.sources_list.set_sensitive(True)
-        self.backend_list.set_sensitive(True)
-        self.resolution_list.set_sensitive(True)
+        try:
+            subprocess.run(
+                self.cache_enable
+                + "python3 "
+                + cur_path
+                + "/dms_demo.py"
+                + " --device="
+                + device
+                + " --backend="
+                + backend
+                + " --model_path=/opt/gopoint-apps/downloads"
+                + " --resolution="
+                + resolution,
+                shell=True,
+                check=True,
+                capture_output=True,
+            )
+        except subprocess.CalledProcessError as e:
+            print(f"Error running DMS demo: {e}")
+            GLib.idle_add(self.status_bar.set_text, "Error running DMS demo")
+        finally:
+            # Always re-enable widgets when done
+            GLib.idle_add(self.set_widgets_sensitive, True)
 
         return True
 

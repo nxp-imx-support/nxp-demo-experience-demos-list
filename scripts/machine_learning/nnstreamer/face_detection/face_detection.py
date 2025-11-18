@@ -112,6 +112,11 @@ class NNStreamerLauncher:
             and "/dev/video3" in devices
         ):
             self.sources_list.set_active(3)
+        
+        if self.platform in ("i.MX95"):
+            devices.append("OS08A20")
+            self.sources_list.append_text("OS08A20")
+            self.sources_list.set_active(len(devices) - 1)
 
         # Populate backends
         backends = []
@@ -322,7 +327,6 @@ class NNStreamerLauncher:
         self.pulsing = False
         GLib.idle_add(self.status_bar.set_text, "Application is ready!")
         self.unblock_buttons(True)
-        self.resolution_list.set_sensitive(False)
 
     def unblock_buttons(self, status):
         """Block/unblock buttons"""
@@ -354,6 +358,9 @@ class NNStreamerLauncher:
         normalization = ""
         display = ""
         graph_path = ""
+        cam_op = ""
+        res = ""
+        env = os.environ.copy()
         if backend in ("GPU"):
             model = self.tflite_model
         if self.platform == "i.MX95" and backend == "NPU":
@@ -364,22 +371,37 @@ class NNStreamerLauncher:
             display = " -d "
         if color == "white":
             color = ""
+        else:
+            color = " -t" + color
         if self.platform == "i.MX8MP" and backend != "CPU":
             graph_path = " -g /opt/gopoint-apps/downloads"
+        if self.resolution_list.get_active_text() == "1920x1080":
+            res = " -r 1920,1080,60 "
+        else:
+            res = " -r 640,480,30 "
+        
+        if device != "OS08A20":
+            cam_op = " -c " + device
+        else:
+            env["CAMERA_BACKEND"]="libcamera"
+            env["LIBCAMERA_PIPELINES_MATCH_LIST"]="nxp/neo,imx8-isi,simple"
+            env["LIBCAMERA_CAM_DEVICE"]="/base/soc/bus@42000000/i2c@42540000/os08a20_mipi@36"
+            env["LIBCAMERA_IPA_MODULE_PATH"]="/usr/lib/libcamera/ipa"
+
 
         pipeline = (
             "/opt/gopoint-apps/scripts/machine_learning/nnstreamer/face_detection/example_face_detection_tflite"
-            " -c "
-            + device
+            + cam_op
             + " -b "
             + backend
             + " -p "
             + model
             + display
             + graph_path
-            + " -t "
             + color
+            + res
         )
+
 
         self.output_process = subprocess.Popen(
             pipeline,
@@ -388,6 +410,7 @@ class NNStreamerLauncher:
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             encoding="utf-8",
+            env=env
         )
 
         return True

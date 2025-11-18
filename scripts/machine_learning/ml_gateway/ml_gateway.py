@@ -199,6 +199,10 @@ class ServerWindow:
             if backend == "CPU":
                 self.custom = "NumThreads:2"
                 self.model = self.cpu_model
+        if self.platform == "i.MX95":
+            if backend == "CPU":
+                self.custom = "NumThreads:6"
+                self.model = self.cpu_model
 
         GLib.idle_add(self.status_bar.set_text, "Model is ready for inference!")
 
@@ -308,6 +312,10 @@ class ServerWindow:
                 self.model = self.vela_model
             if backend == "CPU":
                 self.custom = "NumThreads:2"
+                self.model = self.cpu_model
+        if self.platform == "i.MX95":
+            if backend == "CPU":
+                self.custom = "NumThreads:6"
                 self.model = self.cpu_model
 
     @threaded
@@ -432,10 +440,12 @@ class ClientWindow:
         # Get ip address
         capture_ip_thread = Thread(target=self.access_ip, daemon=True)
         capture_ip_thread.start()
+        capture_ip_thread.join()
 
         # Set up client
         preload_thread = Thread(target=self.preload, daemon=True)
         preload_thread.start()
+        preload_thread.join()
 
     def quit_app(self, widget):
         """Closes GStreamer pipeline and GTK+3 GUI"""
@@ -609,7 +619,7 @@ class ClientWindow:
         )
         client_pipeline += f" mode=bounding_boxes option1=tf-ssd option2={self.labels} "
         client_pipeline += "option3=0:1:2:3,50 option4=640:480 option5=300:300 !"
-        client_pipeline += " mix. t. ! queue max-size-buffers=2 !"
+        client_pipeline += " mix.sink_0 t. ! queue max-size-buffers=2 ! mix.sink_1"
         client_pipeline += (
             " imxcompositor_g2d name=mix latency=33333333 min-upstream-latency=33333333"
         )
@@ -671,7 +681,7 @@ if __name__ == "__main__":
         "utf-8"
     )[:-1]
 
-    if PLATFORM in ("i.MX8MP", "i.MX93"):
+    if PLATFORM in ("i.MX8MP", "i.MX93", "i.MX95"):
         server_application = ServerWindow()
     else:
         client_application = ClientWindow()

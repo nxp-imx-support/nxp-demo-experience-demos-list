@@ -153,6 +153,8 @@ class DMSDemo:
             self.platform = "i.MX8MP"
         elif os.path.exists("/usr/lib/libethosu_delegate.so"):
             self.platform = "i.MX93"
+        elif os.path.exists("/usr/lib/libneutron_delegate.so"):
+            self.platform = "i.MX95"
         else:
             print("Target is not supported!")
             sys.exit()
@@ -169,6 +171,11 @@ class DMSDemo:
             videocrop = "videocrop top=0 left=80 right=80 bottom=0 ! "
             info_image = "/imx93_dms_info.jpeg"
             compositor = "imxcompositor_pxp "
+        if self.platform == "i.MX95":
+            videoconvert = "imxvideoconvert_g2d ! "
+            videocrop = "videocrop top=0 left=80 right=80 bottom=0 ! "
+            info_image = "/imx95_dms_info.jpeg"
+            compositor = "imxcompositor_g2d "
 
         display_resolution = resolution.split("x")
         cam_pipeline = (
@@ -218,6 +225,12 @@ class DMSDemo:
             landmark_model = model_path + "/face_landmark_ptq_vela.tflite"
             iris_model = model_path + "/iris_landmark_ptq_vela.tflite"
             smk_call_model = model_path + "/yolov4_tiny_smk_call_vela.tflite"
+
+        if self.platform == "i.MX95" and inf_device == "NPU":
+            face_model = model_path + "/face_detection_ptq_neutron.tflite"
+            landmark_model = model_path + "/face_landmark_ptq_neutron.tflite"
+            iris_model = model_path + "/iris_landmark_ptq_neutron.tflite"
+            smk_call_model = model_path + "/yolov4_tiny_smk_call_neutron.tflite"
 
         self.face_detector = FaceDetector(
             face_model, inf_device, self.platform, FACE_THRESHOLD

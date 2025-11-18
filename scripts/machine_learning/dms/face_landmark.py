@@ -29,6 +29,8 @@ class FaceLandmark:
                 delegate = tflite.load_delegate("/usr/lib/libvx_delegate.so")
             elif platform == "i.MX93":
                 delegate = tflite.load_delegate("/usr/lib/libethosu_delegate.so")
+            elif platform == "i.MX95":
+                delegate = tflite.load_delegate("/usr/lib/libneutron_delegate.so")
             else:
                 print("Platform not supported!")
                 return
