@@ -40,6 +40,10 @@ def threaded(fn):
 class CarNavigation:
 
     def __init__(self):
+        # Check and install canopen if needed
+        if not self.check_and_install_canopen():
+            return
+            
         # Obtain GUI settings and configurations
         glade_file = "/opt/gopoint-apps/scripts/communication/car_navigation/CarNav.glade"
         self.builder = gtk.Builder()
@@ -79,6 +83,51 @@ class CarNavigation:
         self.close_button.connect("clicked", self.quit_app)
         window.connect("delete-event", gtk.main_quit)
         window.show()
+
+    def check_and_install_canopen(self):
+        """Check if canopen is installed, try to install if not"""
+        try:
+            import canopen
+            return True
+        except ImportError:
+            # Try to install canopen
+            result = subprocess.run(
+                ["pip3", "install", "canopen"],
+                capture_output=True,
+                text=True
+            )
+            
+            if result.returncode != 0:
+                # Installation failed, show error dialog
+                self.show_canopen_error_dialog(result.stderr)
+                return False
+            
+            # Try importing again after installation
+            try:
+                import canopen
+                return True
+            except ImportError:
+                self.show_canopen_error_dialog("Failed to import canopen after installation")
+                return False
+    
+    def show_canopen_error_dialog(self, error_message):
+        """Show error dialog when canopen installation fails"""
+        dialog = gtk.MessageDialog(
+            transient_for=None,
+            flags=0,
+            message_type=gtk.MessageType.ERROR,
+            buttons=gtk.ButtonsType.OK,
+            text="CANopen Installation Failed"
+        )
+        dialog.format_secondary_text(
+            f"Failed to install the canopen Python module.\n\n"
+            f"Error details:\n{error_message}\n\n"
+            f"Please install it manually using:\n"
+            f"sudo pip3 install canopen"
+        )
+        dialog.run()
+        dialog.destroy()
+        gtk.main_quit()
 
     def quit_app(self, widget):
         """Closes GStreamer pipeline and GTK+3 GUI"""
