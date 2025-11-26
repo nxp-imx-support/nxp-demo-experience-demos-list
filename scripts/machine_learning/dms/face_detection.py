@@ -2,7 +2,7 @@
 
 """
 Copyright © 2021 Patrick Levin
-Copyright 2022-2024 NXP
+Copyright 2022-2025 NXP
 
 SPDX-License-Identifier: MIT
 Original Source: https://github.com/patlevin/face-detection-tflite

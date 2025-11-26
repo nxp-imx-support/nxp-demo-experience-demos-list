@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 """
-Copyright 2023-2024 NXP
+Copyright 2023-2025 NXP
 SPDX-License-Identifier: BSD-3-Clause
 
 This script define class of smoking/calling detection used in DMS demo

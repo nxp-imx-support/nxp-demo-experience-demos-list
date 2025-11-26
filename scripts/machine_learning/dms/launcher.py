@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 """
-Copyright 2024 NXP
+Copyright 2024-2025 NXP
 SPDX-License-Identifier: BSD-3-Clause
 
 This script launches the i.MX DMS demo using a GUI
