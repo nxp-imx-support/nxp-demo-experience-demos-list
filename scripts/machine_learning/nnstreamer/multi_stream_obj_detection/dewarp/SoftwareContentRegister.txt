@@ -1,0 +1,13 @@
+------------------------------------------------------
+NXP Software Content Register
+
+Generated Model Data for Dewarping Calibration Tool (DCT)
+
+Package:                     DCT_Model
+Version:                     2024.3.1
+Outgoing License:            LA_OPT_NXP_Software_License v57 July 2024 - Additional Distribution License granted, license in Section 2.3 applies
+License File:                LICENSE.txt
+Package Category:            Model Data
+Type of Content:             transformation parameters
+Description and comments:    Generated DCT Model for camera.
+Release Location:            Downloaded from https://dewarping.nxp.com

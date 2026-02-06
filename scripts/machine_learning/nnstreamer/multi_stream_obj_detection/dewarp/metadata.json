@@ -1,0 +1,38 @@
+{
+  "ChessboardEdges": 20,
+  "InputFileType": "PICTURE_BASED",
+  "NumberOfEdgesHorizontal": 7,
+  "NumberOfEdgesVertical": 7,
+  "OutputFileType": "WARP_BUFFER",
+  "Version": "2024.3.1",
+  "ConversionReport": {
+    "re_projection_error": 1.0188805747485994,
+    "avg_reprojection_error": 1.0188815289328368,
+    "board_height": 7,
+    "board_width": 7,
+    "calibration_time": "Mon Nov 03 11:39:01 2025",
+    "fisheye_model": true,
+    "flags": 650,
+    "image_height": 1280,
+    "image_width": 1920,
+    "nr_of_frames": 2,
+    "per_view_reprojection_errors": [
+      1.0179387331008911,
+      1.019823431968689
+    ],
+    "square_size": 20,
+    "conversionReport": {
+      "expected_size": 9830400,
+      "horizontal_conversion_errors": 0,
+      "horizontal_conversion_loss": 0.03125,
+      "horizontal_max": 1697.34375,
+      "horizontal_min": 221.65625,
+      "resolution_x": 1920,
+      "resolution_y": 1280,
+      "vertical_conversion_errors": 0,
+      "vertical_conversion_loss": 0.03125,
+      "vertical_max": 1281.0625,
+      "vertical_min": -1.75
+    }
+  }
+}

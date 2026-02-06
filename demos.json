@@ -9,13 +9,29 @@
              "icon": "ml-icon.svg",
              "description": "Image classification example using NNStreamer. Image classification is an ML task that attempts to comprehend an entire image as a whole. The goal is to classify the image by assigning it to a specific label. Typically, it refers to images in which only one object appears and is analyzed. An internet connection may be required."
          },{
-             "name": "Object Detection",
-             "id": "obj_detect_nn",
-             "executable": "python3 /opt/gopoint-apps/scripts/machine_learning/nnstreamer/object_detection/object_detection.py",
-             "compatible": "imx8mp, imx93, imx8mm, imx8qmmek, imx95",
-             "screenshot": "ml_detect.jpg",
-             "icon": "ml-icon.svg",
-             "description": "Object detection example using NNStreamer. Object detection is the ML task that detects instances of objects of a certain class within an image. A bounding box and a class label are found for each detected object. An internet connection may be required."
+            "name": "Multistream Obj Detect",
+            "id": "multistream_detect_nn",
+            "executable": "python3 /opt/gopoint-apps/scripts/machine_learning/nnstreamer/multi_stream_obj_detection/multistream_object_detection.py",
+            "compatible": "imx8mp, imx95",
+            "screenshot": "multicam.jpg",
+            "icon": "multicam.svg",
+            "description": "Real-time object detection on video feeds captured simultaneously from four different camera sources."
+         },{
+           "name": "4k Object Detection",
+           "id": "4k_object_detection",
+           "executable": "python3 /opt/gopoint-apps/scripts/machine_learning/nnstreamer/4k_Object_detection/object_detection.py",
+           "compatible": "imx8mp, imx95",
+           "screenshot": "4k_demo.jpg",
+           "icon": "4k_demo.svg",
+           "description": "Real-time object detection on 4K video stream from a camera source, capturing and saving the last five frames where a person is detected."
+        },{
+	   "name": "Object Detection",
+           "id": "obj_detect_nn",
+           "executable": "python3 /opt/gopoint-apps/scripts/machine_learning/nnstreamer/object_detection/object_detection.py",
+           "compatible": "imx8mp, imx93, imx8mm, imx8qmmek, imx95",
+           "screenshot": "ml_detect.jpg",
+           "icon": "ml-icon.svg",
+           "description": "Object detection example using NNStreamer. Object detection is the ML task that detects instances of objects of a certain class within an image. A bounding box and a class label are found for each detected object. An internet connection may be required."
          },{
             "name": "Face Detection",
             "id": "face_detect_nn",
@@ -166,7 +182,7 @@
             "source": "",
             "icon": "multimedia-icon.svg",
             "screenshot": "gst_test_src_screenshot.jpg",
-            "compatible": "imx7ulp, imx8ulp, imx8qxpc0mek, imx8qmmek, imx8mq, imx8mm, imx8mn, imx8mp, imx93",
+            "compatible": "imx7ulp, imx8ulp, imx8qxpc0mek, imx8qmmek, imx8mq, imx8mm, imx8mn, imx8mp, imx93, imx943",
             "description": "This is a simple demo utility that allows users to play back video captured on a camera or a test source."
         },{
             "name": "Camera using VPU",
@@ -330,8 +346,18 @@
             "source": "",
             "icon": "communication.svg",
             "screenshot": "car-navigation.jpg",
-            "compatible": "imx8mp, imx93",
+            "compatible": "imx8mp, imx93, imx943",
             "description": "The demo consists of two parts: one simulates the parking sensors and the steering wheel position, and the other simulates the car's navigation panel when in reverse. Each part uses the CANOpen protocol in a slightly different way. The sensor simulation uses the canopend and cocomm utilities to send messages on the CAN interface, while the car navigation simulation functions as a genuine CANOpen device (e.g., stepper motor)."
+        }],
+        "Wi-Fi":[{
+            "name": "Wi-Fi Selector",
+            "id": "wifi_selector_demo",
+            "executable": "/opt/gopoint-apps/scripts/communication/wifi_selector/wifi-selector",
+            "source": "",
+            "icon": "communication.svg",
+            "screenshot": "wifi-selector.jpg",
+            "compatible": "imx93",
+            "description": "This demo showcases a graphic interface that emulates a Wi-Fi selector based on LVGL (Light and Versatile Graphics Library) with the purpose of creating an easy way to establish Wi-Fi connection on the i.MX boards."
         }]
     }]
     },

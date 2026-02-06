@@ -51,6 +51,20 @@ OUTPUT = False
 
 class FaceDemo:
     """Run the video and inference part of the application."""
+    def __init__(self):
+        self.face_models = []
+        self.width = 0
+        self.height = 0
+        self.options_window = False
+        self.mode = 0
+        self.countdown = None
+        self.registered_faces = []
+        self.detect_time = None
+        self.recog_time = None
+        self.write_time = False
+        self.current_frame = None  # ADD THIS
+        self.frame_lock = threading.Lock()  # ADD THIS
+        self.running = True  # ADD THIS
 
     def __init__(self):
         self.face_models = []
@@ -73,8 +87,10 @@ class FaceDemo:
         else:
             self.width = 1920
             self.height = 1080
+
         if GUI:
             GLib.idle_add(MAIN_WINDOW.status_bar.set_text, "Starting cameras...")
+        
         if cam == "fake":
             cam_pipeline = cv2.VideoCapture(
                 "videotestsrc ! imxvideoconvert_g2d ! "
@@ -95,26 +111,32 @@ class FaceDemo:
                 + " ! "
                 + "videoconvert ! appsink"
             )
+
         if GUI:
             GLib.idle_add(MAIN_WINDOW.destroy)
             self.options_window = OptionsWindow()
             GLib.idle_add(self.options_window.show_all)
-            GLib.idle_add(cv2.namedWindow, "i.MX Face Recognition Demo")
-        elif OUTPUT:
-            cv2.namedWindow("i.MX Face Recognition Demo", cv2.WND_PROP_FULLSCREEN)
-            cv2.setWindowProperty(
-                "i.MX Face Recognition Demo",
-                cv2.WND_PROP_FULLSCREEN,
-                cv2.WINDOW_FULLSCREEN,
-            )
+        
+        # Don't create window here in GUI mode - will be created in main thread
+        if not GUI:
+            if OUTPUT:
+                cv2.namedWindow("i.MX Face Recognition Demo", cv2.WND_PROP_FULLSCREEN)
+                cv2.setWindowProperty(
+                    "i.MX Face Recognition Demo",
+                    cv2.WND_PROP_FULLSCREEN,
+                    cv2.WINDOW_FULLSCREEN,
+                )
+
         status, org_img = cam_pipeline.read()
-        while status:
+        while status and self.running:
             mod_img = self.process_frame(org_img)
+            
             if self.write_time:
                 overall_time = time.perf_counter() - overall_time
                 times = self.get_timings(overall_time)
             else:
                 times = ["N/A", "N/A"]
+            
             cv2.putText(
                 mod_img,
                 "Overall time: " + times[0] + " IPS (" + times[1] + " ms)",
@@ -124,15 +146,24 @@ class FaceDemo:
                 (255, 255, 255),
                 2,
             )
-            if GUI:
-                GLib.idle_add(cv2.imshow, "i.MX Face Recognition Demo", mod_img)
-            else:
-                if OUTPUT:
-                    cv2.imshow("i.MX Face Recognition Demo", mod_img)
-                    cv2.waitKey(1)
+            
+            # Store frame for main thread to display
+            with self.frame_lock:
+                self.current_frame = mod_img
+            
+            # Only show in non-GUI mode (already in separate thread)
+            if not GUI and OUTPUT:
+                cv2.imshow("i.MX Face Recognition Demo", mod_img)
+                cv2.waitKey(1)
+            
             status, org_img = cam_pipeline.read()
             self.write_time = True
             overall_time = time.perf_counter()
+
+    def get_current_frame(self):
+        """Thread-safe method to get current frame"""
+        with self.frame_lock:
+            return self.current_frame.copy() if self.current_frame is not None else None
 
     def setup_inferences(self, backend):
         """Sets up the inference engines"""
@@ -453,16 +484,17 @@ class Model(NamedTuple):
 
 class MainWindow(Gtk.Window):
     """Main GUI window that starts the demo"""
-
     def __init__(self):
         """Sets up the first window to do preroll setup"""
         super().__init__()
         self.set_default_size(450, 200)
         self.set_resizable(False)
         self.set_border_width(10)
+        
         devices = []
         for device in glob.glob("/dev/video*"):
             devices.append(device)
+
         if os.path.exists("/usr/lib/libtim-vx.so"):
             backends_available = ["NPU", "CPU"]
         else:
@@ -471,53 +503,49 @@ class MainWindow(Gtk.Window):
         main_grid = Gtk.Grid(row_homogeneous=True, column_spacing=15, row_spacing=15)
         main_grid.set_margin_end(10)
         main_grid.set_margin_start(10)
-
+        
         header = Gtk.HeaderBar()
         header.set_title("i.MX Face Recognition Demo")
         header.set_subtitle("i.MX Machine Learning Demos")
         self.set_titlebar(header)
-
+        
         quit_button = Gtk.Button()
         quit_icon = Gio.ThemedIcon(name="process-stop-symbolic")
         quit_image = Gtk.Image.new_from_gicon(quit_icon, Gtk.IconSize.BUTTON)
         quit_button.add(quit_image)
         header.pack_end(quit_button)
         quit_button.connect("clicked", Gtk.main_quit)
-
+        
         source_label = Gtk.Label.new("Source")
         source_label.set_halign(1)
-
         self.source_select = Gtk.ComboBoxText()
         self.source_select.set_entry_text_column(0)
         for option in devices:
             self.source_select.append_text(option)
         self.source_select.set_active(0)
         self.source_select.set_hexpand(True)
-
+        
         backend_label = Gtk.Label.new("Backend")
         backend_label.set_halign(1)
-
         self.backend_select = Gtk.ComboBoxText()
         self.backend_select.set_entry_text_column(0)
         for option in backends_available:
             self.backend_select.append_text(option)
         self.backend_select.set_active(0)
         self.backend_select.set_hexpand(True)
-
+        
         self.launch_button = Gtk.Button.new_with_label("Run")
         self.launch_button.connect("clicked", self.on_change_start)
-
+        
         self.status_bar = Gtk.Label.new()
-
+        
         main_grid.attach(source_label, 0, 1, 1, 1)
         main_grid.attach(backend_label, 0, 2, 1, 1)
-
         main_grid.attach(self.source_select, 1, 1, 1, 1)
         main_grid.attach(self.backend_select, 1, 2, 1, 1)
-
         main_grid.attach(self.launch_button, 0, 3, 2, 1)
         main_grid.attach(self.status_bar, 0, 4, 2, 1)
-
+        
         self.add(main_grid)
 
     def on_change_start(self, widget):
@@ -526,6 +554,7 @@ class MainWindow(Gtk.Window):
         widget.set_sensitive(False)
         self.backend_select.set_sensitive(False)
         self.source_select.set_sensitive(False)
+        
         global FACE_DEMO
         FACE_DEMO = FaceDemo()
         cam_thread = threading.Thread(
@@ -538,7 +567,27 @@ class MainWindow(Gtk.Window):
         )
         cam_thread.daemon = True
         cam_thread.start()
-
+        
+        # Wait a moment for camera to initialize
+        time.sleep(1)
+        
+        # Create OpenCV window in main thread
+        cv2.namedWindow("i.MX Face Recognition Demo")
+        
+        # Start display loop in main thread
+        GLib.timeout_add(33, self.update_display)  # ~30 FPS
+    
+    def update_display(self):
+        """Update OpenCV display from main thread"""
+        if FACE_DEMO is None:
+            return False
+        
+        frame = FACE_DEMO.get_current_frame()
+        if frame is not None:
+            cv2.imshow("i.MX Face Recognition Demo", frame)
+            cv2.waitKey(1)
+        
+        return True  # Continue calling this function
 
 class OptionsWindow(Gtk.Window):
     """GUI for during play opperations"""
