@@ -131,10 +131,10 @@ class NNStreamerLauncher:
         self.backend_list.set_active(0)
 
         # Populate resolution for video
-        resolutions = ["1920x1080", "640x480"]
+        resolutions = ["640x480@30"]
         for resolution in resolutions:
             self.resolution_list.append_text(resolution)
-        self.resolution_list.set_active(1)
+        self.resolution_list.set_active(0)
 
         colors = ["white", "red", "green", "blue", "black"]
         for color in colors:

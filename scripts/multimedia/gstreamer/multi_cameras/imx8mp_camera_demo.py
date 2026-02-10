@@ -117,7 +117,7 @@ class VideoDevice:
             device = props.get_string("device.path")
             caps = self.get_device_caps(dev.get_caps().normalize())
 
-            if "0/0" not in caps:
+            if "0/0" not in caps and device != None:
                 self.devices_list.append(device)
 
         dev_monitor.stop()

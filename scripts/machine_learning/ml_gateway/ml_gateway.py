@@ -176,7 +176,7 @@ class ServerWindow:
         # Compile model using vela tool for i.MX 93
         if self.platform == "i.MX93":
             self.compile_vela()
-        else:
+        elif self.platform == "i.MX8MP":
             os.environ["VIV_VX_CACHE_BINARY_GRAPH_DIR"] = "/opt/gopoint-apps/downloads"
             os.environ["VIV_VX_ENABLE_CACHE_GRAPH_BINARY"] = "1"
 

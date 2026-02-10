@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 """
-Copyright 2024-2025 NXP
+Copyright 2024 NXP
 
 SPDX-License-Identifier: BSD-3-Clause
 
@@ -135,7 +135,7 @@ class NNStreamerLauncher:
         self.backend_list.set_active(0)
 
         # Populate resolution for video
-        resolutions = ["1920x1080", "640x480"]
+        resolutions = ["640x480@30"]
         for resolution in resolutions:
             self.resolution_list.append_text(resolution)
         self.resolution_list.set_active(0)
@@ -452,8 +452,8 @@ class NNStreamerLauncher:
             color = " -t " + color
         if self.platform == "i.MX8MP" and backend != "CPU":
             graph_path = " -g /opt/gopoint-apps/downloads"
-        if self.resolution_list.get_active_text() == "1920x1080":
-            res = " -r 1920,1080,60 "
+        if self.resolution_list.get_active_text() == "1920x1080@15":
+            res = " -r 1920,1080,15 "
         else:
             res = " -r 640,480,30 "
         if device != "OS08A20":
@@ -461,8 +461,9 @@ class NNStreamerLauncher:
         else:
             env["CAMERA_BACKEND"]="libcamera"
             env["LIBCAMERA_PIPELINES_MATCH_LIST"]="nxp/neo,imx8-isi,simple"
-            env["LIBCAMERA_CAM_DEVICE"]="/base/soc/bus@42000000/i2c@42540000/os08a20_mipi@36"
+            env["LIBCAMERA_CAM_DEVICE"]="/base/soc/bus@42000000/i2c@42530000/os08a20_mipi@36"
             env["LIBCAMERA_IPA_MODULE_PATH"]="/usr/lib/libcamera/ipa"
+            res = " -r 1920,1080,60 "
 
         pipeline = (
             "/opt/gopoint-apps/scripts/machine_learning/nnstreamer/object_detection/example_detection_mobilenet_ssd_v2_tflite"

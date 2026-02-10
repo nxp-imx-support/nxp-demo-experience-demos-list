@@ -139,7 +139,7 @@ class NNStreamerLauncher:
         self.backend_list.set_active(0)
 
         # Populate resolution for video
-        resolutions = ["1920x1080", "640x480"]
+        resolutions = ["1920x1080@30", "640x480@30"]
         for resolution in resolutions:
             self.resolution_list.append_text(resolution)
         self.resolution_list.set_active(0)
@@ -390,7 +390,6 @@ class NNStreamerLauncher:
         self.pulsing = False
         GLib.idle_add(self.status_bar.set_text, "Application is ready!")
         self.unblock_buttons(True)
-        self.resolution_list.set_sensitive(False)
 
     def unblock_buttons(self, status):
         """Block/unblock buttons"""
@@ -438,8 +437,8 @@ class NNStreamerLauncher:
             color = " -t" + color
         if self.platform == "i.MX8MP" and backend != "CPU":
             graph_path = " -g /opt/gopoint-apps/downloads"
-        if self.resolution_list.get_active_text() == "1920x1080":
-            res = " -r 1920,1080,60 "
+        if self.resolution_list.get_active_text() == "1920x1080@30":
+            res = " -r 1920,1080,30 "
         else:
             res = " -r 640,480,30 "
         

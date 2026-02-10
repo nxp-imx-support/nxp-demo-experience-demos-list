@@ -12,15 +12,15 @@
             "name": "Multistream Obj Detect",
             "id": "multistream_detect_nn",
             "executable": "python3 /opt/gopoint-apps/scripts/machine_learning/nnstreamer/multi_stream_obj_detection/multistream_object_detection.py",
-            "compatible": "imx8mp, imx95",
+            "compatible": "imx95",
             "screenshot": "multicam.jpg",
             "icon": "multicam.svg",
             "description": "Real-time object detection on video feeds captured simultaneously from four different camera sources."
          },{
            "name": "4k Object Detection",
            "id": "4k_object_detection",
-           "executable": "python3 /opt/gopoint-apps/scripts/machine_learning/nnstreamer/4k_Object_detection/object_detection.py",
-           "compatible": "imx8mp, imx95",
+           "executable": "python3 /opt/gopoint-apps/scripts/machine_learning/nnstreamer/4k_Object_detection/4k_object_detection.py",
+           "compatible": "imx95",
            "screenshot": "4k_demo.jpg",
            "icon": "4k_demo.svg",
            "description": "Real-time object detection on 4K video stream from a camera source, capturing and saving the last five frames where a person is detected."

@@ -66,18 +66,6 @@ class FaceDemo:
         self.frame_lock = threading.Lock()  # ADD THIS
         self.running = True  # ADD THIS
 
-    def __init__(self):
-        self.face_models = []
-        self.width = 0
-        self.height = 0
-        self.options_window = False
-        self.mode = 0
-        self.countdown = None
-        self.registered_faces = []
-        self.detect_time = None
-        self.recog_time = None
-        self.write_time = False
-
     def start(self, backend, cam):
         """Starts the camera and sets up the inference engine"""
         self.setup_inferences(backend)
