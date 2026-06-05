@@ -200,7 +200,7 @@
             "source": "",
             "icon": "photo-video-solid.svg",
             "screenshot": "video_to_texture.png",
-            "compatible": "imx95, imx8qmmek",
+            "compatible": "",
             "description": "Demonstrates Video to texturing functionality of gstreamer within a QT video player application"
         },{
             "name": "2Way Video Streaming",
@@ -228,7 +228,7 @@
             "source": "",
             "icon": "multimedia-icon.svg",
             "screenshot": "camera_rotation.jpg",
-            "compatible": "imx8mm, imx8mp, imx8ulp, imx95",
+            "compatible": "imx8mm, imx8mp, imx8ulp",
             "description": "This example application shows methods to accelerate video rotation on NXP i.MX platforms, enabling more stable and readable video streams from moving cameras—particularly useful in medical or industrial inspection scenarios where cameras are hand-held or rotating."
         }],
         "ISP":[{
@@ -270,16 +270,7 @@
             "compatible": "imx7ulp",
             "description": "This test plays the audio file recorded on the 'Audio Record' test. Make sure a Headphone is connected to the board. Need to run the 'Audio Record' test first."
         }],
-        "Voice":[{
-            "name": "i.MX Voice Control",
-            "id": "voice",
-            "executable": "python3 /opt/gopoint-apps/scripts/audio/voice/voice_demo.py",
-            "source": "",
-            "icon": "voice-control.svg",
-            "screenshot": "voice-control.jpg",
-            "compatible": "imx8mp, imx8mm",
-            "description": "See NXP's Voice Technology in action! Use your voice to open and close various applications. This requires 8-MIC Array Board (8MIC-RPI-MX8) installed on the i.MX hardware (Visit NXP.com for help). Please note that this will override '/etc/asound.conf' file. It will be restored if this application is gracefully terminated."
-        },
+        "Legacy":[
         {
             "name": "i.MX Multimedia Player",
             "id": "voiceplayer",
@@ -288,7 +279,7 @@
             "icon": "voice-control.svg",
             "screenshot": "multimedia-player.jpg",
             "compatible": "imx8mm, imx8mp, imx93",
-            "description": "This is an application for controlling an audio player using the Bluetooth communication protocol by the use of voice commands. WakeWord supported:'HEY NXP'. Voice commands supported : PLAY MUSIC, PAUSE, PREVIOUS SONG, NEXT SONG, VOLUME UP, VOLUME DOWN, MUTE, STOP, STOP PLAYER. This application requires 8-MIC Array Board (8MIC-RPI-MX8) installed on the i.MX hardware (Visit NXP.com for help)."
+            "description": "This is an application for controlling an audio player using the Bluetooth communication protocol. Voice is no longer supported"
         },
         {
             "name": "Smart Kitchen",
@@ -298,31 +289,18 @@
             "icon": "voice-control.svg",
             "screenshot": "smart-kitchen-screenshot.jpg",
             "compatible": "imx8mm, imx8mp, imx93",
-            "description": "This application simulates a smart kitchen controlled by voice commands using NXP's Voice Intelligent Technology (VIT). How to use: First say a wakeword to select a kitchen's item (hood, oven or aircon) and then say one of the item's available commands (e.g. \"Hey hood, light on\"). WakeWords supported are HEY HOOD, HEY OVEN, HEY AIRCON. Global Commands are ENTER, EXIT, RUN DEMO, STOP DEMO. Hood commands are FAN OFF, FAN ON, FAN LOW, FAN HIGH, LIGHT OFF, LIGHT ON. Aircon commands are DRY MODE, COOL MODE, FAN MODE SWING OFF, SWING ON, FAN LOW, FAN HIGH. Oven commands are CLOSE DOOR, OPEN DOOR. The item's functions can also be activated by clicking on the item's controls using a mouse or touchscreen."
+            "description": "This application simulates a smart kitchen. The item's functions can be activated by clicking on the item's controls using a mouse or touchscreen. Voice is no longer supported"
         },
         {
-             "name": "E-Bike VIT",
+             "name": "E-Bike",
              "id": "ebike-vit",
              "executable": "/opt/gopoint-apps/scripts/multimedia/ebike-vit/run.sh",
              "source": "",
              "icon": "ebike-vit-icon.svg",
              "screenshot": "ebike-vit-screenshot.jpg",
              "compatible": "imx8mm, imx8mp, imx93",
-             "description": "This application simulates a ebike controlled by voice commands using NXP's Voice Intelligent Technology (VIT). First say a wakeword to wake up ebike and then say one of the available commands.The supported wake words are HEY NXP, HEY E-Bike. Global Commands are NEXT PAGE, LAST PAGE, RUN DEMO, STOP DEMO. The page can also be switched by clicking on the UI using a mouse or touchscreen."
+             "description": "This application simulates a ebike. The page can be switched by clicking on the UI using a mouse or touchscreen. Voice is no longer supported"
 	}]
-    }]
-    },
-    {"TSN":[{
-        "TSN Qbv":[{
-            "name": "TSN 802.1Qbv",
-            "id": "qbv_demo",
-            "executable": "python3 /opt/gopoint-apps/scripts/TSN/qbv/start_demo.py",
-            "source": "",
-            "icon": "tsn.svg",
-            "screenshot": "tsn.jpg",
-            "compatible": "imx8mm, imx8mp",
-            "description": "Enhancements to Traffic Scheduling: Time-Aware Shaper. It separates communication on the Ethernet network into configurable length, repeating time cycles, thereby contributing to the delivery of time-critical traffic. Each network node's egress ports have per-queue traffic windows which may be opened/closed at specified times.The talker-to-listener path across the network may be dedicated to this priority traffic alone, at real-time (T), causing the talker's traffic to be delivered reliably and deterministically across the network."
-        }]
     }]
     },
     {"Security":[{
@@ -358,6 +336,16 @@
             "screenshot": "wifi-selector.jpg",
             "compatible": "imx93",
             "description": "This demo showcases a graphic interface that emulates a Wi-Fi selector based on LVGL (Light and Versatile Graphics Library) with the purpose of creating an easy way to establish Wi-Fi connection on the i.MX boards."
+        }],
+        "TSN Qbv":[{
+            "name": "TSN 802.1Qbv",
+            "id": "qbv_demo",
+            "executable": "python3 /opt/gopoint-apps/scripts/communication/TSN-Qbv/case_selector.py",
+            "source": "",
+            "icon": "tsn.svg",
+            "screenshot": "tsn.jpg",
+            "compatible": "imx8mm, imx8mp, imx943",
+            "description": "Enhancements to Traffic Scheduling: Time-Aware Shaper. It separates communication on the Ethernet network into configurable length, repeating time cycles, thereby contributing to the delivery of time-critical traffic. Each network node's egress ports have per-queue traffic windows which may be opened/closed at specified times.The talker-to-listener path across the network may be dedicated to this priority traffic alone, at real-time (T), causing the talker's traffic to be delivered reliably and deterministically across the network."
         }]
     }]
     },
@@ -632,6 +620,51 @@
             "compatible": "imx7ulp, imx8ulp",
             "description": "This sample is a variation from the previous sample, again, a cubemap texture is used, but this time instead of simulating a reflective material a refractive material is simulated. It also shows you how to use the ContentManager service to load a 'dds' file from the Content directory into a Texture utility class which is then used to create an OpenGL ES cubemap texture."
         }]
+    }]
+    },
+    {"NPU":[{
+        "ARA240":[
+            {
+            "name": "Ara2 Vision Examples",
+            "id": "ara2-vision-examples_demo",
+            "executable": "/usr/bin/launcher_multistream_yolo",
+            "source": "",
+            "icon": "ml-icon.svg",
+            "screenshot": "ara2-vision-examples-8streams.png",
+            "compatible": "imx8mp, imx95",
+            "description": "This application is supported to use with FRDM boards only.\n\nThis demo contains comprehensive vision examples for NXP i.MX processors with ARA240 DNPU acceleration. It demonstrates real-time multi-stream video processing with AI/ML inference capabilities including object detection, classification, pose estimation, and semantic segmentation. "
+            },
+            {
+            "name": "LLM Edge Studio",
+            "id": "llm_edge_studio_demo",
+            "executable": "/usr/share/llm-edge-studio/launch_llm_edge_studio.sh",
+            "source": "",
+            "icon": "ml-icon.svg",
+            "screenshot": "llm-edge-studio-query.png",
+            "compatible": "imx8mp, imx95",
+            "description": "This application is supported to use with FRDM boards only.\n\nLLM Edge Studio is designed for supported Large Language Models (LLMs) accelerated by the Ara240 DNPU at the edge. This application, compatible with FRDM i.MX95 and FRDM i.MX 8MPlus, enables rapid interaction with locally running LLMs. It uses the eIQ AAF Connector to communicate with the Ara240 Runtime SDK and provides a user-friendly GUI for model selection and prompt input."
+            },
+            {
+            "name": "VLM Edge Studio",
+            "id": "vlm_edge_studio_demo",
+            "executable": "/usr/share/vlm-edge-studio/launch_vlm_edge_studio.sh",
+            "source": "",
+            "icon": "ml-icon.svg",
+            "screenshot": "vlm-edge-studio-video.png",
+            "compatible": "imx8mp, imx95",
+            "description": "This application is supported to use with FRDM boards only.\n\nVLM Edge Studio is a Qt/QML-based application designed for NXP's FRDM i.MX platforms to interact with Vision Models accelerated by the Ara240 DNPU at the edge."
+            },
+            {
+            "name": "Smart Device Gateway",
+            "id": "smart-device-gateway_demo",
+            "executable": "/usr/share/smart-device-gateway/launch_smart_device_gateway.sh",
+            "source": "",
+            "icon": "ml-icon.svg",
+            "screenshot": "smart-device-gateway-client.png",
+            "compatible": "imx8mp, imx95",
+            "description": "This application is supported to use with FRDM boards only.\n\nThis demo application transforms the way we interact with everyday devices. Instead of embedding expensive AI chips into every device, our architecture centralizes intelligence in one powerful server. Your devices become voice-enabled endpoints—lightweight, affordable, and infinitely capable."
+            }
+        ]
     }]
     }
 ]}

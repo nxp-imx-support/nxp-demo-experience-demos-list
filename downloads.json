@@ -3,7 +3,7 @@
     {
       "name": "coco_labels.txt",
       "url": "https://github.com/google-coral/test_data/raw/master/coco_labels.txt",
-      "alt_url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.2_1.0.0/models/coco_labels.txt",
+      "alt_url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.20_2.0.0/models/coco_labels.txt",
       "sha": "52852394f9acf1faa39526a5f010e89a17f91f98"
     }
   ],
@@ -11,7 +11,7 @@
     {
       "name": "mobilenet_ssd_v2_coco_quant_postprocess.tflite",
       "url": "https://github.com/google-coral/test_data/raw/master/ssd_mobilenet_v2_coco_quant_postprocess.tflite",
-      "alt_url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.2_1.0.0/models/ssd_mobilenet_v2_coco_quant_postprocess.tflite",
+      "alt_url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.20_2.0.0/models/ssd_mobilenet_v2_coco_quant_postprocess.tflite",
       "sha": "6f3e892ef2a0300c99b09731aa08e3d556ee91fb"
     }
   ],
@@ -19,14 +19,14 @@
     {
       "name": "mobilenet_v1_1.0_224_quant.tflite",
       "url": "https://github.com/google-coral/test_data/raw/master/mobilenet_v1_1.0_224_quant.tflite",
-      "alt_url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.2_1.0.0/models/mobilenet_v1_1.0_224_quant.tflite",
+      "alt_url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.20_2.0.0/models/mobilenet_v1_1.0_224_quant.tflite",
       "sha": "7e201c9721be5e57d1c91c2d726df83859a6b237"
     }
   ],
   "id_example.mov": [
     {
       "name": "id_example.mov",
-      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.2_1.0.0/videos/id_example.mov",
+      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.20_2.0.0/videos/id_example.mov",
       "alt_url": "",
       "sha": "8686e73b23376b70ef7b33030b83f90ee69dea32"
     }
@@ -34,7 +34,7 @@
   "detect_example.mov": [
     {
       "name": "detect_example.mov",
-      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.2_1.0.0/videos/detect_example.mov",
+      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.20_2.0.0/videos/detect_example.mov",
       "alt_url": "",
       "sha": "4677e5f165bccaf3beb04d7e6dad9a98de1dafe8"
     }
@@ -42,7 +42,7 @@
   "pose_example.mov": [
     {
       "name": "pose_example.mov",
-      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.2_1.0.0/videos/pose_example.mov",
+      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.20_2.0.0/videos/pose_example.mov",
       "alt_url": "",
       "sha": "0185664be1d57bb9d40d643ae6ceee44dab36a22"
     }
@@ -51,7 +51,7 @@
     {
       "name": "ssd_mobilenet_v2_face_quant_postprocess.tflite",
       "url": "https://raw.githubusercontent.com/google-coral/test_data/master/ssd_mobilenet_v2_face_quant_postprocess.tflite",
-      "alt_url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.2_1.0.0/models/ssd_mobilenet_v2_face_quant_postprocess.tflite",
+      "alt_url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.20_2.0.0/models/ssd_mobilenet_v2_face_quant_postprocess.tflite",
       "sha": "3c54642d3eff00a32858e580b6e950d876c3bebe"
     }
   ],
@@ -59,14 +59,14 @@
     {
       "name": "facenet_int_quantized.tflite",
       "url": "https://github.com/shubham0204/FaceRecognition_With_FaceNet_Android/raw/master/app/src/main/assets/facenet_int_quantized.tflite",
-      "alt_url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.2_1.0.0/models/facenet_int_quantized.tflite",
+      "alt_url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.20_2.0.0/models/facenet_int_quantized.tflite",
       "sha": "a64cc9df1293b8e7efce03402691a4123350df5a"
     }
   ],
   "face_landmark_ptq.tflite": [
     {
       "name": "face_landmark_ptq.tflite",
-      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.2_1.0.0/models/face_landmark_ptq.tflite",
+      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.20_2.0.0/models/face_landmark_ptq.tflite",
       "alt_url": "",
       "sha": "e5e2ebd15860a48de9fc9063a1819e20c6d82fd6"
     }
@@ -74,15 +74,15 @@
   "face_landmark_ptq_neutron.tflite": [
     {
       "name": "face_landmark_ptq_neutron.tflite",
-      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.2_1.0.0/models/face_landmark_ptq_neutron.tflite",
+      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.20_2.0.0/models/face_landmark_ptq_neutron.tflite",
       "alt_url": "",
-      "sha": "53e68081b94a315a59870c4560b1fb5b8a0cccaa"
+      "sha": "d1c4c4a501ff5f6c88c00e3de6e0b3cfa17d4700"
     }
   ],
   "face_detection_ptq.tflite": [
     {
       "name": "face_detection_ptq.tflite",
-      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.2_1.0.0/models/face_detection_ptq.tflite",
+      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.20_2.0.0/models/face_detection_ptq.tflite",
       "alt_url": "",
       "sha": "8436d74058d81cfeb63986fbc835274907a028ea"
     }
@@ -90,15 +90,15 @@
   "face_detection_ptq_neutron.tflite": [
     {
       "name": "face_detection_ptq_neutron.tflite",
-      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.2_1.0.0/models/face_detection_ptq_neutron.tflite",
+      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.20_2.0.0/models/face_detection_ptq_neutron.tflite",
       "alt_url": "",
-      "sha": "6e57b00d250d72de7a2317e9e96c236f9d145236"
+      "sha": "4b0f19d4170092e15dac63dcffb91706720afd0c"
     }
   ],
   "iris_landmark_ptq.tflite": [
     {
       "name": "iris_landmark_ptq.tflite",
-      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.2_1.0.0/models/iris_landmark_ptq.tflite",
+      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.20_2.0.0/models/iris_landmark_ptq.tflite",
       "alt_url": "",
       "sha": "dfb3e5dbad7693399bebb42e76ac40ae554854f5"
     }
@@ -106,7 +106,7 @@
   "iris_landmark_ptq_neutron.tflite": [
     {
       "name": "iris_landmark_ptq_neutron.tflite",
-      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.2_1.0.0/models/iris_landmark_ptq_neutron.tflite",
+      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.20_2.0.0/models/iris_landmark_ptq_neutron.tflite",
       "alt_url": "",
       "sha": "8fb02e60430ecda71c354350289c9243edf9ff3a"
     }
@@ -114,7 +114,7 @@
   "yolov4_tiny_smk_call.tflite": [
     {
       "name": "yolov4_tiny_smk_call.tflite",
-      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.2_1.0.0/models/yolov4_tiny_smk_call.tflite",
+      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.20_2.0.0/models/yolov4_tiny_smk_call.tflite",
       "alt_url": "",
       "sha": "ff38e377458fa636559ca05ae68305ea382b3ef4"
     }
@@ -122,15 +122,15 @@
   "yolov4_tiny_smk_call_neutron.tflite": [
     {
       "name": "yolov4_tiny_smk_call_neutron.tflite",
-      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.2_1.0.0/models/yolov4_tiny_smk_call_neutron.tflite",
+      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.20_2.0.0/models/yolov4_tiny_smk_call_neutron.tflite",
       "alt_url": "",
-      "sha": "ed28dd98a812f51b02f431d2c2b1cb262c019b74"
+      "sha": "b667c73ce245a0f2a275147479506eb31a1e7505"
     }
   ],
   "imx8mp_dms_info.jpeg": [
     {
       "name": "imx8mp_dms_info.jpeg",
-      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.2_1.0.0/images/imx8mp_dms_info.jpeg",
+      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.20_2.0.0/images/imx8mp_dms_info.jpeg",
       "alt_url": "",
       "sha": "de0fd9aae89651705bfcfbf48638ab47c62f350f"
     }
@@ -138,7 +138,7 @@
   "imx93_dms_info.jpeg": [
     {
       "name": "imx93_dms_info.jpeg",
-      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.2_1.0.0/images/imx93_dms_info.jpeg",
+      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.20_2.0.0/images/imx93_dms_info.jpeg",
       "alt_url": "",
       "sha": "82875d4b0e30cfcff543447112bf6f2aa65c5364"
     }
@@ -146,7 +146,7 @@
   "imx95_dms_info.jpeg": [
     {
       "name": "imx95_dms_info.jpeg",
-      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.2_1.0.0/images/imx95_dms_info.jpeg",
+      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.20_2.0.0/images/imx95_dms_info.jpeg",
       "alt_url": "",
       "sha": "5bd04c4c9df4a7d03bba0234fc04646d799b7d34"
     }
@@ -155,7 +155,7 @@
   "background.jpg": [
     {
       "name": "background.jpg",
-      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.2_1.0.0/images/background.jpg",
+      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.20_2.0.0/images/background.jpg",
       "alt_url": "",
       "sha": "192b2708a7002f1d371d6b966d23f61210747bce"
     }
@@ -163,7 +163,7 @@
   "selfie_segmenter_int8.tflite": [
     {
       "name": "selfie_segmenter_int8.tflite",
-      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.2_1.0.0/models/selfie_segmenter_int8.tflite",
+      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.20_2.0.0/models/selfie_segmenter_int8.tflite",
       "alt_url": "",
       "sha": "13d19b69fd4f4aeb266a0b62beb61847d59d8560"
     }
@@ -171,7 +171,7 @@
   "background_landscape.jpg": [
     {
       "name": "background_landscape.jpg",
-      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.2_1.0.0/images/background_landscape.jpg",
+      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.20_2.0.0/images/background_landscape.jpg",
       "alt_url": "",
       "sha": "d301869a7e05e9621dc6cbfffa5b93541c68205b"
     }
@@ -179,7 +179,7 @@
   "selfie_segmenter_landscape_int8.tflite": [
     {
       "name": "selfie_segmenter_landscape_int8.tflite",
-      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.2_1.0.0/models/selfie_segmenter_landscape_int8.tflite",
+      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.20_2.0.0/models/selfie_segmenter_landscape_int8.tflite",
       "alt_url": "",
       "sha": "36ee33cf074f99a0605318cfb8b95f59429fe5d9"
     }
@@ -187,7 +187,7 @@
   "pose_detection_quant.tflite": [
     {
       "name": "pose_detection_quant.tflite",
-      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.2_1.0.0/models/pose_detection_quant.tflite",
+      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.20_2.0.0/models/pose_detection_quant.tflite",
       "alt_url": "",
       "sha": "0a4bbbc2224b21868edbb5601861406d50ad8619"
     }
@@ -195,7 +195,7 @@
   "pose_landmark_lite_quant.tflite": [
     {
       "name": "pose_landmark_lite_quant.tflite",
-      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.2_1.0.0/models/pose_landmark_lite_quant.tflite",
+      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.20_2.0.0/models/pose_landmark_lite_quant.tflite",
       "alt_url": "",
       "sha": "58a942015d032fa859c1454d3fd1cbdf8aeb13d2"
     }
@@ -203,7 +203,7 @@
   "anchors.txt": [
     {
       "name": "anchors.txt",
-      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.2_1.0.0/models/anchors.txt",
+      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.20_2.0.0/models/anchors.txt",
       "alt_url": "",
       "sha": "9dce1bb5c693cd11d7219a39da6e97239f8419de"
     }
@@ -211,7 +211,7 @@
   "pose_embeddings.csv": [
     {
       "name": "pose_embeddings.csv",
-      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.2_1.0.0/models/pose_embeddings.csv",
+      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.20_2.0.0/models/pose_embeddings.csv",
       "alt_url": "",
       "sha": "26ca31efcf9780f0774cd4285f982a102dad17ea"
     }
@@ -219,7 +219,7 @@
   "lp_baby_detection.elf": [
     {
       "name": "lp_baby_detection.elf",
-      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.2_1.0.0/models/lp_baby_detection.elf",
+      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.20_2.0.0/models/lp_baby_detection.elf",
       "alt_url": "",
       "sha": "8c481e935773f0922c5cd57eeb98efd39382e57d"
     }
@@ -227,7 +227,7 @@
   "lp_kws_detection.elf": [
     {
       "name": "lp_kws_detection.elf",
-      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.2_1.0.0/models/lp_kws_detection.elf",
+      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.20_2.0.0/models/lp_kws_detection.elf",
       "alt_url": "",
       "sha": "94d959677b6f3d8cb1cd20ae97caa4f3955ef688"
     }
@@ -235,7 +235,7 @@
   "snoring_detect.tflite": [
     {
       "name": "snoring_detect.tflite",
-      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.2_1.0.0/models/snoring_detect.tflite",
+      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.20_2.0.0/models/snoring_detect.tflite",
       "alt_url": "",
       "sha": "89c0ec6bec3419244977066147aabb035420c769"
     }
@@ -243,7 +243,7 @@
   "no_snoring_0.wav": [
     {
       "name": "no_snoring_0.wav",
-      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.2_1.0.0/audios/no_snoring_0.wav",
+      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.20_2.0.0/audios/no_snoring_0.wav",
       "alt_url": "",
       "sha": "64a7db4db5995c9aeaee195ab9588a04d0588acb"
     }
@@ -251,7 +251,7 @@
   "no_snoring_1.wav": [
     {
       "name": "no_snoring_1.wav",
-      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.2_1.0.0/audios/no_snoring_1.wav",
+      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.20_2.0.0/audios/no_snoring_1.wav",
       "alt_url": "",
       "sha": "4d2b0918448a2329416b0cf3559ef3fe96598101"
     }
@@ -259,7 +259,7 @@
   "snoring_0.wav": [
     {
       "name": "snoring_0.wav",
-      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.2_1.0.0/audios/snoring_0.wav",
+      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.20_2.0.0/audios/snoring_0.wav",
       "alt_url": "",
       "sha": "45b137f325625497dee61ae7a4e521b5a7425060"
     }
@@ -267,7 +267,7 @@
   "snoring_1.wav": [
     {
       "name": "snoring_1.wav",
-      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.2_1.0.0/audios/snoring_1.wav",
+      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.20_2.0.0/audios/snoring_1.wav",
       "alt_url": "",
       "sha": "9dae35cd028cd260ca7ba48b8e475b46eaf0e1a1"
     }
@@ -275,7 +275,7 @@
   "labels_mobilenet_quant_v1_224.txt": [
     {
       "name": "labels_mobilenet_quant_v1_224.txt",
-      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.2_1.0.0/models/labels_mobilenet_quant_v1_224.txt",
+      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.20_2.0.0/models/labels_mobilenet_quant_v1_224.txt",
       "alt_url": "",
       "sha": "9bf4e3f155d34ce2f624c864c9cf64c04ff9a06c"
     }
@@ -284,7 +284,7 @@
   "mobilenet_v1_1.0_224_quant_uint8_float32.tflite": [
     {
       "name": "mobilenet_v1_1.0_224_quant_uint8_float32.tflite",
-      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.2_1.0.0/models/mobilenet_v1_1.0_224_quant_uint8_float32.tflite",
+      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.20_2.0.0/models/mobilenet_v1_1.0_224_quant_uint8_float32.tflite",
       "alt_url": "",
       "sha": "ffe71eb53d2f880ff720f8f371bc51719c97dc49"
     }
@@ -292,7 +292,7 @@
   "mobilenet_v1_1.0_224.tflite": [
     {
       "name": "mobilenet_v1_1.0_224.tflite",
-      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.2_1.0.0/models/mobilenet_v1_1.0_224.tflite",
+      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.20_2.0.0/models/mobilenet_v1_1.0_224.tflite",
       "alt_url": "",
       "sha": "824e3c3aeb3ce70b90e5d71ef5e23633e8abd98e"
     }
@@ -300,7 +300,7 @@
   "box_priors.txt": [
     {
       "name": "box_priors.txt",
-      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.2_1.0.0/models/box_priors.txt",
+      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.20_2.0.0/models/box_priors.txt",
       "alt_url": "",
       "sha": "7eaba5955f0ab57ed90a6d20d22c8c2cb89c3a7c"
     }
@@ -308,7 +308,7 @@
   "coco_labels_list.txt": [
     {
       "name": "coco_labels_list.txt",
-      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.2_1.0.0/models/coco_labels_list.txt",
+      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.20_2.0.0/models/coco_labels_list.txt",
       "alt_url": "",
       "sha": "c75d067ad8ff2de1e828f2167fef7ec5b2f1da2a"
     }
@@ -316,7 +316,7 @@
   "ssdlite_mobilenet_v2_coco_no_postprocess.tflite": [
     {
       "name": "ssdlite_mobilenet_v2_coco_no_postprocess.tflite",
-      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.2_1.0.0/models/ssdlite_mobilenet_v2_coco_no_postprocess.tflite",
+      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.20_2.0.0/models/ssdlite_mobilenet_v2_coco_no_postprocess.tflite",
       "alt_url": "",
       "sha": "709e8e9914a4ac697b49337cd8b437b7be2af05f"
     }
@@ -324,7 +324,7 @@
   "ssdlite_mobilenet_v2_coco_quant_uint8_float32_no_postprocess.tflite": [
     {
       "name": "ssdlite_mobilenet_v2_coco_quant_uint8_float32_no_postprocess.tflite",
-      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.2_1.0.0/models/ssdlite_mobilenet_v2_coco_quant_uint8_float32_no_postprocess.tflite",
+      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.20_2.0.0/models/ssdlite_mobilenet_v2_coco_quant_uint8_float32_no_postprocess.tflite",
       "alt_url": "",
       "sha": "2965aeb0bf96a3bd311bc8d4549eae026dc76b78"
     }
@@ -340,7 +340,7 @@
   "movenet_quant.tflite": [
     {
       "name": "movenet_quant.tflite",
-      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.2_1.0.0/models/movenet_quant.tflite",
+      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.20_2.0.0/models/movenet_quant.tflite",
       "alt_url": "",
       "sha": "d845d1119345586db234ec85495ccb7197083fe3"
     }
@@ -348,7 +348,7 @@
   "movenet_single_pose_lightning.tflite": [
     {
       "name": "movenet_single_pose_lightning.tflite",
-      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.2_1.0.0/models/movenet_single_pose_lightning.tflite",
+      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.20_2.0.0/models/movenet_single_pose_lightning.tflite",
       "alt_url": "",
       "sha": "9aa0fc4f4d1f926c63b79c453f6c2b9821a4b5a9"
     }
@@ -356,7 +356,7 @@
   "ultraface_slim_uint8_float32.tflite": [
     {
       "name": "ultraface_slim_uint8_float32.tflite",
-      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.2_1.0.0/models/ultraface_slim_uint8_float32.tflite",
+      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.20_2.0.0/models/ultraface_slim_uint8_float32.tflite",
       "alt_url": "",
       "sha": "e35853a7318c9f9622e1337ccc7fff9514f3b5d2"
     }
@@ -364,7 +364,7 @@
   "emotion_uint8_float32.tflite": [
     {
       "name": "emotion_uint8_float32.tflite",
-      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.2_1.0.0/models/emotion_uint8_float32.tflite",
+      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.20_2.0.0/models/emotion_uint8_float32.tflite",
       "alt_url": "",
       "sha": "c4f4b92e09b4ef24f0ef59df880e2432fd712fb4"
     }
@@ -372,7 +372,7 @@
   "deeplabv3_mnv2_dm05_pascal.tflite": [
     {
       "name": "ultraface_slim_uint8_float32.tflite",
-      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.2_1.0.0/models/ultraface_slim_uint8_float32.tflite",
+      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.20_2.0.0/models/ultraface_slim_uint8_float32.tflite",
       "alt_url": "",
       "sha": "a5348f7410a4ad4e44ce8a10f678ec8d2f784720"
     }
@@ -380,7 +380,7 @@
   "deeplabv3_mnv2_dm05_pascal_quant_uint8_float32.tflite": [
     {
       "name": "deeplabv3_mnv2_dm05_pascal_quant_uint8_float32.tflite",
-      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.2_1.0.0/models/deeplabv3_mnv2_dm05_pascal_quant_uint8_float32.tflite",
+      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.20_2.0.0/models/deeplabv3_mnv2_dm05_pascal_quant_uint8_float32.tflite",
       "alt_url": "",
       "sha": "c3974eaef77b28402b799ef4c087ca6b6babdb5a"
     }
@@ -388,7 +388,7 @@
   "mobilenet_v1_1.0_224_quant_uint8_float32_neutron.tflite": [
     {
       "name": "mobilenet_v1_1.0_224_quant_uint8_float32_neutron.tflite",
-      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.2_1.0.0/models/mobilenet_v1_1.0_224_quant_uint8_float32_neutron.tflite",
+      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.20_2.0.0/models/mobilenet_v1_1.0_224_quant_uint8_float32_neutron.tflite",
       "alt_url": "",
       "sha": "ced8abe357bedaa8719393441b944e785a9d349f"
     }
@@ -396,23 +396,23 @@
   "ssdlite_mobilenet_v2_coco_quant_uint8_float32_no_postprocess_neutron.tflite": [
     {
       "name": "ssdlite_mobilenet_v2_coco_quant_uint8_float32_no_postprocess_neutron.tflite",
-      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.2_1.0.0/models/ssdlite_mobilenet_v2_coco_quant_uint8_float32_no_postprocess_neutron.tflite",
+      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.20_2.0.0/models/ssdlite_mobilenet_v2_coco_quant_uint8_float32_no_postprocess_neutron.tflite",
       "alt_url": "",
-      "sha": "02dfb126995ead6d380ad91d734789c1065e4231"
+      "sha": "a4486174bd72cc6ccf0e5d620c415f7a508d91dd"
     }
   ],
   "ultraface_slim_uint8_float32_neutron.tflite": [
     {
       "name": "ultraface_slim_uint8_float32_neutron.tflite",
-      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.2_1.0.0/models/ultraface_slim_uint8_float32_neutron.tflite",
+      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.20_2.0.0/models/ultraface_slim_uint8_float32_neutron.tflite",
       "alt_url": "",
-      "sha": "b3023f6eaea603203304fcf3cc2fe6723905269a"
+      "sha": "c8d85471c2f59ba62c12a081ea7b3ef6fcc91714"
     }
   ],
   "palm_detection_full_quant.tflite": [
     {
       "name": "palm_detection_full_quant.tflite",
-      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.2_1.0.0/models/palm_detection_full_quant.tflite",
+      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.20_2.0.0/models/palm_detection_full_quant.tflite",
       "alt_url": "",
       "sha": "cd18e097611c72b90a559dde6e00ca90f88d4d5b"
     }
@@ -420,7 +420,7 @@
   "hand_landmark_full_quant.tflite": [
     {
       "name": "hand_landmark_full_quant.tflite",
-      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.2_1.0.0/models/hand_landmark_full_quant.tflite",
+      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.20_2.0.0/models/hand_landmark_full_quant.tflite",
       "alt_url": "",
       "sha": "58a8ee0ee190850b50669f56b0b789d057b2f771"
     }
@@ -428,7 +428,7 @@
   "keypoint_classifier.tflite": [
     {
       "name": "keypoint_classifier.tflite",
-      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.2_1.0.0/models/keypoint_classifier.tflite",
+      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.20_2.0.0/models/keypoint_classifier.tflite",
       "alt_url": "",
       "sha": "f0ef067df338baa37bc3cf5732aa9c481d1c198f"
     }
@@ -436,7 +436,7 @@
   "small_dog.jpg": [
     {
       "name": "small_dog.jpg",
-      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.2_1.0.0/images/small_dog.jpg",
+      "url": "https://github.com/nxp-imx-support/nxp-demo-experience-assets/raw/lf-6.18.20_2.0.0/images/small_dog.jpg",
       "alt_url": "",
       "sha": "d7d6273747a74b70ffbc455fda74e1a29b29b201"
     }

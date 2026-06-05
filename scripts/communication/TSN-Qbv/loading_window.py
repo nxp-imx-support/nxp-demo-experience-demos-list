@@ -26,7 +26,7 @@ class MyWindow(Gtk.Window):
         self.set_titlebar(hb)
         quit_button.add(quit_image)
         hb.pack_end(quit_button)
-        animation_path = "/opt/gopoint-apps/scripts/TSN/qbv/loading.gif"
+        animation_path = "/opt/gopoint-apps/scripts/communication/TSN-Qbv/loading.gif"
         animation = GdkPixbuf.PixbufAnimation.new_from_file(animation_path)
         image.set_from_animation(animation)
         if sys.argv[1] == "launch":

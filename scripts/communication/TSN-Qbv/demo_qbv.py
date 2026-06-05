@@ -19,15 +19,24 @@ hostUserName = "root"
 hostIP = "172.15.0.1"
 hostPwd = "null"
 
+device = subprocess.check_output("hostname", shell=True)
+if b"8mm" in device or b"8mp" in device:
+    FIRST_INTERFACE = "eth0"
+    SECOND_INTERFACE = "eth1"
+elif b"943" in device:
+    FIRST_INTERFACE = "eth1"
+    SECOND_INTERFACE = "eth2"
+
+
 # Check if Ethernet interfaces are UP and collect IP addresses
-eth0_operstate = os.popen("cat /sys/class/net/eth0/operstate").read()
-eth1_operstate = os.popen("cat /sys/class/net/eth1/operstate").read()
+eth0_operstate = os.popen(f"cat /sys/class/net/{FIRST_INTERFACE}/operstate").read()
+eth1_operstate = os.popen(f"cat /sys/class/net/{SECOND_INTERFACE}/operstate").read()
 output1 = subprocess.check_output(
-    "ifconfig eth1| grep 'inet ' | awk '{print $2}'", shell=True
+    f"ifconfig {SECOND_INTERFACE}| grep 'inet ' | awk '{{print $2}}'", shell=True
 )
 ip_address1 = output1.strip().decode()
 output2 = subprocess.check_output(
-    "ifconfig eth0| grep 'inet ' | awk '{print $2}'", shell=True
+    f"ifconfig {FIRST_INTERFACE}| grep 'inet ' | awk '{{print $2}}'", shell=True
 )
 ip_address2 = output2.strip().decode()
 list1 = ["Fail", "Fail"]
@@ -58,7 +67,7 @@ class DialogWindow(Gtk.Window):
         )
         box.pack_start(label1, True, True, 0)
         pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(
-            filename="/opt/gopoint-apps/scripts/TSN/qbv/TSN_Qbv_setup_diagram.png",
+            filename="/opt/gopoint-apps/scripts/communication/TSN-Qbv/TSN_Qbv_setup_diagram.png",
             width=900,
             height=520,
             preserve_aspect_ratio=False,
@@ -101,7 +110,7 @@ class DialogWindow(Gtk.Window):
                 )
                 image = Gtk.Image()
                 image.set_from_file(
-                    "/opt/gopoint-apps/scripts/TSN/qbv/TSN_Qbv_setup_diagram.png"
+                    "/opt/gopoint-apps/scripts/communication/TSN-Qbv/TSN_Qbv_setup_diagram.png"
                 )
                 box_notification = Gtk.Box(
                     orientation=Gtk.Orientation.VERTICAL, spacing=6
@@ -117,7 +126,7 @@ class DialogWindow(Gtk.Window):
                 dialog.show_all()
                 dialog.run()
                 os.system(
-                    "python3 /opt/gopoint-apps/scripts/TSN/qbv/tsnqbv.py stop root 192.168.0.1"
+                    "python3 /opt/gopoint-apps/scripts/communication/TSN-Qbv/tsnqbv.py stop root 192.168.0.1"
                 )
                 dialog.destroy()
 
@@ -132,7 +141,7 @@ class DialogWindow(Gtk.Window):
                 )
                 image = Gtk.Image()
                 image.set_from_file(
-                    "/opt/gopoint-apps/scripts/TSN/qbv/TSN_Qbv_setup_diagram.png"
+                    "/opt/gopoint-apps/scripts/communication/TSN-Qbv/TSN_Qbv_setup_diagram.png"
                 )
                 box_notification = Gtk.Box(
                     orientation=Gtk.Orientation.VERTICAL, spacing=6
@@ -148,7 +157,7 @@ class DialogWindow(Gtk.Window):
                 dialog.show_all()
                 dialog.run()
                 os.system(
-                    "python3 /opt/gopoint-apps/scripts/TSN/qbv/tsnqbv.py stop root 192.168.0.1"
+                    "python3 /opt/gopoint-apps/scripts/communication/TSN-Qbv/tsnqbv.py stop root 192.168.0.1"
                 )
                 dialog.destroy()
 
@@ -187,10 +196,10 @@ class DialogWindow(Gtk.Window):
     def on_start(self):
         if list1[0] == "Pass" and list1[1] == "Pass":
             os.system(
-                "python3 /opt/gopoint-apps/scripts/TSN/qbv/loading_window.py run_demo &"
+                "python3 /opt/gopoint-apps/scripts/communication/TSN-Qbv/loading_window.py run_demo &"
             )
             os.system(
-                "python3 /opt/gopoint-apps/scripts/TSN/qbv/tsnqbv.py start root 192.168.0.1 &"
+                "python3 /opt/gopoint-apps/scripts/communication/TSN-Qbv/tsnqbv.py start root 192.168.0.1 &"
             )
             self.button1.set_sensitive(True)
         else:
@@ -209,13 +218,13 @@ class DialogWindow(Gtk.Window):
 
     def on_stop(self, button):
         os.system(
-            "python3 /opt/gopoint-apps/scripts/TSN/qbv/tsnqbv.py stop root 192.168.0.1 &"
+            "python3 /opt/gopoint-apps/scripts/communication/TSN-Qbv/tsnqbv.py stop root 192.168.0.1 &"
         )
 
     def on_video_combo_changed(self, combo):
         text = combo.get_active_text()
         print(text)
-        y = open("/opt/gopoint-apps/scripts/TSN/qbv/video.txt", "w")
+        y = open("/opt/gopoint-apps/scripts/communication/TSN-Qbv/video.txt", "w")
         y.write(text)
         y.close()
         list1[0] = "Pass"

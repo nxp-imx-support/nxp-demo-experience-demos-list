@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 """
-Copyright 2022-2026 NXP
+Copyright 2022-2025 NXP
 SPDX-License-Identifier: Apache-2.0
 
 The following is a demo to show how to recognize faces using

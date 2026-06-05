@@ -32,7 +32,7 @@ while cap.isOpened():
         if (time.time() - start_time) > value:
             FPS = count / (time.time() - start_time)
             FPS = str(FPS)
-            _file = open("/opt/gopoint-apps/scripts/TSN/qbv/FPS.txt", "w")
+            _file = open("/opt/gopoint-apps/scripts/communication/TSN-Qbv/FPS.txt", "w")
             _file.write(FPS)
             count = 0
             start_time = time.time()

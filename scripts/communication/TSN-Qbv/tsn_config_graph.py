@@ -65,7 +65,7 @@ class ButtonWindow(Gtk.Window):
         model = combobox.get_model()
         if model[treeiter][0] == "No qbv (No Prioritization)":
             os.system(
-                "python3 /opt/gopoint-apps/scripts/TSN/qbv/tsnqbv.py no_qbv root 192.168.0.1 &"
+                "python3 /opt/gopoint-apps/scripts/communication/TSN-Qbv/tsnqbv.py no_qbv root 192.168.0.1 &"
             )
             dialog = Gtk.MessageDialog(
                 transient_for=self,
@@ -81,7 +81,7 @@ class ButtonWindow(Gtk.Window):
             dialog.destroy()
         if model[treeiter][0] == "Qbv1 (Video Prioritization)":
             os.system(
-                "python3 /opt/gopoint-apps/scripts/TSN/qbv/tsnqbv.py qbv1 root 192.168.0.1 &"
+                "python3 /opt/gopoint-apps/scripts/communication/TSN-Qbv/tsnqbv.py qbv1 root 192.168.0.1 &"
             )
             dialog = Gtk.MessageDialog(
                 transient_for=self,
@@ -97,7 +97,7 @@ class ButtonWindow(Gtk.Window):
             dialog.destroy()
         if model[treeiter][0] == "Qbv2 (Iperf Prioritization)":
             os.system(
-                "python3 /opt/gopoint-apps/scripts/TSN/qbv/tsnqbv.py qbv2 root 192.168.0.1 &"
+                "python3 /opt/gopoint-apps/scripts/communication/TSN-Qbv/tsnqbv.py qbv2 root 192.168.0.1 &"
             )
             dialog = Gtk.MessageDialog(
                 transient_for=self,
@@ -119,23 +119,24 @@ def animate(i, x_axis: list, y1_axis: list, y2_axis: list):
         _Time = time.strftime("%H:%M:%S", Local_time)
         x_axis.append(_Time)
         iperf_result = open(
-            "/opt/gopoint-apps/scripts/TSN/qbv/iperf.txt", "r"
+            "/opt/gopoint-apps/scripts/communication/TSN-Qbv/iperf.txt", "r"
         ).readlines()
         iperf_result = iperf_result[-1]
         iperf_result = iperf_result.split()
         if "received" in iperf_result:
             pass
         else:
+            key = "MBytes" if "MBytes" in iperf_result else "Bytes"
             iperf_result = iperf_result[
-                iperf_result.index("MBytes") + 1 or iperf_result.index("Bytes") + 1
+                iperf_result.index(key) + 1
             ]
-            iperf_result1 = open("/opt/gopoint-apps/scripts/TSN/qbv/iperf1.txt", "w")
+            iperf_result1 = open("/opt/gopoint-apps/scripts/communication/TSN-Qbv/iperf1.txt", "w")
             iperf_result1.write(iperf_result)
             iperf_result1.close()
-        iperf = open("/opt/gopoint-apps/scripts/TSN/qbv/iperf1.txt", "r").readlines()
+        iperf = open("/opt/gopoint-apps/scripts/communication/TSN-Qbv/iperf1.txt", "r").readlines()
         iperf = iperf[0].strip()
         iperf = float(iperf)
-        FPS = open("/opt/gopoint-apps/scripts/TSN/qbv/FPS.txt", "r").readlines()
+        FPS = open("/opt/gopoint-apps/scripts/communication/TSN-Qbv/FPS.txt", "r").readlines()
         FPS = FPS[0].strip()
         FPS = float(FPS)
         y1_axis.append(iperf)
@@ -165,8 +166,8 @@ def animate(i, x_axis: list, y1_axis: list, y2_axis: list):
         ax2.set_ylim([0, 150])
         ax1.set_ylabel("IPERF", color="g")
         ax2.set_ylabel("FPS", color="b")
-    except:
-        print("FPS is not updated at this point")
+    except Exception as E:
+        print("FPS is not updated at this point | Problem: " + str(E))
 
 
 canvas = FigureCanvas(figure)
