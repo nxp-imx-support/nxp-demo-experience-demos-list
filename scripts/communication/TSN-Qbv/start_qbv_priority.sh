@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Copyright 2023 NXP
+# Copyright 2023, 2026 NXP
 # SPDX-License-Identifier: BSD-3-Clause
 #
 # This scripts assigns priority to the queues before 

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 """
-Copyright 2022-2025 NXP
+Copyright 2022-2026 NXP
 SPDX-License-Identifier: Apache-2.0
 
 This application allows ML-resource-constraint MPU systems (clients) to connect and run inferencing

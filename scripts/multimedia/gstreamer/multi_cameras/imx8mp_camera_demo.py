@@ -1,5 +1,5 @@
 """
-Copyright 2021-2024 NXP
+Copyright 2021-2024, 2026 NXP
 SPDX-License-Identifier: BSD-3-Clause
 
 i.MX 8M Plus camera demo.

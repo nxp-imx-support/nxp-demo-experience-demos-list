@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Copyright 2023-2024 NXP
+# Copyright 2023-2024, 2026 NXP
 # SPDX-License-Identifier: BSD-3-Clause
 #
 # This scripts assigns IP to the interfaces
