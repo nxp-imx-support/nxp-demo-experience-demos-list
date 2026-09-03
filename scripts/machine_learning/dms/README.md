@@ -11,11 +11,11 @@
 
 NXP's *GoPoint for i.MX Applications Processors* unlocks a world of possibilities. This user-friendly app launches
 pre-built applications packed with the Linux BSP, giving you hands-on experience with your i.MX SoC's capabilities.
-Using the i.MX 8M Plus or i.MX 93 EVKs you can run the included *Driver Monitor System (DMS)* application available on GoPoint
+Using the i.MX 8MPlus & FRDM-iMX8MP，i.MX93 EVKs & FRDM-i.MX93 or i.MX95 EVKs & FRDM-iMX95, you can run the included *Driver Monitor System (DMS)* application available on GoPoint
 launcher as apart of the BSP flashed on to the board. For more information about GoPoint, please refer to
 [GoPoint for i.MX Applications Processors User's Guide](https://www.nxp.com/IMXLINUX).
 
-With rapid development in automotive industry recently, *Driver Monitor System* (DMS) has become a common requirement in today's vehicle. In general, DMS is a vehicle safety system to assess the driver's alertness and warn the driver if needed, which helps to prevent traffic accident and protect driver in the first place. With *Machine Learning* (ML) and *Neural Network* (NN)'s help, DMS can now achieve very high accuracy and low latency. This GoPoint application showcases the capability of implementing DMS on i.MX 8M Plus and i.MX 93 platform, and the performance boost brought by *Neural Processing Unit* (NPU) on these platforms.
+With rapid development in automotive industry recently, *Driver Monitor System* (DMS) has become a common requirement in today's vehicle. In general, DMS is a vehicle safety system to assess the driver's alertness and warn the driver if needed, which helps to prevent traffic accident and protect driver in the first place. With *Machine Learning* (ML) and *Neural Network* (NN)'s help, DMS can now achieve very high accuracy and low latency. This GoPoint application showcases the capability of implementing DMS on i.MX 8M Plus, i.MX 93 and i.MX 95 platform, and the performance boost brought by *Neural Processing Unit* (NPU) on these platforms.
 
 ## Table of Contents
 
@@ -34,7 +34,7 @@ With rapid development in automotive industry recently, *Driver Monitor System* 
 
 <img src="./data/dms_gst_pipeline.svg" width="1080">
 
->**NOTE:** On the i.MX 93, *PXP* acceleration is used for the color space conversion and image resizing during pre-processing and display composition. On i.MX 8M Plus, the *2D-GPU* accelerator is used for the same purpose.
+>**NOTE:** On the i.MX 93, *PXP* acceleration is used for the color space conversion and image resizing during pre-processing and display composition. On i.MX 8M Plus, the *2D-GPU* accelerator is used for the same purpose. On i.MX 95, the *G2D* engine is used for the same purpose.
 
 When a new frame reaches *AppSink*, the following inference process will start to run using the *tflite_runtime* framework and NPU delegate, and finally return the driver status to be rendered on the display.
 
@@ -94,10 +94,8 @@ Origin               | Model trained by NXP
 
 ### Benchmarks
 
-The quantized INT8 models have been tested on i.MX 8M Plus and i.MX 93 using `./benchmark_model` tool. For i.MX 93, INT8 models need to be compiled by vela tool first before using NPU delegate.
+The quantized INT8 models have been tested on i.MX 8M Plus and i.MX 93 using `./benchmark_model` tool. For i.MX 93, INT8 models need to be compiled by vela tool first before using NPU delegate. For i.MX 95, INT8 models need to be compiled by neutron converter tool first before using NPU delegate.
 (see [i.MX Machine Learning User's Guide](https://www.nxp.com/docs/en/user-guide/IMX-MACHINE-LEARNING-UG.pdf) for more details).
-
->**NOTE:** Evaluated on BSP LF-6.6.3_1.0.0.
 
 #### MediaPipe BlazeFace Short Range performance
 
@@ -109,6 +107,9 @@ i.MX 8M Plus | NPU             |  1.194 ms           | ./benchmark_model --graph
 i.MX 93      | CPU (1 thread)  | 10.312 ms           | ./benchmark_model --graph=face_detection_ptq.tflite
 i.MX 93      | CPU (2 threads) |  7.308 ms           | ./benchmark_model --graph=face_detection_ptq.tflite --num_threads=2
 i.MX 93      | NPU             |  1.970 ms           | ./benchmark_model --graph=face_detection_ptq_vela.tflite --external_delegate_path=/usr/lib/libethosu_delegate.so
+i.MX95       | CPU (1 thread)  |  7.592 ms           | ./benchmark_model --graph=face_detection_ptq.tflite 
+i.MX95       | CPU (6 thread)  |  1.794 ms           | ./benchmark_model --graph=face_detection_ptq.tflite --num_threads=6
+i.MX95       | NPU             |  0.511 ms           | ./benchmark_model --graph=face_detection_ptq_neutron.tflite --external_delegate_path=/usr/lib/libneutron_delegate.so
 
 #### MediaPipe Face Mesh performance
 
@@ -120,6 +121,9 @@ i.MX 8M Plus | NPU             |  4.254 ms           | ./benchmark_model --graph
 i.MX 93      | CPU (1 thread)  | 48.950 ms           | ./benchmark_model --graph=face_landmark_ptq.tflite
 i.MX 93      | CPU (2 threads) | 45.444 ms           | ./benchmark_model --graph=face_landmark_ptq.tflite --num_threads=2
 i.MX 93      | NPU             |  2.893 ms           | ./benchmark_model --graph=face_landmark_ptq_vela.tflite --external_delegate_path=/usr/lib/libethosu_delegate.so
+i.MX95       | CPU (1 thread)  | 48.467 ms           | ./benchmark_model --graph=face_landmark_ptq.tflite 
+i.MX95       | CPU (6 thread)  | 43.468 ms           | ./benchmark_model --graph=face_landmark_ptq.tflite --num_threads=6
+i.MX95       | NPU             |  1.196 ms           | ./benchmark_model --graph=face_landmark_ptq_neutron.tflite --external_delegate_path=/usr/lib/libneutron_delegate.so
 
 #### MediaPipe Iris performance
 
@@ -131,6 +135,9 @@ i.MX 8M Plus | NPU             |  3.412 ms           | ./benchmark_model --graph
 i.MX 93      | CPU (1 thread)  | 42.433 ms           | ./benchmark_model --graph=iris_landmark_ptq.tflite
 i.MX 93      | CPU (2 threads) | 40.587 ms           | ./benchmark_model --graph=iris_landmark_ptq.tflite --num_threads=2
 i.MX 93      | NPU             |  2.136 ms           | ./benchmark_model --graph=iris_landmark_ptq_vela.tflite --external_delegate_path=/usr/lib/libethosu_delegate.so
+i.MX 95      | CPU (1 threads) | 44.110 ms           | ./benchmark_model --graph=iris_landmark_ptq.tflite
+i.MX 95      | CPU (6 threads) | 41.529 ms           | ./benchmark_model --graph=iris_landmark_ptq.tflite --num_threads=6
+i.MX 95      | NPU             |  1.053 ms           | ./benchmark_model --graph=iris_landmark_ptq_neutron.tflite --external_delegate_path=/usr/lib/libneutron_delegate.so
 
 #### Smoking&Calling Detection performance
 
@@ -142,23 +149,26 @@ i.MX 8M Plus | NPU             |  18.367 ms          | ./benchmark_model --graph
 i.MX 93      | CPU (1 thread)  |  407.963 ms         | ./benchmark_model --graph=yolov4_tiny_smk_call.tflite
 i.MX 93      | CPU (2 threads) |  303.159 ms         | ./benchmark_model --graph=yolov4_tiny_smk_call.tflite --num_threads=2
 i.MX 93      | NPU             |  23.008 ms          | ./benchmark_model --graph=yolov4_tiny_smk_call_vela.tflite --external_delegate_path=/usr/lib/libethosu_delegate.so
+i.MX 95      | CPU (1 thread)  |  225.517 ms         | ./benchmark_model --graph=yolov4_tiny_smk_call.tflite
+i.MX 95      | CPU (6 thread)  |   45.996 ms         | ./benchmark_model --graph=yolov4_tiny_smk_call.tflite --num_threads=6
+i.MX 95      | NPU             |   10.921 ms         | ./benchmark_model --graph=yolov4_tiny_smk_call_neutron.tflite --external_delegate_path=/usr/lib/libneutron_delegate.so
 
 ## 3 Hardware
 
-To run *i.MX Driver Monitor System*, either the i.MX 8M Plus or i.MX 93 EVKs are required with their respective hardware components.
+To run *i.MX Driver Monitor System*, i.MX 8M Plus，i.MX 93 EVKs and i.MX95 are required with their respective hardware components.
 
-Component                                         | i.MX 8M Plus        | i.MX 93
----                                               | :---:              | :---:
-Power Supply                                      | :white_check_mark: | :white_check_mark:
-HDMI Display                                      | :white_check_mark: | :white_check_mark:
-USB micro-B cable (Type-A male to Micro-B male)   | :white_check_mark: |                   
-USB Type-C cable  (Type-A male to Type-C male)    |                    | :white_check_mark:
-HDMI cable                                        | :white_check_mark: | :white_check_mark:
-IMX-MIPI-HDMI (MIPI-DSI to HDMI adapter)          |                    | :white_check_mark:
-Mini-SAS cable                                    |                    | :white_check_mark:
-MIPI-CSI camera module                            | :white_check_mark: | :white_check_mark:
-USB camera (optional, if no MIPI-CSI camera used) | :white_check_mark: | :white_check_mark:
-Mouse                                             | :white_check_mark: | :white_check_mark:
+Component                                         | i.MX 8M Plus       | i.MX 93            | i.MX95
+---                                               | :---:              | :---:              | :---:
+Power Supply                                      | :white_check_mark: | :white_check_mark: | :white_check_mark:
+HDMI Display                                      | :white_check_mark: | :white_check_mark: | :white_check_mark:
+USB micro-B cable (Type-A male to Micro-B male)   | :white_check_mark: |                    |
+USB Type-C cable  (Type-A male to Type-C male)    |                    | :white_check_mark: | :white_check_mark:
+HDMI cable                                        | :white_check_mark: | :white_check_mark: | :white_check_mark:
+IMX-MIPI-HDMI (MIPI-DSI to HDMI adapter)          |                    | :white_check_mark: | :white_check_mark:
+Mini-SAS cable                                    |                    | :white_check_mark: | :white_check_mark:
+MIPI-CSI camera module                            | :white_check_mark: | :white_check_mark: | :white_check_mark:
+USB camera (optional, if no MIPI-CSI camera used) | :white_check_mark: | :white_check_mark: | :white_check_mark:
+Mouse                                             | :white_check_mark: | :white_check_mark: | :white_check_mark:
 
 ## 4 Setup
 
@@ -166,7 +176,7 @@ Launch GoPoint on the board and click on the **DMS** application shown in the la
 
 <img src="./data/launcher.jpg" width="360">
 
-When running the application on i.MX 8M Plus, a warm-up time is needed for models to be ready for acceleration on the NPU. On i.MX 93, the models need to be compiled using vela tool for acceleration on the Ethos-U NPU. The process is done automatically, but may take about one minute to finish on each platform. This only happens during the first time of running the application, since compiled models are stored as cache files for future use.
+When running the application on i.MX 8M Plus, a warm-up time is needed for models to be ready for acceleration on the NPU. On i.MX 93, the models need to be compiled using vela tool for acceleration on the Ethos-U NPU. On i.MX 95, the models need to be compiled using neutron tool for acceleration on the Neutron-S NPU. The process is done automatically, but may take about one minute to finish on each platform. This only happens during the first time of running the application, since compiled models are stored as cache files for future use.
 
 <img src="./data/compiling.jpg" width="360">
 
@@ -234,6 +244,7 @@ For more general technical questions, enter your questions on the [NXP Community
 Version | Description                         | Date
 ---     | ---                                 | ---
 1.0.0   | Initial release                     | March 29<sup>th</sup> 2024
+1.1.0   | Update i.MX95 Benchmark             | Aug 4<sup>th</sup> 2026
 
 ## Licensing
 

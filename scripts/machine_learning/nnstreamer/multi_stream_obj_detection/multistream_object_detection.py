@@ -532,17 +532,17 @@ class NNStreamerLauncher:
             'dummy_sink': dummy_sink
         }
 
-    @threaded
     def start(self, widget):
-        """Start the nnstreamer demo"""
+        """Read UI options on the main thread, then launch the demo in a worker thread.
+
+        GTK is not thread-safe, so widget access must happen on the main GTK
+        thread. Only the pipeline build/launch runs in the worker thread.
+        """
         self.unblock_buttons(False)
 
-        GLib.idle_add(
-            self.status_bar.set_text,
-            "Creating GStreamer pipeline...",
-        )
+        self.status_bar.set_text("Creating GStreamer pipeline...")
 
-        # Get options from user
+        # Get options from user (must be read on the main thread)
         device1 = self.sources_list_1.get_active_text()
         device2 = self.sources_list_2.get_active_text()
         device3 = self.sources_list_3.get_active_text()
@@ -551,6 +551,12 @@ class NNStreamerLauncher:
         color = self.color_list.get_active_text()
         performance_display = self.display_performance.get_active()
 
+        self._start_worker(device1, device2, device3, device4, backend, color, performance_display)
+        return True
+
+    @threaded
+    def _start_worker(self, device1, device2, device3, device4, backend, color, performance_display):
+        """Build the GStreamer pipeline and start it off the main thread."""
         # Extract camera paths from device labels
         def get_camera_path(device_label):
             camera_id = device_label.split("Camera ")[1]
@@ -565,7 +571,7 @@ class NNStreamerLauncher:
 
         # Configure arguments
         model = self.npu_tflite_model
-        if backend in ("GPU"):
+        if backend == "GPU":
             model = self.tflite_model
         elif backend == "NPU" and self.platform == "i.MX93":
             model = self.vela_tflite_model

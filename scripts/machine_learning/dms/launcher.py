@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 """
-Copyright 2024-2025 NXP
+Copyright 2024-2026 NXP
 SPDX-License-Identifier: BSD-3-Clause
 
 This script launches the i.MX DMS demo using a GUI
@@ -9,7 +9,6 @@ This script launches the i.MX DMS demo using a GUI
 
 import os
 import sys
-import glob
 import subprocess
 import threading
 import time
@@ -82,7 +81,13 @@ class ImxDMSLauncher:
         elif os.path.exists("/usr/lib/libethosu_delegate.so"):
             self.platform = "i.MX93"
         elif os.path.exists("/usr/lib/libneutron_delegate.so"):
-            self.platform = "i.MX95"
+            soc_id = subprocess.check_output(
+                ["cat", "/sys/devices/soc0/soc_id"]
+            ).decode("utf-8").strip()
+            if "i.MX952" in soc_id:
+                self.platform = "i.MX952"
+            else:
+                self.platform = "i.MX95"
         else:
             print("Target is not supported!")
             sys.exit()
@@ -94,6 +99,8 @@ class ImxDMSLauncher:
             self.info_image = "imx93_dms_info.jpeg"
         elif self.platform == "i.MX95":
             self.info_image = "imx95_dms_info.jpeg"
+        elif self.platform == "i.MX952":
+            self.info_image = "imx952_dms_info.jpeg"
         else:
             print("Target is not supported!")
             sys.exit()
@@ -105,14 +112,21 @@ class ImxDMSLauncher:
         self.smk_call_detection_model = "yolov4_tiny_smk_call.tflite"
 
         # Obtain available devices
+        # get_video_devices() filters out nodes that cannot capture: a USB webcam
+        # adds a metadata-only node, and the i.MX ISI capture node exists even
+        # when no sensor is fitted. Selecting either makes the pipeline fail at
+        # start-up, so they must not appear in the list.
         devices = []
-        for device in glob.glob("/dev/video*"):
+        for device in utils.get_video_devices():
             devices.append(device)
 
         for device in devices:
             self.sources_list.append_text(device)
 
-        self.sources_list.set_active(len(devices) - 1)
+        # Guard the index: set_active(-1) on an empty list clears the selection
+        # instead of choosing anything, which used to hide the "no camera" case.
+        if devices:
+            self.sources_list.set_active(len(devices) - 1)
 
         # Obtain backend
         self.backend_list.append_text("NPU")
@@ -166,19 +180,31 @@ class ImxDMSLauncher:
         self.backend_list.set_sensitive(sensitive)
         self.resolution_list.set_sensitive(sensitive)
 
-    @threaded
     def start(self, widget):
         """
-        Function to start and run i.MX DMS demo
+        Function to handle Run button click on the main GTK thread
+
+        Reads all widget values on the main thread, then launches the
+        worker thread. Accessing GTK widgets from a background thread is
+        not safe and can cause intermittent crashes.
         """
-        # Disable widgets using GLib.idle_add to ensure main thread execution
-        GLib.idle_add(self.set_widgets_sensitive, False)
-        
+        # Disable widgets on the main thread
+        self.set_widgets_sensitive(False)
+
         device = self.sources_list.get_active_text()
         backend = self.backend_list.get_active_text()
         resolution = self.resolution_list.get_active_text()
 
+        self._start_worker(device, backend, resolution)
+        return True
+
+    @threaded
+    def _start_worker(self, device, backend, resolution):
+        """
+        Worker function to start and run i.MX DMS demo off the main thread
+        """
         self.pulsing = True
+
         self.timeout_id = GLib.timeout_add(50, self.on_timeout)
 
         GLib.idle_add(self.status_bar.set_text, "Downloading models...")
@@ -207,6 +233,17 @@ class ImxDMSLauncher:
             iris_landmark_neutron_model = utils.download_file("iris_landmark_ptq_neutron.tflite")
             download_result.append(iris_landmark_neutron_model)
             smk_call_detection_neutron_model = utils.download_file("yolov4_tiny_smk_call_neutron.tflite")
+            download_result.append(smk_call_detection_neutron_model)
+
+        # Download neutron converted models for i.MX952
+        if self.platform == "i.MX952":
+            face_detection_neutron_model = utils.download_file("face_detection_ptq_neutron_952.tflite")
+            download_result.append(face_detection_neutron_model)
+            face_landmark_neutron_model = utils.download_file("face_landmark_ptq_neutron_952.tflite")
+            download_result.append(face_landmark_neutron_model)
+            iris_landmark_neutron_model = utils.download_file("iris_landmark_ptq_neutron_952.tflite")
+            download_result.append(iris_landmark_neutron_model)
+            smk_call_detection_neutron_model = utils.download_file("yolov4_tiny_smk_call_neutron_952.tflite")
             download_result.append(smk_call_detection_neutron_model)
 
         # Handle errors during download if present

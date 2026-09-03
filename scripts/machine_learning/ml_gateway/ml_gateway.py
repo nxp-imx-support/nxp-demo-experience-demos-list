@@ -15,7 +15,6 @@ import socket
 import time
 import sys
 import subprocess
-import glob
 import gi
 import numpy as np
 import tflite_runtime.interpreter as tflite
@@ -318,13 +317,22 @@ class ServerWindow:
                 self.custom = "NumThreads:6"
                 self.model = self.cpu_model
 
-    @threaded
     def start_server(self, widget):
-        """Pipeline to start server"""
+        """Disable controls on the main thread, then start the server in a worker thread.
+
+        GTK is not thread-safe, so widget access must happen on the main GTK
+        thread. Only the blocking pipeline/main loop runs in the worker thread.
+        """
         self.run_server.set_sensitive(False)
         self.backend_select.set_sensitive(False)
         self.close_button.set_sensitive(False)
 
+        self._start_server_worker()
+        return True
+
+    @threaded
+    def _start_server_worker(self):
+        """Build and run the server pipeline off the main thread."""
         server_pipeline = (
             f"tensor_query_serversrc host={self.ip_address} ! "
             "video/x-raw,width=300,height=300,format=RGB"
@@ -348,7 +356,7 @@ class ServerWindow:
             print("ERROR: Unable to set the pipeline to the playing state")
             sys.exit(1)
 
-        self.run_server.set_label("Server is running")
+        GLib.idle_add(self.run_server.set_label, "Server is running")
         self.main_loop.run()
 
         # disconnecting the pipeline
@@ -422,9 +430,15 @@ class ClientWindow:
         self.pulsing = False
 
         # Populate source devices
-        for device in glob.glob("/dev/video*"):
+        # get_video_devices() filters out nodes that cannot capture: a USB webcam
+        # adds a metadata-only node, and the i.MX ISI capture node exists even
+        # when no sensor is fitted. Selecting either makes the pipeline fail at
+        # start-up, so they must not appear in the list.
+        sources = utils.get_video_devices()
+        for device in sources:
             self.source_select.append_text(device)
-        self.source_select.set_active(0)
+        if sources:
+            self.source_select.set_active(0)
 
         Gst.init()
         self.main_loop = GLib.MainLoop()
@@ -596,15 +610,25 @@ class ClientWindow:
                 self.entry_text_box.set_activates_default(False)
                 self.entry_text_box.set_sensitive(False)
 
-    @threaded
     def connect_to_server(self, widget):
-        """To start the connection to server"""
+        """Read UI options on the main thread, then connect in a worker thread.
+
+        GTK is not thread-safe, so widget access must happen on the main GTK
+        thread. Only the blocking pipeline/main loop runs in the worker thread.
+        """
         self.connect_server.set_sensitive(False)
 
+        # Get options from user (must be read on the main thread)
         if self.entry_text_box.get_activates_default() is True:
             self.server_ip = self.entry_text_box.get_text()
         src = self.source_select.get_active_text()
 
+        self._connect_worker(src)
+        return True
+
+    @threaded
+    def _connect_worker(self, src):
+        """Build and run the client pipeline off the main thread."""
         client_pipeline = (
             f"v4l2src device={src} ! video/x-raw,width=640,height=480,framerate=30/1 "
         )
@@ -637,7 +661,7 @@ class ClientWindow:
             print("ERROR: Unable to set the pipeline to the playing state")
             sys.exit(1)
 
-        self.connect_server.set_label("Connected to server")
+        GLib.idle_add(self.connect_server.set_label, "Connected to server")
         self.main_loop.run()
 
         # disconnecting the pipeline

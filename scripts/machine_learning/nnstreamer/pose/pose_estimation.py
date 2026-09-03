@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 """
-Copyright 2024 NXP
+Copyright 2024, 2026 NXP
 
 SPDX-License-Identifier: BSD-3-Clause
 
@@ -11,7 +11,6 @@ This script launches the Pose Estimation NNStreamer example using a UI to pick s
 import os
 import sys
 import threading
-import glob
 import subprocess
 import time
 import gi
@@ -97,15 +96,25 @@ class NNStreamerLauncher:
 
         # Obtain available devices
         devices = []
-        if self.platform in ("i.MX8MP"):
+        source_offset = 0
+        if self.platform == "i.MX8MP":
             self.sources_list.append_text("Example video")
-        for device in glob.glob("/dev/video*"):
+            # "Example video" occupies row 0, so the camera rows start at 1.
+            source_offset = 1
+        # get_video_devices() is used instead of globbing /dev/video*: the glob
+        # is unsorted and also lists nodes that cannot capture, such as the
+        # encoder and decoder on i.MX8MP.
+        for device in utils.get_video_devices():
             self.sources_list.append_text(device)
             devices.append(device)
         self.sources_list.set_active(0)
 
         if self.platform in ("i.MX8MM", "i.MX8QM") and "/dev/video3" in devices:
-            self.sources_list.set_active(3)
+            # Look the index up instead of assuming /dev/video3 is the fourth
+            # entry, and shift by any non-camera rows added above.
+            self.sources_list.set_active(
+                devices.index("/dev/video3") + source_offset
+            )
 
         # Populate backends
         backends = []
@@ -325,22 +334,28 @@ class NNStreamerLauncher:
         self.color_list.set_sensitive(status)
         self.display_performance.set_sensitive(status)
 
-    @threaded
     def start(self, widget):
-        """Start the nnstreamer demo"""
+        """Read UI options on the main thread, then launch the demo in a worker thread.
+
+        GTK is not thread-safe, so widget access must happen on the main GTK
+        thread. Only the blocking subprocess launch runs in the worker thread.
+        """
         self.unblock_buttons(False)
 
-        GLib.idle_add(
-            self.status_bar.set_text,
-            "Running Pose Estimation...",
-        )
+        self.status_bar.set_text("Running Pose Estimation...")
 
-        # Get options from user
+        # Get options from user (must be read on the main thread)
         device = self.sources_list.get_active_text()
         backend = self.backend_list.get_active_text()
         color = self.color_list.get_active_text()
         performance_display = self.display_performance.get_active()
 
+        self._start_worker(device, backend, color, performance_display)
+        return True
+
+    @threaded
+    def _start_worker(self, device, backend, color, performance_display):
+        """Build the pipeline and launch the nnstreamer process off the main thread."""
         # Configure arguments
         source = ""
         model = self.npu_tflite_model

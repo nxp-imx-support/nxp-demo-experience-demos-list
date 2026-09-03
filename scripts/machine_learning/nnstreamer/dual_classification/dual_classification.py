@@ -11,7 +11,6 @@ This script launches the Duel Image Classification NNStreamer example using a UI
 import os
 import sys
 import threading
-import glob
 import subprocess
 import time
 import gi
@@ -102,21 +101,31 @@ class NNStreamerLauncher:
             os.environ["VIV_VX_ENABLE_CACHE_GRAPH_BINARY"] = "1"
 
         # Obtain available devices
+        # get_video_devices() is used instead of globbing /dev/video* because not
+        # every node can capture. A USB webcam adds a metadata-only node, and the
+        # i.MX ISI capture node exists even when no sensor is fitted; selecting
+        # either one makes the pipeline fail at start-up. The list is sorted too,
+        # so entry 0 is the lowest numbered usable camera rather than whatever
+        # order the directory happened to return.
         devices = []
-        for device in glob.glob("/dev/video*"):
+        for device in utils.get_video_devices():
             self.sources_list_1.append_text(device)
             self.sources_list_2.append_text(device)
             devices.append(device)
-        self.sources_list_1.set_active(0)
-        self.sources_list_2.set_active(0)
+        if devices:
+            self.sources_list_1.set_active(0)
+            self.sources_list_2.set_active(0)
 
         # Set /dev/video3 as default device for i.MX 8M Plus
         if (
             self.platform in ("i.MX8MP", "i.MX8MM", "i.MX8QM")
             and "/dev/video3" in devices
         ):
-            self.sources_list_1.set_active(3)
-            self.sources_list_2.set_active(3)
+            # Look the index up instead of assuming /dev/video3 is the fourth
+            # entry. Unusable nodes are filtered out now, so its position in the
+            # combo box no longer matches the number in its name.
+            self.sources_list_1.set_active(devices.index("/dev/video3"))
+            self.sources_list_2.set_active(devices.index("/dev/video3"))
 
         # Populate backends
         backends = []
@@ -373,29 +382,36 @@ class NNStreamerLauncher:
         self.color_list.set_sensitive(status)
         self.display_performance.set_sensitive(status)
 
-    @threaded
     def start(self, widget):
-        """Start the nnstreamer demo"""
+        """Read UI options on the main thread, then launch the demo in a worker thread.
+
+        GTK is not thread-safe, so widget access must happen on the main GTK
+        thread. Only the blocking subprocess launch runs in the worker thread.
+        """
         self.unblock_buttons(False)
 
-        GLib.idle_add(
-            self.status_bar.set_text,
-            "Running Dual Classification...",
-        )
+        self.status_bar.set_text("Running Dual Classification...")
 
-        # Get options from user
+        # Get options from user (must be read on the main thread)
         device_1 = self.sources_list_1.get_active_text()
         device_2 = self.sources_list_2.get_active_text()
         backend = self.backend_list.get_active_text()
         color = self.color_list.get_active_text()
         performance_display = self.display_performance.get_active()
 
+        self._start_worker(device_1, device_2, backend, color, performance_display)
+        return True
+
+    @threaded
+    def _start_worker(self, device_1, device_2, backend, color, performance_display):
+        """Build the pipeline and launch the nnstreamer process off the main thread."""
+
         # Configure arguments
         model = self.npu_tflite_model
         normalization = ""
         display = ""
         graph_path = ""
-        if backend in ("GPU"):
+        if backend == "GPU":
             normalization = " -n centeredReduced"
             model = self.npu_tflite_model
         if self.platform == "i.MX95" and backend == "NPU":

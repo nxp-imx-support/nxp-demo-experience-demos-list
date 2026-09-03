@@ -10,7 +10,6 @@ quality only, and should not be used in production software.
 """
 
 import os
-import glob
 from typing import NamedTuple
 import time
 import threading
@@ -479,8 +478,12 @@ class MainWindow(Gtk.Window):
         self.set_resizable(False)
         self.set_border_width(10)
         
+        # get_video_devices() filters out nodes that cannot capture: a USB webcam
+        # adds a metadata-only node, and the i.MX ISI capture node exists even
+        # when no sensor is fitted. Selecting either makes the pipeline fail at
+        # start-up, so they must not appear in the list.
         devices = []
-        for device in glob.glob("/dev/video*"):
+        for device in utils.get_video_devices():
             devices.append(device)
 
         if os.path.exists("/usr/lib/libtim-vx.so"):

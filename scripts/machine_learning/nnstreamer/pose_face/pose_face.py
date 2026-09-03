@@ -11,7 +11,6 @@ This script launches the Pose and Face Detection NNStreamer example using a UI t
 import os
 import sys
 import threading
-import glob
 import subprocess
 import time
 import gi
@@ -109,26 +108,41 @@ class NNStreamerLauncher:
             os.environ["VIV_VX_ENABLE_CACHE_GRAPH_BINARY"] = "1"
 
         # Obtain available devices
+        # get_video_devices() is used instead of globbing /dev/video* because not
+        # every node can capture. A USB webcam adds a metadata-only node, and the
+        # i.MX ISI capture node exists even when no sensor is fitted; selecting
+        # either one makes the pipeline fail at start-up. The list is sorted too,
+        # so entry 0 is the lowest numbered usable camera rather than whatever
+        # order the directory happened to return.
         devices = []
-        for device in glob.glob("/dev/video*"):
+        for device in utils.get_video_devices():
             self.sources_list.append_text(device)
             devices.append(device)
-        self.sources_list.set_active(0)
+        if devices:
+            self.sources_list.set_active(0)
 
         if (
             self.platform in ("i.MX8MP", "i.MX8MM", "i.MX8QM")
             and "/dev/video3" in devices
         ):
-            self.sources_list.set_active(3)
+            # Look the index up instead of assuming /dev/video3 is the
+            # fourth entry. Unusable nodes are filtered out now, so its position
+            # in the combo box no longer matches the number in its name.
+            self.sources_list.set_active(devices.index("/dev/video3"))
 
-        if self.platform in ("i.MX95"):
+        # Only offer the MIPI-CSI sensor if it is actually in the device tree.
+        # soc_id cannot tell an EVK with an OS08A20 fitted from an FRDM-IMX95
+        # with no camera at all - both report i.MX95 - so gating on the
+        # platform alone put an unusable entry in the list and preselected it.
+        self.os08a20_path = utils.get_os08a20_device_path()
+        if self.platform == "i.MX95" and self.os08a20_path is not None:
             devices.append("OS08A20")
             self.sources_list.append_text("OS08A20")
             self.sources_list.set_active(len(devices) - 1)
 
         # Populate backends
         backends = []
-        if self.platform in ("i.MX8MP"):
+        if self.platform == "i.MX8MP":
             backends.append("NPU")
         backends.append("CPU")
         for backend in backends:
@@ -138,11 +152,12 @@ class NNStreamerLauncher:
             self.backend_list.append_text("GPU")
         self.backend_list.set_active(0)
 
-        # Populate resolution for video
-        resolutions = ["1920x1080@30", "640x480@30"]
-        for resolution in resolutions:
-            self.resolution_list.append_text(resolution)
-        self.resolution_list.set_active(0)
+        # Populate resolution from what the selected camera actually supports,
+        # rather than offering a fixed list every camera is assumed to do. A
+        # hardcoded entry fails with "not-negotiated" on Start whenever the
+        # sensor cannot deliver it, and the user gets no hint why.
+        self.sources_list.connect("changed", self.on_source_changed)
+        self.populate_resolutions()
 
         colors = ["white", "red", "green", "blue", "black"]
         for color in colors:
@@ -156,6 +171,33 @@ class NNStreamerLauncher:
         # Preload model
         preload_thread = threading.Thread(target=self.preload, daemon=True)
         preload_thread.start()
+
+    # Modes offered when the camera's caps cannot be read, e.g. when the
+    # GStreamer python bindings are missing or the source is the libcamera
+    # OS08A20 rather than a V4L2 node.
+    FALLBACK_RESOLUTIONS = ["1920x1080@30", "640x480@30"]
+
+    def populate_resolutions(self):
+        """Fills the resolution combo box from the selected camera's caps."""
+        device = self.sources_list.get_active_text()
+        resolutions = []
+        if device and device.startswith("/dev/"):
+            resolutions = utils.get_video_resolutions(device)
+        if not resolutions:
+            resolutions = self.FALLBACK_RESOLUTIONS
+
+        self.resolution_list.remove_all()
+        for resolution in resolutions:
+            self.resolution_list.append_text(resolution)
+        self.resolution_list.set_active(0)
+
+    def on_source_changed(self, widget):
+        """Repopulates the resolutions when the user picks another camera.
+
+        Without this the list would keep describing whichever camera happened
+        to be selected when the window opened.
+        """
+        self.populate_resolutions()
 
     def quit_app(self, widget):
         """Closes GTK+3 GUI and kills NNStreamer process"""
@@ -290,10 +332,14 @@ class NNStreamerLauncher:
         GLib.idle_add(self.status_bar.set_text, "NPU model successfully downloaded!")
 
         GLib.idle_add(self.status_bar.set_text, "Downloading CPU model...")
-        self.tflite_model_a = utils.download_file(self.tflite_model_b)
+        # Store the resolved path of model B in its own attribute. This used to
+        # assign into tflite_model_a, which both discarded the path resolved for
+        # model A and left tflite_model_b as a bare file name, so the CPU/GPU
+        # pipeline was built from one wrong path and one unresolved name.
+        self.tflite_model_b = utils.download_file(self.tflite_model_b)
 
         # Verify if download is successfull
-        if self.tflite_model_a == -1:
+        if self.tflite_model_b == -1:
             GLib.idle_add(
                 self.status_bar.set_text,
                 "Cannot find files!\n"
@@ -302,7 +348,7 @@ class NNStreamerLauncher:
             self.pulsing = False
             self.unblock_buttons(True)
             return
-        if self.tflite_model_a == -2:
+        if self.tflite_model_b == -2:
             GLib.idle_add(
                 self.status_bar.set_text,
                 "Download failed!\n"
@@ -311,7 +357,7 @@ class NNStreamerLauncher:
             self.pulsing = False
             self.unblock_buttons(True)
             return
-        if self.tflite_model_a == -3:
+        if self.tflite_model_b == -3:
             GLib.idle_add(
                 self.status_bar.set_text,
                 "Downloaded corrupted file!\n"
@@ -400,22 +446,57 @@ class NNStreamerLauncher:
         self.color_list.set_sensitive(status)
         self.display_performance.set_sensitive(status)
 
-    @threaded
     def start(self, widget):
-        """Start the nnstreamer demo"""
+        """Read UI options on the main thread, then launch the demo in a worker thread.
+
+        GTK is not thread-safe, so widget access must happen on the main GTK
+        thread. Only the blocking subprocess launch runs in the worker thread.
+        """
         self.unblock_buttons(False)
 
-        GLib.idle_add(
-            self.status_bar.set_text,
-            "Running Pose/Face...",
-        )
+        self.status_bar.set_text("Running Pose/Face...")
 
-        # Get options from user
+        # Get options from user (must be read on the main thread).
+        # The example takes one backend per model, so the selection is doubled
+        # for the command line. Keep the single selected value separately, since
+        # every decision in the worker has to be made on what the user actually
+        # picked - comparing the doubled "NPU,NPU" string against "NPU" never
+        # matched, so the GPU and i.MX93 vela branches were dead and the
+        # graph-cache option was applied even for a pure CPU run.
         device = self.sources_list.get_active_text()
-        backend = self.backend_list.get_active_text() + "," + self.backend_list.get_active_text()
+        selected_backend = self.backend_list.get_active_text()
+        backend = selected_backend + "," + selected_backend
         color = self.color_list.get_active_text()
         performance_display = self.display_performance.get_active()
+        resolution = self.resolution_list.get_active_text()
 
+        if device is None:
+            # The source list can legitimately be empty now. get_video_devices()
+            # hides nodes that cannot capture, so a board with no sensor fitted
+            # lists nothing at all instead of offering a node that always fails.
+            # Report that and hand the controls back rather than building a
+            # command line out of None, which raises in the worker thread.
+            self.status_bar.set_text(
+                "No usable camera found! Connect a camera and restart the demo."
+            )
+            self.unblock_buttons(True)
+            return True
+
+        self._start_worker(
+            device, backend, selected_backend, color, performance_display, resolution
+        )
+        return True
+
+    @threaded
+    def _start_worker(
+        self, device, backend, selected_backend, color, performance_display, resolution
+    ):
+        """Build the pipeline and launch the nnstreamer process off the main thread.
+
+        backend is the doubled value passed to the example's -b option, while
+        selected_backend is the single value the user picked. Every decision
+        below has to be made on selected_backend.
+        """
         # Configure arguments
         model = self.tflite_npu_model_a + "," + self.npu_tflite_model_b
         normalization = ""
@@ -424,10 +505,10 @@ class NNStreamerLauncher:
         cam_op = ""
         res = ""
         env = os.environ.copy()
-        if backend in ("GPU"):
+        if selected_backend == "GPU":
             normalization = " -n castInt32,castInt32"
             model = self.tflite_model_a + "," + self.tflite_model_b
-        elif backend == "NPU" and self.platform == "i.MX93":
+        elif selected_backend == "NPU" and self.platform == "i.MX93":
             model = self.tflite_vela_model_a + "," + self.vela_tflite_model_b
         if performance_display:
             display = " -d "
@@ -435,20 +516,31 @@ class NNStreamerLauncher:
             color = ""
         else:
             color = " -t" + color
-        if self.platform == "i.MX8MP" and backend != "CPU":
+        if self.platform == "i.MX8MP" and selected_backend != "CPU":
             graph_path = " -g /opt/gopoint-apps/downloads"
-        if self.resolution_list.get_active_text() == "1920x1080@30":
-            res = " -r 1920,1080,30 "
-        else:
-            res = " -r 640,480,30 "
+        # Parse whatever the drop-down holds. Testing against one literal and
+        # falling back to 640x480 silently ignored every other entry, which
+        # made the list itself untrustworthy. In object_detection.py the tested
+        # literal was not even in the list, so the branch could never run.
+        width, height, fps = utils.parse_resolution(resolution)
+        res = " -r {},{},{} ".format(width, height, fps)
         
         if device != "OS08A20":
             cam_op = " -c " + device
         else:
             env["CAMERA_BACKEND"]="libcamera"
             env["LIBCAMERA_PIPELINES_MATCH_LIST"]="nxp/neo,imx8-isi,simple"
-            env["LIBCAMERA_CAM_DEVICE"]="/base/soc/bus@42000000/i2c@42540000/os08a20_mipi@36"
+            # Discovered at runtime: the sensor's i2c bus differs between
+            # device trees, so a hardcoded path breaks on valid configurations.
+            env["LIBCAMERA_CAM_DEVICE"]=self.os08a20_path
             env["LIBCAMERA_IPA_MODULE_PATH"]="/usr/lib/libcamera/ipa"
+            # The OS08A20 sensor only streams at 1920x1080@60 through libcamera,
+            # so the resolution chosen from the drop-down has to be overridden
+            # here. Without this the example is asked for a mode the sensor
+            # cannot deliver, the camera is configured with a 0x0 resolution and
+            # the preview never opens.
+            res = " -r 1920,1080,60 "
+
         pipeline = (
             "/opt/gopoint-apps/scripts/machine_learning/nnstreamer/pose_face/example_face_and_pose_detection_tflite"
             + cam_op
@@ -463,6 +555,10 @@ class NNStreamerLauncher:
             + res
         )
 
+        # env carries the libcamera configuration for the OS08A20 sensor, so it
+        # has to be handed to the child process. Without it the CAMERA_BACKEND
+        # and LIBCAMERA_* variables set above were silently dropped and the
+        # OS08A20 selection never took effect.
         self.output_process = subprocess.Popen(
             pipeline,
             shell=True,
@@ -470,6 +566,7 @@ class NNStreamerLauncher:
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             encoding="utf-8",
+            env=env,
         )
 
         return True

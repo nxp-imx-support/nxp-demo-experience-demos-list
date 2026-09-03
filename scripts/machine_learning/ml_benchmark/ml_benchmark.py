@@ -1,13 +1,16 @@
 #!/usr/bin/env python3
 
 """
-Copyright 2022-2024 NXP
+Copyright 2022-2026 NXP
 SPDX-License-Identifier: Apache-2.0
 
 This script benchmarks the ML performance on NPU and CPU
 User can choose a desired TFLite model for benchmark comparison
 
-Note for i.MX 95:   Currently, i.MX 95 only supports benchmark of default model.
+Note for i.MX 95:   i.MX 95 supports benchmark of the default model only.
+                    The NPU run uses a Neutron-compiled variant of the
+                    model fetched from the downloads database, since the
+                    neutron delegate requires an offline-compiled model.
 """
 
 import os
@@ -78,6 +81,10 @@ class MLBenchmark:
         self.npu_model = str()
         self.delegate = str()
 
+        # NPU model for i.MX95 must be a Neutron-compiled model, otherwise
+        # the neutron delegate falls back to CPU (MICRSE-5901).
+        self.neutron_model = "mobilenet_v1_1.0_224_quant_uint8_float32_neutron.tflite"
+
         # Get platform
         self.platform = subprocess.check_output(
             ["cat", "/sys/devices/soc0/soc_id"]
@@ -138,26 +145,46 @@ class MLBenchmark:
         self.progress_bar.set_fraction(0.0)
         return False
 
-    @threaded
     def start(self, widget):
-        """Benchmark the models"""
+        """Read UI options on the main thread, then run benchmarks in a worker thread.
+
+        GTK is not thread-safe, so widget access must happen on the main GTK
+        thread. Only the blocking benchmark runs in the worker thread.
+        """
         self.run_button.set_sensitive(False)
         self.number_threads.set_sensitive(False)
         self.file_chooser.set_sensitive(False)
 
-        self.cpu_model = self.npu_model = self.file_chooser.get_filename()
-        if "_vela.tflite" in self.cpu_model:
+        # Get options from user (must be read on the main thread)
+        model_file = self.file_chooser.get_filename()
+        number_threads = self.number_threads.get_active_text()
+
+        self._run_benchmark(model_file, number_threads)
+        return True
+
+    @threaded
+    def _run_benchmark(self, model_file, number_threads):
+        """Run the CPU and NPU benchmarks off the main thread."""
+        self.cpu_model = self.npu_model = model_file
+        if "_vela.tflite" in self.cpu_model or "_neutron.tflite" in self.cpu_model:
             GLib.idle_add(
-                self.status_bar.set_text, "Please select a non-compiled Vela model!"
+                self.status_bar.set_text, "Please select a non-compiled model!"
             )
-            self.run_button.set_sensitive(True)
-            self.number_threads.set_sensitive(True)
+            GLib.idle_add(self.run_button.set_sensitive, True)
+            GLib.idle_add(self.number_threads.set_sensitive, True)
             if self.platform != "i.MX95":
-                self.file_chooser.set_sensitive(True)
+                GLib.idle_add(self.file_chooser.set_sensitive, True)
             return False
 
         if self.platform == "i.MX93":
             self.compile_vela()
+        elif self.platform == "i.MX95":
+            if not self.download_neutron():
+                GLib.idle_add(self.run_button.set_sensitive, True)
+                GLib.idle_add(self.number_threads.set_sensitive, True)
+                return False
+        else:
+            self.npu_model = self.cpu_model
 
         benchmark_path = (
             subprocess.check_output(["find", "/usr/bin", "-name", "benchmark_model"])
@@ -166,15 +193,14 @@ class MLBenchmark:
         )
         if len(benchmark_path) < 1:
             GLib.idle_add(self.status_bar.set_text, "Missing benchmarking tool!")
-            self.run_button.set_sensitive(True)
-            self.number_threads.set_sensitive(True)
+            GLib.idle_add(self.run_button.set_sensitive, True)
+            GLib.idle_add(self.number_threads.set_sensitive, True)
             if self.platform != "i.MX95":
-                self.file_chooser.set_sensitive(True)
+                GLib.idle_add(self.file_chooser.set_sensitive, True)
             time.sleep(1)
             return False
 
         benchmark_path = benchmark_path[0]
-        number_threads = self.number_threads.get_active_text()
         GLib.idle_add(self.status_bar.set_text, "Running CPU model...")
 
         cpu_out = (
@@ -231,10 +257,10 @@ class MLBenchmark:
         )
 
         GLib.idle_add(self.text_box.set_text, out)
-        self.run_button.set_sensitive(True)
-        self.number_threads.set_sensitive(True)
+        GLib.idle_add(self.run_button.set_sensitive, True)
+        GLib.idle_add(self.number_threads.set_sensitive, True)
         if self.platform != "i.MX95":
-            self.file_chooser.set_sensitive(True)
+            GLib.idle_add(self.file_chooser.set_sensitive, True)
 
         return True
 
@@ -285,9 +311,16 @@ class MLBenchmark:
 
         self.file_chooser.set_filename(self.cpu_model)
 
-        # Compile model using vela tool for i.MX 93
+        # Compile / fetch the accelerated NPU model per platform.
         if self.platform == "i.MX93":
             self.compile_vela()
+        elif self.platform == "i.MX95":
+            if not self.download_neutron():
+                self.pulsing = False
+                self.run_button.set_sensitive(True)
+                self.number_threads.set_sensitive(True)
+                # file_chooser stays disabled on i.MX95
+                return
         else:
             self.npu_model = self.cpu_model
 
@@ -320,6 +353,28 @@ class MLBenchmark:
         """
         tokens = model_name.split(".tflite")
         return MODELS_PATH + (tokens[-2] + "_vela.tflite").split("/")[-1]
+
+    def download_neutron(self):
+        """Download the Neutron-compiled NPU model for i.MX95.
+
+        i.MX95 has no on-device Neutron compiler; the accelerated model is
+        generated offline and fetched from the downloads database. Sets
+        self.npu_model to the local path of the Neutron model.
+
+        Returns True on success, False on failure (status already reported).
+        """
+        GLib.idle_add(self.status_bar.set_text, "Downloading Neutron NPU model...")
+        result = utils.download_file(self.neutron_model)
+        if result in (-1, -2, -3):
+            messages = {
+                -1: "Cannot find Neutron model!",
+                -2: "Neutron model download failed!",
+                -3: "Corrupted Neutron model!",
+            }
+            GLib.idle_add(self.status_bar.set_text, messages[result])
+            return False
+        self.npu_model = result
+        return True
 
 
 if __name__ == "__main__":

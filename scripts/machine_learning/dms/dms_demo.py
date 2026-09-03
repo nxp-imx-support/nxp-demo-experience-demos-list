@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 """
-Copyright 2022-2025 NXP
+Copyright 2022-2026 NXP
 SPDX-License-Identifier: BSD-3-Clause
 
 Model: face_detection_ptq.tflite
@@ -34,6 +34,7 @@ import sys
 import math
 import time
 import argparse
+import subprocess
 import numpy as np
 import gi
 import cairo
@@ -154,7 +155,13 @@ class DMSDemo:
         elif os.path.exists("/usr/lib/libethosu_delegate.so"):
             self.platform = "i.MX93"
         elif os.path.exists("/usr/lib/libneutron_delegate.so"):
-            self.platform = "i.MX95"
+            soc_id = subprocess.check_output(
+                ["cat", "/sys/devices/soc0/soc_id"]
+            ).decode("utf-8").strip()
+            if "i.MX952" in soc_id:
+                self.platform = "i.MX952"
+            else:
+                self.platform = "i.MX95"
         else:
             print("Target is not supported!")
             sys.exit()
@@ -175,6 +182,11 @@ class DMSDemo:
             videoconvert = "imxvideoconvert_g2d ! "
             videocrop = "videocrop top=0 left=80 right=80 bottom=0 ! "
             info_image = "/imx95_dms_info.jpeg"
+            compositor = "imxcompositor_g2d "
+        if self.platform == "i.MX952":
+            videoconvert = "imxvideoconvert_g2d ! "
+            videocrop = "videocrop top=0 left=80 right=80 bottom=0 ! "
+            info_image = "/imx952_dms_info.jpeg"
             compositor = "imxcompositor_g2d "
 
         display_resolution = resolution.split("x")
@@ -231,6 +243,12 @@ class DMSDemo:
             landmark_model = model_path + "/face_landmark_ptq_neutron.tflite"
             iris_model = model_path + "/iris_landmark_ptq_neutron.tflite"
             smk_call_model = model_path + "/yolov4_tiny_smk_call_neutron.tflite"
+
+        if self.platform == "i.MX952" and inf_device == "NPU":
+            face_model = model_path + "/face_detection_ptq_neutron_952.tflite"
+            landmark_model = model_path + "/face_landmark_ptq_neutron_952.tflite"
+            iris_model = model_path + "/iris_landmark_ptq_neutron_952.tflite"
+            smk_call_model = model_path + "/yolov4_tiny_smk_call_neutron_952.tflite"
 
         self.face_detector = FaceDetector(
             face_model, inf_device, self.platform, FACE_THRESHOLD

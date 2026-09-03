@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 """
-Copyright 2025 NXP
+Copyright 2025-2026 NXP
 SPDX-License-Identifier: Apache-2.0
 
 The following is a demo to show CAN Open usage on i.MX boards.
@@ -148,11 +148,19 @@ class CarNavigation:
         self.about_dialog.run()
         self.about_dialog.hide()
 
-    @threaded
     def start(self, widget):
+        """Read UI options on the main thread, then run the demo in a worker thread.
+
+        GTK is not thread-safe, so widget access must happen on the main GTK
+        thread. Only the blocking work is offloaded to a background thread.
+        """
         part = self.part_box.get_active_id()
         can = self.device_box.get_active_text()
+        self._start_worker(part, can)
 
+    @threaded
+    def _start_worker(self, part, can):
+        """Bring up the CAN interface and launch the demo off the main thread."""
         os.system(f"ip link set down {can}")
         os.system(f"ip link set {can} type can bitrate 250000")
         os.system(f"ip link set up {can}")

@@ -1,17 +1,16 @@
 #!/usr/bin/env python3
 
 """
-Copyright 2024-2025 NXP
+Copyright 2024-2026 NXP
 
 SPDX-License-Identifier: BSD-3-Clause
 
-This script launches the Semantic Segmantation NNStreamer example using a UI to pick settings.
+This script launches the Semantic Segmentation NNStreamer example using a UI to pick settings.
 """
 
 import os
 import sys
 import threading
-import glob
 import subprocess
 import time
 import gi
@@ -95,13 +94,17 @@ class NNStreamerLauncher:
             os.environ["VIV_VX_CACHE_BINARY_GRAPH_DIR"] = "/opt/gopoint-apps/downloads"
             os.environ["VIV_VX_ENABLE_CACHE_GRAPH_BINARY"] = "1"
 
-        # Obtain available devices
-        devices = []
+        # This demo runs on a bundled still image only, so the source list has
+        # exactly one entry. It used to be followed by an i.MX8MM / i.MX8QM
+        # special case that tested "/dev/video3" in devices against a devices
+        # list that was never appended to, so the condition was always false and
+        # the set_active(3) it guarded could never run - and would have pointed
+        # at a nonexistent fourth entry if it had. Removed rather than repaired:
+        # the _start_worker() camera path (--camera_device) is still there if
+        # camera input is wanted later, but enabling it is a feature change that
+        # needs its own testing, not a silent side effect of deleting dead code.
         self.sources_list.append_text("Example photo")
         self.sources_list.set_active(0)
-
-        if self.platform in ("i.MX8MM", "i.MX8QM") and "/dev/video3" in devices:
-            self.sources_list.set_active(3)
 
         # Populate backends
         backends = []
@@ -321,21 +324,28 @@ class NNStreamerLauncher:
         self.color_list.set_sensitive(status)
         self.display_performance.set_sensitive(status)
 
-    @threaded
     def start(self, widget):
-        """Start the nnstreamer demo"""
+        """Read UI options on the main thread, then launch the demo in a worker thread.
+
+        GTK is not thread-safe, so widget access must happen on the main GTK
+        thread. Only the blocking subprocess launch runs in the worker thread.
+        """
         self.unblock_buttons(False)
 
-        GLib.idle_add(
-            self.status_bar.set_text,
-            "Running Segmentation...",
-        )
+        self.status_bar.set_text("Running Semantic Segmentation...")
 
-        # Get options from user
+        # Get options from user (must be read on the main thread)
         device = self.sources_list.get_active_text()
         backend = self.backend_list.get_active_text()
         color = self.color_list.get_active_text()
         performance_display = self.display_performance.get_active()
+
+        self._start_worker(device, backend, color, performance_display)
+        return True
+
+    @threaded
+    def _start_worker(self, device, backend, color, performance_display):
+        """Build the pipeline and launch the nnstreamer process off the main thread."""
 
         # Configure arguments
         source = ""

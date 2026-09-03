@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 """
-Copyright 2023-2025 NXP
+Copyright 2023-2026 NXP
 SPDX-License-Identifier: BSD-3-Clause
 
 This script define class of smoking/calling detection used in DMS demo
@@ -38,7 +38,7 @@ class SmokingCallingDetector:
                 delegate = tflite.load_delegate("/usr/lib/libvx_delegate.so")
             elif platform == "i.MX93":
                 delegate = tflite.load_delegate("/usr/lib/libethosu_delegate.so")
-            elif platform == "i.MX95":
+            elif platform in ("i.MX95", "i.MX952"):
                 delegate = tflite.load_delegate("/usr/lib/libneutron_delegate.so")
             else:
                 print("Platform not supported!")

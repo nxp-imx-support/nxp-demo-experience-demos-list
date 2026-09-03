@@ -11,7 +11,6 @@ This script launches the Object Detection NNStreamer example using a UI to pick 
 import os
 import sys
 import threading
-import glob
 import subprocess
 import time
 import gi
@@ -807,7 +806,13 @@ class NNStreamerLauncher:
                 raise ValueError("No os08a20 cameras found")
         except Exception as e:
             print(f"Error detecting os08a20 cameras: {e}")
-            for device in glob.glob("/dev/video*"):
+        # get_video_devices() is used instead of globbing /dev/video* because not
+        # every node can capture. A USB webcam adds a metadata-only node, and the
+        # i.MX ISI capture node exists even when no sensor is fitted; selecting
+        # either one makes the pipeline fail at start-up. The list is sorted too,
+        # so entry 0 is the lowest numbered usable camera rather than whatever
+        # order the directory happened to return.
+            for device in utils.get_video_devices():
                 self.sources_list.append_text(device)
                 devices.append(device)
             if devices:
@@ -817,7 +822,10 @@ class NNStreamerLauncher:
             self.platform in ("i.MX8MP", "i.MX8MM", "i.MX8QM")
             and "/dev/video3" in devices
         ):
-            self.sources_list.set_active(3)
+            # Look the index up instead of assuming /dev/video3 is the fourth
+            # entry. Unusable nodes are filtered out now, so its position in the
+            # combo box no longer matches the number in its name.
+            self.sources_list.set_active(devices.index("/dev/video3"))
 
         # Populate backends
         backends = []
@@ -1119,35 +1127,41 @@ class NNStreamerLauncher:
             camera_path = device.replace("os08a20:", "")
             return camera_path
         else:
-            # For video devices, we need to map to camera path
-            # This is a simplified mapping - you may need to adjust based on your system
-            if device == "/dev/video0":
-                return "/base/soc/bus@42000000/i2c@42530000/os08a20_mipi@36"
-            elif device == "/dev/video3":
-                return "/base/soc/bus@44000000/i2c@44350000/os08a20_mipi@36"
-            else:
-                # Default camera path
-                return "/base/soc/bus@42000000/i2c@42530000/os08a20_mipi@36"
+            # Fall back to discovering the sensor in the device tree rather than
+            # guessing a bus address from the /dev/video node number. The old
+            # mapping assumed /dev/video0 meant i2c@42530000 and /dev/video3
+            # meant i2c@44350000, but the node number depends on probe order and
+            # the sensor's bus depends on which DTB was booted, so the two are
+            # unrelated. Returns None when no sensor is present, which is
+            # honest - the caller cannot build a libcamera pipeline without one.
+            return utils.get_os08a20_device_path()
 
-    @threaded
+
     def start(self, widget):
-        """Start the person detection pipeline"""
+        """Read UI options on the main thread, then launch the demo in a worker thread.
+
+        GTK is not thread-safe, so widget access must happen on the main GTK
+        thread. Only the pipeline build/launch runs in the worker thread.
+        """
         self.unblock_buttons(False)
 
-        GLib.idle_add(
-            self.status_bar.set_text,
-            "Starting Person Detection Pipeline...",
-        )
+        self.status_bar.set_text("Starting Person Detection Pipeline...")
 
-        # Get options from user
+        # Get options from user (must be read on the main thread)
         device = self.sources_list.get_active_text()
         backend = self.backend_list.get_active_text()
         color = self.color_list.get_active_text()
         performance_display = self.display_performance.get_active()
 
+        self._start_worker(device, backend, color, performance_display)
+        return True
+
+    @threaded
+    def _start_worker(self, device, backend, color, performance_display):
+        """Build the pipeline and start person detection off the main thread."""
         # Configure arguments
         model = self.npu_tflite_model
-        if backend in ("GPU"):
+        if backend == "GPU":
             model = self.tflite_model
         if self.platform == "i.MX95" and backend == "NPU":
             model = self.neutron_tflite_model

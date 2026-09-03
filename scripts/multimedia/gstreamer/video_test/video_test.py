@@ -1,7 +1,7 @@
 """
 Video Test Demo.
 
-Copyright 2022-2024 NXP
+Copyright 2022-2024, 2026 NXP
 SPDX-License-Identifier: BSD-3-Clause
 
 This demo is meant for users to try out cameras and displays connected to a
@@ -9,14 +9,18 @@ board. This simple UI allows for different cameras to be selected, or if no
 camera is selected, users can use a test source.
 """
 
-import glob
 import threading
 import subprocess
 import os
+import sys
 import gi
 
 gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk, Gio
+
+# Import utils
+sys.path.append("/opt/gopoint-apps/scripts/")
+import utils
 
 
 def run_pipeline(pipeline):
@@ -52,7 +56,11 @@ class MainWindow(Gtk.Window):
         source_label = Gtk.Label(label="Source")
 
         self.devices = ["Test Source"]
-        for device in glob.glob("/dev/video*"):
+        # get_video_devices() filters out nodes that cannot capture: a USB webcam
+        # adds a metadata-only node, and the i.MX ISI capture node exists even
+        # when no sensor is fitted. Selecting either makes the pipeline fail at
+        # start-up, so they must not appear in the list.
+        for device in utils.get_video_devices():
             self.devices.append(device)
         self.source_select = Gtk.ComboBoxText()
         for option in self.devices:

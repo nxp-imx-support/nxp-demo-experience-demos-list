@@ -1,5 +1,5 @@
 """
-Copyright 2021-2024 NXP
+Copyright 2021-2024, 2026 NXP
 SPDX-License-Identifier: BSD-3-Clause
 
 This script provides a user interface for the “video_test” tool that is used
@@ -11,16 +11,20 @@ video_test and dump the frames onto the selected drive.
 This demo will only work with cameras that work with video_test.
 """
 
-import glob
 import json
 import subprocess
 import os
+import sys
 from datetime import datetime
 import threading
 import gi
 
 gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk, GLib, Gio
+
+# Import utils
+sys.path.append("/opt/gopoint-apps/scripts/")
+import utils
 
 
 class VideoDump(Gtk.Window):
@@ -120,7 +124,11 @@ class VideoDump(Gtk.Window):
         self.status_bar = Gtk.Statusbar.new()
         self.status_bar.push(0, "Select a camera to load")
 
-        for camera in glob.glob("/dev/video*"):
+        # get_video_devices() filters out nodes that cannot capture: a USB webcam
+        # adds a metadata-only node, and the i.MX ISI capture node exists even
+        # when no sensor is fitted. Selecting either makes the pipeline fail at
+        # start-up, so they must not appear in the list.
+        for camera in utils.get_video_devices():
             self.device_combo.append_text(camera)
 
         drive_finder = subprocess.run(

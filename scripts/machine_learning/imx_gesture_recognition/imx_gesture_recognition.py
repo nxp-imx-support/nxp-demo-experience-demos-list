@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 """
-Copyright 2023-2025 NXP
+Copyright 2023-2026 NXP
 SPDX-License-Identifier: Apache-2.0
 
 This script launches the i.MX Gesture Recognition example application using a GUI
@@ -9,7 +9,6 @@ This script launches the i.MX Gesture Recognition example application using a GU
 
 import os
 import sys
-import glob
 import subprocess
 import threading
 import time
@@ -100,8 +99,12 @@ class ImxGestureRecognition:
             sys.exit()
 
         # Obtain available devices
+        # get_video_devices() filters out nodes that cannot capture: a USB webcam
+        # adds a metadata-only node, and the i.MX ISI capture node exists even
+        # when no sensor is fitted. Selecting either makes the pipeline fail at
+        # start-up, so they must not appear in the list.
         devices = []
-        for device in glob.glob("/dev/video*"):
+        for device in utils.get_video_devices():
             devices.append(device)
 
         for device in devices:
@@ -147,21 +150,29 @@ class ImxGestureRecognition:
         self.progress_bar.set_fraction(0.0)
         return False
 
-    @threaded
     def start(self, widget):
-        """
-        Function to start and run i.MX Gesture Recognition
+        """Read UI options on the main thread, then run the demo in a worker thread.
+
+        GTK is not thread-safe, so widget access must happen on the main GTK
+        thread. Only the blocking work runs in the worker thread.
         """
         self.run_button.set_sensitive(False)
         self.sources_list.set_sensitive(False)
         self.num_hands_list.set_sensitive(False)
 
+        # Get options from user (must be read on the main thread)
         device = self.sources_list.get_active_text()
         num_hands = self.num_hands_list.get_active_text()
 
         self.pulsing = True
         self.timeout_id = GLib.timeout_add(100, self.on_timeout)
 
+        self._start_worker(device, num_hands)
+        return True
+
+    @threaded
+    def _start_worker(self, device, num_hands):
+        """Download models, warm up, and launch the recognition process off the main thread."""
         GLib.idle_add(self.status_bar.set_text, "Downloading models...")
 
         # Download assets
@@ -181,8 +192,8 @@ class ImxGestureRecognition:
                 "Cannot find files!\n"
                 "Make sure required files are available in downloads database!",
             )
-            self.run_button.set_sensitive(True)
-            self.sources_list.set_sensitive(True)
+            GLib.idle_add(self.run_button.set_sensitive, True)
+            GLib.idle_add(self.sources_list.set_sensitive, True)
             return False
         if (
             model_detection == -2
@@ -195,8 +206,8 @@ class ImxGestureRecognition:
                 "Download failed!\n"
                 "Please make sure you have internet connection on the target and try again.",
             )
-            self.run_button.set_sensitive(True)
-            self.sources_list.set_sensitive(True)
+            GLib.idle_add(self.run_button.set_sensitive, True)
+            GLib.idle_add(self.sources_list.set_sensitive, True)
             return False
 
         if (
@@ -210,8 +221,8 @@ class ImxGestureRecognition:
                 "Downloaded corrupted file!\n"
                 "Please clean /opt/gopoint-apps/downloads and try to download again.",
             )
-            self.run_button.set_sensitive(True)
-            self.sources_list.set_sensitive(True)
+            GLib.idle_add(self.run_button.set_sensitive, True)
+            GLib.idle_add(self.sources_list.set_sensitive, True)
             return False
 
         GLib.idle_add(self.status_bar.set_text, "Loading models to cache...")
@@ -330,9 +341,9 @@ class ImxGestureRecognition:
                 self.status_bar.set_text,
                 "Source device not compatible...\nPlease select another device!",
             )
-            self.run_button.set_sensitive(True)
-            self.sources_list.set_sensitive(True)
-            self.num_hands_list.set_sensitive(True)
+            GLib.idle_add(self.run_button.set_sensitive, True)
+            GLib.idle_add(self.sources_list.set_sensitive, True)
+            GLib.idle_add(self.num_hands_list.set_sensitive, True)
             return False
 
         return True

@@ -2,7 +2,7 @@
 
 """
 Copyright © 2021 Patrick Levin
-Copyright 2022-2025 NXP
+Copyright 2022-2026 NXP
 
 SPDX-License-Identifier: MIT
 Original Source: https://github.com/patlevin/face-detection-tflite
@@ -46,7 +46,7 @@ class FaceDetector:
                 delegate = tflite.load_delegate("/usr/lib/libvx_delegate.so")
             elif platform == "i.MX93":
                 delegate = tflite.load_delegate("/usr/lib/libethosu_delegate.so")
-            elif platform == "i.MX95":
+            elif platform in ("i.MX95", "i.MX952"):
                 delegate = tflite.load_delegate("/usr/lib/libneutron_delegate.so")
             else:
                 print("Platform not supported!")

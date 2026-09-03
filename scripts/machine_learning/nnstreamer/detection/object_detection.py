@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 """
-Copyright 2024 NXP
+Copyright 2024, 2026 NXP
 
 SPDX-License-Identifier: BSD-3-Clause
 
@@ -11,7 +11,6 @@ This script launches the Object Detection NNStreamer example using a UI to pick 
 import os
 import sys
 import threading
-import glob
 import subprocess
 import time
 import gi
@@ -103,16 +102,23 @@ class NNStreamerLauncher:
 
         # Obtain available devices
         devices = []
-        for device in glob.glob("/dev/video*"):
+        # get_video_devices() is used instead of globbing /dev/video*: the glob
+        # is unsorted and also lists nodes that cannot capture, such as the
+        # encoder and decoder on i.MX8MP.
+        for device in utils.get_video_devices():
             self.sources_list.append_text(device)
             devices.append(device)
-        self.sources_list.set_active(0)
+        if devices:
+            self.sources_list.set_active(0)
 
         if (
             self.platform in ("i.MX8MP", "i.MX8MM", "i.MX8QM")
             and "/dev/video3" in devices
         ):
-            self.sources_list.set_active(3)
+            # Look the index up instead of assuming /dev/video3 is the fourth
+            # entry. Unusable nodes are filtered out now, so its position in the
+            # combo box no longer matches the number in its name.
+            self.sources_list.set_active(devices.index("/dev/video3"))
 
         # Populate backends
         backends = []
@@ -366,28 +372,34 @@ class NNStreamerLauncher:
         self.color_list.set_sensitive(status)
         self.display_performance.set_sensitive(status)
 
-    @threaded
     def start(self, widget):
-        """Start the nnstreamer demo"""
+        """Read UI options on the main thread, then launch the demo in a worker thread.
+
+        GTK is not thread-safe, so widget access must happen on the main GTK
+        thread. Only the blocking subprocess launch runs in the worker thread.
+        """
         self.unblock_buttons(False)
 
-        GLib.idle_add(
-            self.status_bar.set_text,
-            "Running Object Detection...",
-        )
+        self.status_bar.set_text("Running Object Detection...")
 
-        # Get options from user
+        # Get options from user (must be read on the main thread)
         device = self.sources_list.get_active_text()
         backend = self.backend_list.get_active_text()
         color = self.color_list.get_active_text()
         performance_display = self.display_performance.get_active()
 
+        self._start_worker(device, backend, color, performance_display)
+        return True
+
+    @threaded
+    def _start_worker(self, device, backend, color, performance_display):
+        """Build the pipeline and launch the nnstreamer process off the main thread."""
         # Configure arguments
         model = self.npu_tflite_model
         normalization = ""
         display = ""
         graph_path = ""
-        if backend in ("GPU"):
+        if backend == "GPU":
             normalization = " -n centeredReduced"
             model = self.tflite_model
         elif backend == "NPU" and self.platform == "i.MX93":

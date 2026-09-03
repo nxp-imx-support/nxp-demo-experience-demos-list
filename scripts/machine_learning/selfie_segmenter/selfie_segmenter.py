@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 """
-Copyright 2023-2024 NXP
+Copyright 2023-2024, 2026 NXP
 SPDX-License-Identifier: Apache-2.0
 
 Models: MediaPipe's Selfie Segmenter
@@ -28,7 +28,6 @@ import subprocess
 import threading
 import time
 import re
-import glob
 import logging
 import cairo
 import numpy as np
@@ -183,9 +182,15 @@ class SelfieSegmenter:
             sys.exit()
 
         # Obtain available devices
-        for device in glob.glob("/dev/video*"):
+        # get_video_devices() filters out nodes that cannot capture: a USB webcam
+        # adds a metadata-only node, and the i.MX ISI capture node exists even
+        # when no sensor is fitted. Selecting either makes the pipeline fail at
+        # start-up, so they must not appear in the list.
+        sources = utils.get_video_devices()
+        for device in sources:
             self.source_box.append_text(device)
-        self.source_box.set_active(0)
+        if sources:
+            self.source_box.set_active(0)
 
         # Populate backends
         for backend in self.backends:
@@ -475,13 +480,24 @@ class SelfieSegmenter:
 
         # Set default background image
         self.background = Image.open(self.general_background)
-        self.file_chooser.set_filename(self.general_background)
+        # file_chooser is a GTK widget; set it on the main thread.
+        GLib.idle_add(self.file_chooser.set_filename, self.general_background)
         self.pulsing = False
+
         GLib.idle_add(self.status_bar.set_text, "Application is ready!")
         self.unblock_buttons(True)
 
     def unblock_buttons(self, status):
-        """Block/unblock buttons"""
+        """Block/unblock buttons.
+
+        GTK is not thread-safe. This helper is called from background worker
+        threads (preload and start worker), so all widget access is marshalled
+        onto the main GTK thread via GLib.idle_add to avoid heap corruption.
+        """
+        GLib.idle_add(self._unblock_buttons_main, status)
+
+    def _unblock_buttons_main(self, status):
+        """Perform the actual widget sensitivity change on the main thread."""
         self.source_box.set_sensitive(status)
         self.backend_box.set_sensitive(status)
         self.mode_box.set_sensitive(status)
@@ -489,6 +505,8 @@ class SelfieSegmenter:
         self.color_box.set_sensitive(status)
         self.file_chooser.set_sensitive(status)
         self.run_button.set_sensitive(status)
+        return False
+
 
     def compile_vela(self):
         """Compile vela models"""
@@ -529,9 +547,12 @@ class SelfieSegmenter:
         tokens = model_name.split(".tflite")
         return MODELS_PATH + (tokens[-2] + "_vela.tflite").split("/")[-1]
 
-    @threaded
     def start(self, widget):
-        """Start the selfie segmenter demo"""
+        """Read UI options on the main thread, then launch the demo in a worker thread.
+
+        GTK is not thread-safe, so all widget access must happen on the main GTK
+        thread. Only the blocking pipeline setup is offloaded to a background thread.
+        """
         self.unblock_buttons(False)
 
         device = self.source_box.get_active_text()
@@ -541,6 +562,12 @@ class SelfieSegmenter:
 
         # Set text color
         color = self.color_box.get_active_text()
+
+        self._start_worker(device, demo_mode, color)
+
+    @threaded
+    def _start_worker(self, device, demo_mode, color):
+        """Build the pipeline and launch the demo off the main thread."""
         self.set_color(color)
 
         # Set backend and delegates
